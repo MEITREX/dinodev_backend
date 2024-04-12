@@ -1,16 +1,41 @@
-# schema file of the microservice
+type Mutation {
+    # projects
+    createProject(input: CreateProjectInput!): Project
+    updateProject(id: UUID!, input: UpdateProjectInput!): Project
+    deleteProject(id: UUID!): Boolean!
+    mutateProject(id: UUID!): ProjectMutation!
 
-# TODO define data types, queries and mutations
-# this can be done in a separate files as long as they are in this folder and
-# end with .graphqls
+    # user
+    register(input: CreateUserInput!): GlobalUser
 
-
-# example
-type Template {
-  id: ID!
-  name: String!
+    updateGlobalUserProfile(id: UUID!, input: UpdateUserInput!): GlobalUser!
+    grantRole(userId: UUID!, roleId: UUID!): GlobalUser!
 }
 
 type Query {
-  templates: [Template]
+    # projects
+    projects: [Project!]!
+    project(id: UUID!): Project
+
+    # users
+    globalUsers: [GlobalUser!]!
+    globalUser(id: UUID!): GlobalUser
+    currentUser: GlobalUser
+
+    # roles
+    globalUserRoles: [GlobalUserRole!]!
+}
+
+type Subscription {
+    meetingStarted(projectId: UUID!): Meeting!
+    meetingFinished(projectId: UUID!): Meeting!
+
+    meetingAttendeesChanged(projectId: UUID!): [MeetingAttendee!]!
+
+    planningMeetingUpdated(meetingId: UUID!): PlanningMeeting!
+    planningMeetingPageChanged(meetingId: UUID!): PlanningMeetingPage!
+    animalVotingUpdated(meetingId: UUID!): PlanningMeeting!
+    nameVotingUpdated(meetingId: UUID!): PlanningMeeting!
+    issueEstimationUpdated(meetingId: UUID!): PlanningMeeting!
+    sprintGoalVotingUpdated(meetingId: UUID!): PlanningMeeting!
 }

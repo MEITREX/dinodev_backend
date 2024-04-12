@@ -1,0 +1,101 @@
+type Project {
+    id: UUID!
+    name: String!
+    description: String
+    startDate: DateTime!
+    endDate: DateTime!
+
+    projectSettings: ProjectSettings!
+
+    currentSprint: Sprint
+    previousSprint: Sprint
+    sprints: [Sprint!]!
+
+    users: [UserInProject!]!
+    currentUser: UserInProject
+
+    # meetings
+    meetings(active: Boolean): [Meeting!]!
+    meeting(id: UUID!): Meeting
+    activeMeetings: [Meeting!]!
+
+    activePlanningMeeting: PlanningMeeting
+
+    planningMeetings: [PlanningMeeting!]!
+
+    # roles
+    roles: [UserRoleInProject!]!
+    role(id: UUID!): UserRoleInProject
+
+}
+
+type ProjectSettings {
+    codeRepositorySettings: CodeRepositorySettings!
+    imsSettings: IMSSettings!
+}
+
+type IMSSettings {
+    imsName: String!
+
+    # other settings are implemented in the corresponding services
+
+}
+
+type CodeRepositorySettings {
+    codeRepositoryName: String!
+
+    # other settings are implemented in the corresponding services
+
+}
+
+input CreateProjectInput {
+    name: String!
+    description: String
+    startDate: DateTime!
+    endDate: DateTime!
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input UpdateProjectInput {
+    name: String!
+    description: String
+    startDate: DateTime!
+    endDate: DateTime!
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input ProjectSettingsInput {
+    codeRepositorySettings: CodeRepositorySettingsInput!
+    imsSettings: IMSSettingsInput!
+}
+
+input IMSSettingsInput {
+    imsName: String!
+}
+
+input CodeRepositorySettingsInput {
+    codeRepositoryName: String!
+}
+
+type ProjectMutation {
+    id: UUID!
+    startMeeting(id: UUID!): Meeting!
+    finishMeeting(id: UUID!): Meeting!
+    joinMeeting(id: UUID!): Meeting!
+    leaveMeeting(id: UUID!): Meeting!
+    pingMeeting(id: UUID!): Meeting!
+    promoteToMeetingLeader(meetingId: UUID!, userId: UUID!): Meeting!
+
+    createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting!
+    updatePlanningMeeting(id: UUID!, input: PlanningMeetingInput!): PlanningMeeting!
+
+    mutatePlanningMeeting(id: UUID!): PlanningMeetingMutation!
+
+    createRole(input: CreateRoleInput!): UserRoleInProject!
+    updateRole(id: UUID!, input: UpdateRoleInput!): UserRoleInProject!
+    deleteRole(id: UUID!): Boolean!
+
+    createSprint(input: CreateSprintInput): Sprint!
+}

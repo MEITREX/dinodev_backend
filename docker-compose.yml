@@ -1,58 +1,58 @@
 version: "3"
 
 services:
-  database-template:
+  database-scrum-game:
     image: postgres:alpine
     restart: always
     expose:
-      - 1032
+      - 12032
     ports:
-      - "1032:5432"
+      - "12032:5432"
     volumes:
-      - templatedata:/var/lib/postgresql/data
+      - scrumgamedata:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=templatedatabase
-  app-template:
+      - POSTGRES_DB=scrumgamedatabase
+  app-scrum-game:
     build:
-      context: ./../template-microservice # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
+      context: ./../scrum-game # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
       dockerfile: Dockerfile
     restart: always
-    container_name: template_microservice
+    container_name: scrum_game
     expose:
-      - 1000
-      - 1001
+      - 12000
+      - 12001
     ports:
-      - "1000:1000"
-      - "1001:1001"
+      - "12000:12000"
+      - "12001:12001"
     depends_on:
-      - database-template
+      - database-scrum-game
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://database-template:5432/templatedatabase
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database-scrum-game:5432/scrumgamedatabase
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-  dapr-template:
+  dapr-scrum-game:
     image: "daprio/daprd"
     command: [
       "./daprd",
-      "--app-id", "template_service",
-      "--app-port", "1001",
-      "--dapr-http-port", "1000",
+      "--app-id", "scrum_game_service",
+      "--app-port", "12001",
+      "--dapr-http-port", "12000",
       "--resources-path", "./components"
     ]
     volumes:
-      - "./../template-microservice/components/:/components" # Mount our components folder for the runtime to use. The mounted location must match the --resources-path argument.
+      - "./../scrum-game/components/:/components" # Mount our components folder for the runtime to use. The mounted location must match the --resources-path argument.
     depends_on:
-      - app-template
+      - app-scrum-game
       - redis
-    network_mode: "service:app-template"
+    network_mode: "service:app-scrum-game"
   redis:
     image: "redis:alpine"
     expose:
       - "6379"
 volumes:
-  templatedata:
+  scrumgamedata:
   testdata:
 networks:
   default:

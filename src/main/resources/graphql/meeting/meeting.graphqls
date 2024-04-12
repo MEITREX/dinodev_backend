@@ -1,0 +1,35 @@
+interface Meeting {
+    id: UUID!
+    title: String!
+    description: String
+    start: DateTime!
+    end: DateTime!
+    state: MeetingState!
+    meetingLink: String!
+
+    attendees: [MeetingAttendee!]!
+}
+
+enum MeetingState {
+    PLANNED
+    ACTIVE
+    FINISHED
+}
+
+type MeetingAttendee {
+    userId: UUID!
+    state: UserState!
+    role: MeetingRole!
+}
+
+enum MeetingRole {
+    ATTENDEE
+    MEETING_LEADER
+}
+
+enum UserState {
+    ONLINE
+    OFFLINE
+    AWAY
+}
+

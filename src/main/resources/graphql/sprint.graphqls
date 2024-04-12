@@ -1,0 +1,18 @@
+type Sprint {
+    id: UUID!
+    name: String!
+    startDate: DateTime!
+    endDate: DateTime!
+    project: Project!
+
+    active: Boolean!
+
+}
+
+input CreateSprintInput {
+    name: String!
+    startDate: DateTime!
+    endDate: DateTime!
+
+    # todo animal info
+}

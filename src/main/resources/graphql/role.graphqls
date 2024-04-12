@@ -1,0 +1,65 @@
+type UserRoleInProject {
+    id: UUID!
+    projectId: UUID!
+    project: Project!
+    name: String!
+    gamifiedName: String!
+    projectPrivileges: [ProjectPrivilege!]!
+    projectPrivilegesDetails: [ProjectPrivilegeDetails!]!
+}
+
+type GlobalUserRole {
+    id: UUID!
+    name: String!
+    globalPrivileges: [GlobalPrivilege!]!
+    globalPrivilegesDetails: [GlobalPrivilegeDetails!]!
+}
+
+type ProjectPrivilegeDetails {
+    id: ProjectPrivilege!
+    name: String!
+    description: String!
+}
+
+type GlobalPrivilegeDetails {
+    id: GlobalPrivilege!
+    name: String!
+    description: String!
+}
+
+enum ProjectPrivilege {
+    CREATE_SPRINT
+    UPDATE_SPRINT
+    DELETE_SPRINT
+    CREATE_SHOP_ITEM
+    UPDATE_SHOP_ITEM
+    DELETE_SHOP_ITEM
+    CREATE_USER
+    UPDATE_USER
+    DELETE_USER
+    CREATE_ROLE
+    UPDATE_ROLE
+    DELETE_ROLE
+    # todo add more permissions
+}
+
+enum GlobalPrivilege {
+    CREATE_PROJECT
+    READ_USER_PRIVATE_INFO
+    GRANT_ROLE
+    UPDATE_USER
+    DELETE_USER
+    # todo add more permissions
+}
+
+input CreateRoleInput {
+    name: String!
+    gamifiedName: String!
+    permissions: [ProjectPrivilege!]!
+}
+
+input UpdateRoleInput {
+    name: String!
+    gamifiedName: String!
+    permissions: [ProjectPrivilege!]!
+}

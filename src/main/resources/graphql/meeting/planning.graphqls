@@ -1,0 +1,152 @@
+type PlanningMeeting implements Meeting {
+
+    attendees: [MeetingAttendee!]!
+
+    planningSettings: PlanningSettings!
+
+    currentPage: PlanningMeetingPage!
+    nextPageAllowed: Boolean!
+
+    animalVoting: AnimalVoting!
+    nameVoting: NameVoting!
+
+    issueEstimation: IssueEstimation!
+
+    sprintGoalVoting: SprintGoalVoting!
+
+    # inherited from Meeting:
+    id: UUID!
+    title: String!
+    description: String
+    start: DateTime!
+    end: DateTime!
+    state: MeetingState!
+    meetingLink: String!
+}
+
+enum PlanningMeetingPage {
+    CONFIGURATION
+    CHOOSE_ANIMAL
+    NAME_ANIMAL
+    ESTIMATE_ANIMAL
+}
+
+type PlanningSettings {
+    sprintDurationDays: Int!
+    sprintStartDate: DateTime!
+}
+
+type AnimalVoting {
+    votableAnimals: [String!]!
+    animalVotingStates: [VotingState!]!
+
+    finished: Boolean!
+    votingResult: String
+}
+
+type VotingState {
+    votedFor: String! # todo animal type
+    userVotes: [AnimalVote!]!
+    totalVotes: Int!
+}
+
+type AnimalVote {
+    userId: UUID!
+    user: GlobalUser!
+}
+
+type NameVoting {
+    votableNames: [String!]!
+    nameVotingStates: [VotingState!]!
+
+    finished: Boolean!
+    votingResult: String
+}
+
+type IssueEstimations {
+    currentIssueEstimation: IssueEstimation
+    issueEstimations: [IssueEstimation!]!
+
+    finished: Boolean!
+    countdown: Int!
+
+    # todo estimation statistics ?
+
+    # other fields added by the IMS service
+}
+
+type IssueEstimation {
+    votes: [StoryPointVote!]!
+    finished: Boolean!
+    skipped: Boolean!
+    issueId: UUID!
+
+    median: StoryPoints
+    max: StoryPoints
+    min: StoryPoints
+    mode: StoryPoints
+
+    finalResult: StoryPoints
+    # other fields added by the IMS service
+}
+
+type StoryPointVote {
+    userId: UUID!
+    user: GlobalUser!
+    storyPoints: StoryPoints!
+}
+
+type SprintGoalVoting {
+    # backlog issues added by the IMS service
+
+    sprintIssueIds: [UUID!]!
+
+    storyPointLimit: Int!
+    capacity: Int!
+
+    finished: Boolean!
+}
+
+type PlanningMeetingMutation {
+    id: UUID!
+    changePage(page: PlanningMeetingPage!): PlanningMeeting!
+    nextPage: PlanningMeeting!
+    voteAnimal(animal: String!, userId: UUID!): PlanningMeeting!
+    voteName(name: String!, userId: UUID!): PlanningMeeting!
+
+    voteStoryPoints(storyPoints: StoryPoints!, userId: UUID!): PlanningMeeting!
+    skipIssue: PlanningMeeting!
+    startCountdown: PlanningMeeting!
+    setFinalResult(storyPoints: StoryPoints!): PlanningMeeting!
+
+    addSprintIssue(issueId: UUID!): PlanningMeeting!
+    removeSprintIssue(issueId: UUID!): PlanningMeeting!
+    setStoryPointLimit(limit: Int!): PlanningMeeting!
+
+    finishMeeting: Sprint!
+}
+
+enum StoryPoints {
+    NO_VOTE
+    ZERO
+    ONE
+    TWO
+    THREE
+    FIVE
+    EIGHT
+    THIRTEEN
+}
+
+input PlanningMeetingInput {
+    title: String!
+    description: String
+    start: DateTime!
+    end: DateTime!
+
+    planningSettings: PlanningSettingsInput!
+}
+
+input PlanningSettingsInput {
+    sprintDurationDays: Int!
+    sprintStartDate: DateTime!
+}

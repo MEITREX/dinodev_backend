@@ -1,0 +1,27 @@
+type UserInProject {
+    userId: UUID!
+    user: GlobalUser!
+    projectId: UUID!
+    project: Project!
+    roles: [UserRoleInProject!]!
+
+    privateInfo: PrivateUserInfo!
+}
+
+type PrivateUserInfo {
+    stats: UserStats!
+    xp: Int!
+    level: Int!
+
+}
+
+type UserStats {
+    user: GlobalUser!
+    project: Project!
+
+    commits: Int!
+    issuesCreated: Int!
+    issuesClosed: Int!
+    storyPoints: Int!
+    hoursWorked: Int!
+}

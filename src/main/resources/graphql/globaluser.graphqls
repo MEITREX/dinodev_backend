@@ -1,0 +1,21 @@
+type GlobalUser {
+    id: UUID!
+    username: String!
+    avatar: String
+    roles: [GlobalUserRole!]!
+
+    userInProject(projectId: UUID!): UserInProject!
+}
+
+input CreateUserInput {
+    username: String!
+    avatar: String
+}
+
+input UpdateUserInput {
+    username: String!
+    avatar: String
+}
+
+
+

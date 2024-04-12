@@ -1,0 +1,7 @@
+type ShopItem {
+    id: ID!
+    name: String!
+    price: Int!
+    description: String!
+    image: String!
+}
