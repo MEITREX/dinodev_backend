@@ -1,5 +1,7 @@
-package de.unistuttgart.iste.meitrex.template.config;
+package de.unistuttgart.iste.meitrex.scrumgame.config;
 
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.GlobalUserMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.UserInProjectMapping;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -22,7 +22,7 @@ if (jacocoEnabled.toBoolean()) {
 
 sonarqube {
   properties {
-    property("sonar.projectKey", "MEITREX_template-microservice")
+	  property("sonar.projectKey", "MEITREX_scrum_game_service")
     property("sonar.organization", "meitrex")
     property("sonar.host.url", "https://sonarcloud.io")
   }
@@ -67,7 +67,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.0'
+	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.1'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -75,12 +75,16 @@ dependencies {
 	implementation 'org.modelmapper:modelmapper:3.+'
 	implementation 'com.graphql-java:graphql-java-extended-scalars:20.0'
 	implementation 'com.graphql-java:graphql-java-extended-validation:20.0'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.security:spring-security-oauth2-resource-server'
+	implementation 'org.springframework.security:spring-security-oauth2-jose'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.0'
+	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.1b'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
@@ -93,5 +97,3 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
-
-tasks.withType(Test).configureEach { testLogging.showStandardStreams = true }
