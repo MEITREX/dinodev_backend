@@ -5,13 +5,25 @@ type Mutation {
     deleteProject(id: UUID!): Boolean!
     mutateProject(id: UUID!): ProjectMutation!
 
+    # user
+    register(input: CreateGlobalUserInput!): GlobalUser
 
+    updateGlobalUser(id: UUID!, input: UpdateGlobalUserInput!): GlobalUser!
+    grantRole(userId: UUID!, roleName: String!): GlobalUser!
 }
 
 type Query {
     # projects
     projects: [Project!]!
     project(id: UUID!): Project
+
+    # users
+    globalUsers: [GlobalUser!]!
+    globalUser(id: UUID!): GlobalUser
+    currentUser: GlobalUser
+
+    # roles
+    globalUserRoles: [GlobalUserRole!]!
 }
 
 type Subscription {

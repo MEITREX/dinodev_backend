@@ -14,6 +14,8 @@ public class ModelMapperConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper();
+        return new ModelMapper()
+                .registerModule(new GlobalUserMapping())
+                .registerModule(new UserInProjectMapping());
     }
 }
