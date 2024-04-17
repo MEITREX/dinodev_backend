@@ -9,6 +9,9 @@ type Mutation {
 }
 
 type Query {
+    # projects
+    projects: [Project!]!
+    project(id: UUID!): Project
 }
 
 type Subscription {
