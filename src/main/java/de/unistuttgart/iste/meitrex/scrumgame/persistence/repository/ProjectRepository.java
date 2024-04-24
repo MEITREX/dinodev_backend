@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.repository;
 
 import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 
 import java.util.UUID;
 

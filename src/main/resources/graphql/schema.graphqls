@@ -1,7 +1,7 @@
 type Mutation {
     # projects
-    createProject(input: CreateProjectInput!): Project
-    updateProject(id: UUID!, input: UpdateProjectInput!): Project
+    createProject(input: CreateProjectInput!): Project!
+    updateProject(id: UUID!, input: UpdateProjectInput!): Project!
     deleteProject(id: UUID!): Boolean!
     mutateProject(id: UUID!): ProjectMutation!
 

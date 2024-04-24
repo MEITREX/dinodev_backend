@@ -1,82 +1,127 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
+import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
+import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.ProjectMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service for managing projects.
+ *
+ * @see ProjectMapping project mapping details
+ */
 @Service
+@Slf4j
 @RequiredArgsConstructor
-public class ProjectService {
+public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Project> {
 
     private final ProjectRepository projectRepository;
-    private final ObjectMapper objectMapper;
+    private final ProjectInitializerService projectInitializerService;
+    private final ModelMapper modelMapper;
 
+    /**
+     * Get all projects.
+     *
+     * @return a list of all projects.
+     */
     public List<Project> getAllProjects() {
-        List<ProjectEntity> projectEntities = projectRepository.findAll();
-
-        return convertToDtos(projectEntities);
+        return getAll();
     }
 
-    public Optional<Project> getProject(UUID id) {
-        return projectRepository.findById(id)
-                .map(this::convertToDto);
+    /**
+     * @param id the id of the project to get.
+     * @return the project with the given id, or an empty optional if
+     * no project with the given id exists.
+     */
+    public Optional<Project> findProject(UUID id) {
+        return find(id);
     }
 
+    /**
+     * @param projectId the id of the project to get.
+     * @return the project with the given id.
+     * @throws MeitrexNotFoundException if no project with the given id exists.
+     */
     public Project getProjectOrThrow(UUID projectId) {
-        return convertToDto(projectRepository.findByIdOrThrow(projectId));
+        return getOrThrow(projectId);
     }
 
-    // @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.CREATE_PROJECT)")
+    /**
+     * Create a new project.
+     * AUTHORIZATION: Requires the global CREATE_PROJECT privilege.
+     *
+     * @param input the input data for the new project.
+     * @return the created project.
+     */
+    @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.CREATE_PROJECT)")
     public Project createProject(CreateProjectInput input) {
-        ProjectEntity newProjectEntity = ProjectEntity.builder()
-                .name(input.getName())
-                .description(input.getDescription())
-                .startDate(input.getStartDate())
-                .endDate(input.getEndDate())
-                .build();
+        ProjectEntity projectEntity = createEntity(input);
 
-        ProjectEntity savedProjectEntity = projectRepository.save(newProjectEntity);
+        projectInitializerService.initializeNewProject(projectEntity);
 
-        return convertToDto(savedProjectEntity);
+        return convertToDto(projectEntity);
     }
 
+    /**
+     * Update a project.
+     * AUTHORIZATION: Requires the UPDATE_PROJECT privilege for the project.
+     *
+     * @param projectId the id of the project to update.
+     * @param input     the input data for the update.
+     * @return the updated project.
+     */
     @PreAuthorize("@auth.hasPrivilege(@projectPrivileges.UPDATE_PROJECT, #projectId)")
     public Project updateProject(UUID projectId, UpdateProjectInput input) {
-        ProjectEntity projectEntity = projectRepository.findByIdOrThrow(projectId);
-
-        projectEntity.setName(input.getName());
-        projectEntity.setDescription(input.getDescription());
-        projectEntity.setStartDate(input.getStartDate());
-        projectEntity.setEndDate(input.getEndDate());
-
-        ProjectEntity savedProjectEntity = projectRepository.save(projectEntity);
-
-        return convertToDto(savedProjectEntity);
+        return update(projectId, input);
     }
 
     @PreAuthorize("@auth.hasPrivilege(@projectPrivileges.DELETE_PROJECT, #projectId)")
-    public Project deleteProject(UUID projectId) {
-        throw new UnsupportedOperationException("Not implemented yet");
+    public boolean deleteProject(UUID projectId) {
+        // TODO: more sophisticated deletion logic
+        return delete(projectId);
     }
 
-    // Note: Authorization is checked in the specific sub-mutations
+    /**
+     * Create a project mutation object for the given project,
+     * which serves as a facade for project mutation operations.
+     * AUTHORIZATION: No authorization check is performed here.
+     * The authorization checks are performed in the sub-mutations.
+     *
+     * @param projectId the id of the project to mutate.
+     * @return a project mutation object for the given project.
+     */
     public ProjectMutation mutateProject(UUID projectId) {
-        return new ProjectMutation(projectId);
+        return ProjectMutation.builder().setId(projectId).build();
     }
 
-    private Project convertToDto(ProjectEntity projectEntity) {
-        return objectMapper.convertValue(projectEntity, Project.class);
+    @Override
+    protected Class<ProjectEntity> getEntityClass() {
+        return ProjectEntity.class;
     }
 
-    private List<Project> convertToDtos(List<ProjectEntity> projectEntities) {
-        return projectEntities.stream()
-                .map(this::convertToDto)
-                .toList();
+    @Override
+    protected Class<Project> getDtoClass() {
+        return Project.class;
     }
+
+    @Override
+    protected ModelMapper getModelMapper() {
+        return modelMapper;
+    }
+
+    @Override
+    protected MeitrexRepository<ProjectEntity, UUID> getRepository() {
+        return projectRepository;
+    }
+
 }

@@ -26,7 +26,7 @@ public class ProjectController {
     @QueryMapping
     @Nullable
     public Project project(@Argument UUID id) {
-        return projectService.getProject(id).orElse(null);
+        return projectService.findProject(id).orElse(null);
     }
 
     @MutationMapping
@@ -40,7 +40,7 @@ public class ProjectController {
     }
 
     @MutationMapping
-    public Project deleteProject(@Argument UUID id) {
+    public boolean deleteProject(@Argument UUID id) {
         return projectService.deleteProject(id);
     }
 

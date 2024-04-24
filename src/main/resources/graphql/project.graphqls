@@ -2,8 +2,6 @@ type Project {
     id: UUID!
     name: String!
     description: String
-    startDate: DateTime!
-    endDate: DateTime!
 
     projectSettings: ProjectSettings!
 
@@ -15,12 +13,9 @@ type Project {
     currentUser: UserInProject
 
     # meetings
-    meetings(states: [MeetingState!]): [Meeting!]!
-    meeting(id: UUID!): Meeting
-
     activePlanningMeeting: PlanningMeeting
-
-    planningMeetings: [PlanningMeeting!]!
+    activeStandupMeeting: StandupMeeting
+    activeRetrospectiveMeeting: RetrospectiveMeeting
 
     # roles
     roles: [UserRoleInProject!]!
@@ -40,15 +35,11 @@ type IMSSettings {
 
 type CodeRepositorySettings {
     codeRepositoryName: String!
-
-
 }
 
 input CreateProjectInput {
     name: String! @NotBlank
     description: String
-    startDate: DateTime!
-    endDate: DateTime!
 
     projectSettings: ProjectSettingsInput!
 }
@@ -56,18 +47,16 @@ input CreateProjectInput {
 input UpdateProjectInput {
     name: String! @NotBlank
     description: String
-    startDate: DateTime!
-    endDate: DateTime!
 
     projectSettings: ProjectSettingsInput!
 }
 
 input ProjectSettingsInput {
     codeRepositorySettings: CodeRepositorySettingsInput!
-    imsSettings: IMSSettingsInput!
+    imsSettings: ImsSettingsInput!
 }
 
-input IMSSettingsInput {
+input ImsSettingsInput {
     imsName: String!
 }
 
@@ -77,17 +66,13 @@ input CodeRepositorySettingsInput {
 
 type ProjectMutation {
     id: UUID!
-    startMeeting(id: UUID!): Meeting!
-    finishMeeting(id: UUID!): Meeting!
-    joinMeeting(id: UUID!): Meeting!
-    leaveMeeting(id: UUID!): Meeting!
-    pingMeeting(id: UUID!): Meeting!
-    promoteToMeetingLeader(meetingId: UUID!, userId: UUID!): Meeting!
+    joinMeeting(type: MeetingType!): Meeting!
+    leaveMeeting(type: MeetingType!): Meeting!
+    pingMeeting(type: MeetingType!): Meeting!
+    promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting!
 
     createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting!
-    updatePlanningMeeting(id: UUID!, input: PlanningMeetingInput!): PlanningMeeting!
-
-    mutatePlanningMeeting(id: UUID!): PlanningMeetingMutation!
+    mutatePlanningMeeting: PlanningMeetingMutation!
 
     createRole(input: CreateRoleInput!): UserRoleInProject!
     updateRole(name: String!, input: UpdateRoleInput!): UserRoleInProject!

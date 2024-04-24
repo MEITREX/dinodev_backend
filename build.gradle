@@ -67,7 +67,7 @@ repositories {
 }
 
 dependencies {
-	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.1'
+	implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.2'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-graphql'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -84,14 +84,15 @@ dependencies {
 	runtimeOnly 'org.postgresql:postgresql'
 	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.1b'
+	testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.1.0-pre'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework:spring-webflux'
 	testImplementation 'org.springframework.graphql:spring-graphql-test'
-	testImplementation "org.mockito:mockito-core:3.+"
+	testImplementation "org.mockito:mockito-core:5.+"
 	testImplementation 'org.hamcrest:hamcrest:2.+'
 	testImplementation "org.testcontainers:postgresql:1.+"
 	testImplementation "org.testcontainers:junit-jupiter:1.+"
+	testImplementation 'org.exparity:hamcrest-date:2.0.8'
 }
 
 tasks.named('test') {
