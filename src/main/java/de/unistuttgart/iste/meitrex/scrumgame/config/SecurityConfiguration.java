@@ -40,7 +40,7 @@ public class SecurityConfiguration {
                 // disable CORS
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers(HttpMethod.OPTIONS, "/graphql**").permitAll()
+                        .requestMatchers("/graphql**").permitAll()
                         // allow access to the GraphiQL interface
                         .requestMatchers("/graphiql**").permitAll()
                         .anyRequest().authenticated())
@@ -53,7 +53,7 @@ public class SecurityConfiguration {
      * Configures the security for the production environment.
      */
     @Bean
-    @Profile("!dev")
+    @Profile("prod")
     DefaultSecurityFilterChain prodSpringWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
@@ -68,6 +68,7 @@ public class SecurityConfiguration {
     }
 
     @Bean
+    @Profile({"prod", "dev"})
     public JwtDecoder jwtDecoder() {
         NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
 
