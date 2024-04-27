@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.role;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
@@ -12,13 +14,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
+import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleGlobalUserRoles.sampleGlobalUserRoleBuilder;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.GlobalUserRoleMatcher.matchingGlobalUserRoleInput;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
@@ -34,7 +39,7 @@ class MutationUpdateGlobalUserRuleTest {
     @Test
     void testUpdateGlobalUserRole(GraphQlTester graphQlTester) {
         // arrange
-        when(authService.hasPrivilege(GlobalPrivileges.UPDATE_ROLE)).thenReturn(true);
+        when(authService.hasPrivilege(GlobalPrivileges.CHANGE_ROLES)).thenReturn(true);
 
         GlobalUserRoleEntity role = globalUserRoleRepository.save(sampleGlobalUserRoleBuilder().build());
         UpdateGlobalUserRoleInput input = getSampleUpdateGlobalUserRoleInput();
@@ -56,13 +61,13 @@ class MutationUpdateGlobalUserRuleTest {
         assertThat(roleEntity, matchingGlobalUserRoleInput(input));
 
         // verify
-        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.UPDATE_ROLE);
+        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);
     }
 
     @Test
     void testUpdateGlobalUserRoleWithoutPrivilege(GraphQlTester graphQlTester) {
         // arrange
-        when(authService.hasPrivilege(GlobalPrivileges.UPDATE_ROLE)).thenReturn(false);
+        when(authService.hasPrivilege(GlobalPrivileges.CHANGE_ROLES)).thenReturn(false);
 
         GlobalUserRoleEntity role = globalUserRoleRepository.save(sampleGlobalUserRoleBuilder().build());
         UpdateGlobalUserRoleInput input = getSampleUpdateGlobalUserRoleInput();
@@ -74,17 +79,37 @@ class MutationUpdateGlobalUserRuleTest {
                 .variable("input", input)
                 .execute()
                 .errors()
-                .satisfy(errors -> assertThat(errors.getFirst().getExtensions().get("exception"),
-                        is("AccessDeniedException")));
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
 
         // verify
-        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.UPDATE_ROLE);
+        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);
+    }
+
+    @Test
+    void testUpdateAdminUserRole(GraphQlTester graphQlTester) {
+        // arrange
+        when(authService.hasPrivilege(GlobalPrivileges.CHANGE_ROLES)).thenReturn(true);
+
+        GlobalUserRoleEntity role = globalUserRoleRepository.save(sampleGlobalUserRoleBuilder().name("ADMIN").build());
+        UpdateGlobalUserRoleInput input = getSampleUpdateGlobalUserRoleInput();
+        String mutation = getUpdateGlobalUserRoleMutation();
+
+        // act
+        graphQlTester.document(mutation)
+                .variable("name", role.getName())
+                .variable("input", input)
+                .execute()
+                .errors()
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
+
+        // verify
+        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);
     }
 
     @Test
     void testUpdateGlobalUserRoleNotFound(GraphQlTester graphQlTester) {
         // arrange
-        when(authService.hasPrivilege(GlobalPrivileges.UPDATE_ROLE)).thenReturn(true);
+        when(authService.hasPrivilege(GlobalPrivileges.CHANGE_ROLES)).thenReturn(true);
 
         UpdateGlobalUserRoleInput input = getSampleUpdateGlobalUserRoleInput();
         String mutation = getUpdateGlobalUserRoleMutation();
@@ -99,13 +124,7 @@ class MutationUpdateGlobalUserRuleTest {
                         containsString("Resource GlobalUserRole with id Non-Existent Role not found")));
 
         // verify
-        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.UPDATE_ROLE);
-    }
-
-    private GlobalUserRoleEntity.GlobalUserRoleEntityBuilder sampleGlobalUserRoleBuilder() {
-        return GlobalUserRoleEntity.builder()
-                .name("Test Role")
-                .globalPrivileges(List.of(GlobalPrivilege.CREATE_PROJECT, GlobalPrivilege.READ_USER_PRIVATE_INFO));
+        verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);
     }
 
     private UpdateGlobalUserRoleInput getSampleUpdateGlobalUserRoleInput() {

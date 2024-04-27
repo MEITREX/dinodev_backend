@@ -1,12 +1,18 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.auth;
 
+import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserRoleInProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -32,6 +38,8 @@ public class AuthService {
 
     private final GlobalUserRepository globalUserRepository;
     private final UserInProjectRepository userInProjectRepository;
+    private final GlobalUserRoleRepository    globalUserRoleRepository;
+    private final UserRoleInProjectRepository userRoleInProjectRepository;
 
     /**
      * Retrieves the user ID of the currently authenticated user.
@@ -101,6 +109,38 @@ public class AuthService {
                     getCurrentUserId(), privilege);
         }
         return authorized;
+    }
+
+    /**
+     * Checks if the currently authenticated user has all privileges of the given global role.
+     *
+     * @param roleName the name of the global role
+     * @return true if the user has all privileges of the role, false otherwise
+     * @throws MeitrexNotFoundException if the role does not exist
+     */
+    public boolean hasPrivilegesOfGlobalRole(String roleName) {
+        UUID userId = getCurrentUserId();
+        GlobalUserRoleEntity role = globalUserRoleRepository.findByIdOrThrow(roleName);
+
+        return getGlobalPrivileges(userId)
+                .containsAll(role.getGlobalPrivileges());
+    }
+
+    /**
+     * Checks if the currently authenticated user has all privileges of the given project role in the given project.
+     *
+     * @param roleName  the name of the project role
+     * @param projectId the project ID
+     * @return true if the user has all privileges of the role, false otherwise
+     * @throws MeitrexNotFoundException if the role does not exist
+     */
+    public boolean hasPrivilegesOfProjectRole(String roleName, UUID projectId) {
+        UUID userId = getCurrentUserId();
+        UserRoleInProjectEntity role = userRoleInProjectRepository
+                .findByIdOrThrow(new UserRoleInProjectId(roleName, projectId));
+
+        return getProjectPrivileges(userId, projectId)
+                .containsAll(role.getProjectPrivileges());
     }
 
     private Set<ProjectPrivilege> getProjectPrivileges(UUID userId, UUID projectId) {

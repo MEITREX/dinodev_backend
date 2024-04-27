@@ -5,7 +5,9 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUser
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -21,7 +23,7 @@ public class GlobalUserEntity implements IWithId<UUID> {
     private UUID id;
 
     @Column(name = "name")
-    private String name;
+    private String username;
 
     @Column(name = "avatar")
     @Lob
@@ -31,7 +33,11 @@ public class GlobalUserEntity implements IWithId<UUID> {
     @Builder.Default
     private List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     @Builder.Default
     private List<UserInProjectEntity> userInProjects = new ArrayList<>();
 

@@ -2,7 +2,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
 import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,15 +13,17 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 /**
  * Service for managing global user roles.
  */
 @Service
 @RequiredArgsConstructor
-public class GlobalUserRoleService
-        extends AbstractCrudService<String, GlobalUserRoleEntity, GlobalUserRole> {
+public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUserRoleEntity, GlobalUserRole> {
 
     private final GlobalUserRoleRepository globalUserRoleRepository;
     private final ModelMapper modelMapper;
@@ -37,7 +42,7 @@ public class GlobalUserRoleService
         return create(input);
     }
 
-    @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.UPDATE_ROLE)")
+    @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.CHANGE_ROLES) and #name != 'ADMIN'")
     public GlobalUserRole updateGlobalUserRole(String name, UpdateGlobalUserRoleInput input) {
         return update(name, entity -> entity.setGlobalPrivileges(input.getGlobalPrivileges()));
     }
@@ -59,8 +64,7 @@ public class GlobalUserRoleService
     }
 
     /**
-     * Get or create the admin role.
-     * The admin role has all global privileges.
+     * Get or create the admin role. The admin role has all global privileges.
      *
      * @return the admin role
      */

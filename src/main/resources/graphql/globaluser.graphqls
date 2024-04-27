@@ -5,6 +5,7 @@ type GlobalUser {
     roles: [GlobalUserRole!]!
 
     userInProject(projectId: UUID!): UserInProject
+    userInProjects: [UserInProject!]!
 }
 
 input CreateGlobalUserInput {

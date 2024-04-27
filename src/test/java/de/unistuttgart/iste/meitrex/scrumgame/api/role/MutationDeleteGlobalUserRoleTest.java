@@ -1,7 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.role;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
@@ -12,12 +11,16 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.UUID;
 
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
+import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleGlobalUserRoles.sampleGlobalUserRoleBuilder;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.*;
@@ -41,7 +44,11 @@ class MutationDeleteGlobalUserRoleTest {
         when(authService.hasPrivilege(GlobalPrivileges.DELETE_ROLE)).thenReturn(true);
 
         GlobalUserRoleEntity role = globalUserRoleRepository.save(sampleGlobalUserRoleBuilder().build());
-        GlobalUserEntity user = GlobalUserEntity.builder().id(UUID.randomUUID()).name("test").roles(List.of(role)).build();
+        GlobalUserEntity user = GlobalUserEntity.builder()
+                .id(UUID.randomUUID())
+                .username("test")
+                .roles(List.of(role))
+                .build();
         user = globalUserRepository.save(user);
 
         String mutation = getDeleteGlobalUserRoleMutation();
@@ -77,8 +84,7 @@ class MutationDeleteGlobalUserRoleTest {
                 .variable("name", role.getName())
                 .execute()
                 .errors()
-                .satisfy(errors -> assertThat(errors.getFirst().getExtensions().get("exception"),
-                        is("AccessDeniedException")));
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
     }
 
     @Test
@@ -98,12 +104,6 @@ class MutationDeleteGlobalUserRoleTest {
 
         // assert
         assertThat(result, is(false));
-    }
-
-    private GlobalUserRoleEntity.GlobalUserRoleEntityBuilder sampleGlobalUserRoleBuilder() {
-        return GlobalUserRoleEntity.builder()
-                .name("Test Role")
-                .globalPrivileges(List.of(GlobalPrivilege.CREATE_PROJECT, GlobalPrivilege.READ_USER_PRIVATE_INFO));
     }
 
     private String getDeleteGlobalUserRoleMutation() {

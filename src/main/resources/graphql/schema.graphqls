@@ -6,10 +6,13 @@ type Mutation {
     mutateProject(id: UUID!): ProjectMutation!
 
     # user
-    register(input: CreateGlobalUserInput!): GlobalUser
+    register(input: CreateGlobalUserInput!): GlobalUser!
+    joinProject(projectId: UUID!): UserInProject!
 
     updateGlobalUser(id: UUID!, input: UpdateGlobalUserInput!): GlobalUser!
     grantRole(userId: UUID!, roleName: String!): GlobalUser!
+    revokeRole(userId: UUID!, roleName: String!): GlobalUser!
+    deleteUser(id: UUID!): Boolean!
 
     createGlobalUserRole(input: CreateGlobalUserRoleInput!): GlobalUserRole!
     updateGlobalUserRole(name: String!, input: UpdateGlobalUserRoleInput!): GlobalUserRole!
