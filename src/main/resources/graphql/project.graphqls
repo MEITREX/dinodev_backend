@@ -74,8 +74,8 @@ type ProjectMutation {
     createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting!
     mutatePlanningMeeting: PlanningMeetingMutation!
 
-    createRole(input: CreateRoleInput!): UserRoleInProject!
-    updateRole(name: String!, input: UpdateRoleInput!): UserRoleInProject!
+    createRole(input: CreateProjectRoleInput!): UserRoleInProject!
+    updateRole(name: String!, input: UpdateProjectRoleInput!): UserRoleInProject!
     deleteRole(name: String!): Boolean!
 
     createSprint(input: CreateSprintInput): Sprint!

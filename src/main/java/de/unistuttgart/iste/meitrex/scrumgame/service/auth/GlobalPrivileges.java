@@ -17,4 +17,7 @@ public class GlobalPrivileges {
     public static final GlobalPrivilege UPDATE_USER = GlobalPrivilege.UPDATE_USER;
     public static final GlobalPrivilege LIST_USERS = GlobalPrivilege.LIST_USERS;
     public static final GlobalPrivilege CREATE_PROJECT = GlobalPrivilege.CREATE_PROJECT;
+    public static final GlobalPrivilege CREATE_ROLE = GlobalPrivilege.CREATE_ROLE;
+    public static final GlobalPrivilege UPDATE_ROLE = GlobalPrivilege.UPDATE_ROLE;
+    public static final GlobalPrivilege DELETE_ROLE = GlobalPrivilege.DELETE_ROLE;
 }

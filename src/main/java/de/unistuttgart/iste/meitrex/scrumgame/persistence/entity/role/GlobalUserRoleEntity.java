@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -25,8 +26,19 @@ public class GlobalUserRoleEntity implements IWithId<String> {
     @Enumerated(EnumType.STRING)
     private List<GlobalPrivilege> globalPrivileges = new ArrayList<>();
 
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<GlobalUserEntity> users = new ArrayList<>();
+
     @Override
     public String getId() {
         return name;
+    }
+
+    @PreRemove
+    public void onDelete() {
+        for (GlobalUserEntity user : users) {
+            user.getRoles().remove(this);
+        }
     }
 }

@@ -27,12 +27,19 @@ public class GlobalUserEntity implements IWithId<UUID> {
     @Lob
     private String avatar;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     @Builder.Default
     private List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
     @OneToMany
     @Builder.Default
     private List<UserInProjectEntity> userInProjects = new ArrayList<>();
+
+    @PreRemove
+    public void onDelete() {
+        for (GlobalUserRoleEntity role : roles) {
+            role.getUsers().remove(this);
+        }
+    }
 
 }

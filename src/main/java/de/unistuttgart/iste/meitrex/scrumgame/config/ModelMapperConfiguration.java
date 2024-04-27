@@ -16,6 +16,7 @@ public class ModelMapperConfiguration {
         return new ModelMapper()
                 .registerModule(new GlobalUserMapping())
                 .registerModule(new UserInProjectMapping());
+                .registerModule(new GlobalUserRoleMapping())
                 .registerModule(new ProjectMapping())
     }
 }

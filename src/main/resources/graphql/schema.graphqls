@@ -10,6 +10,10 @@ type Mutation {
 
     updateGlobalUser(id: UUID!, input: UpdateGlobalUserInput!): GlobalUser!
     grantRole(userId: UUID!, roleName: String!): GlobalUser!
+
+    createGlobalUserRole(input: CreateGlobalUserRoleInput!): GlobalUserRole!
+    updateGlobalUserRole(name: String!, input: UpdateGlobalUserRoleInput!): GlobalUserRole!
+    deleteGlobalUserRole(name: String!): Boolean!
 }
 
 type Query {
@@ -24,6 +28,7 @@ type Query {
 
     # roles
     globalUserRoles: [GlobalUserRole!]!
+    globalUserRole(name: String!): GlobalUserRole
 }
 
 type Subscription {
