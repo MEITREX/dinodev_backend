@@ -11,12 +11,8 @@ public class GlobalUserMapping implements Module {
     @Override
     public void setupModule(ModelMapper modelMapper) {
         /* GlobalUserEntity -> GlobalUser */
-        modelMapper.emptyTypeMap(GlobalUserEntity.class, GlobalUser.class)
-                // resolved by schema mapping
-                .addMappings(mapper ->
-                        mapper.skip(GlobalUserEntity::getUserInProjects, GlobalUser::setUserInProjects))
-
-                .implicitMappings();
+        modelMapper.createTypeMap(GlobalUserEntity.class, GlobalUser.class);
+        // no mappings needed
 
         /* UpdateGlobalUserInput -> GlobalUserEntity */
         modelMapper.emptyTypeMap(UpdateGlobalUserInput.class, GlobalUserEntity.class)

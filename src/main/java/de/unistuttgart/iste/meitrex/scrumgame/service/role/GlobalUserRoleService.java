@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service.user;
+package de.unistuttgart.iste.meitrex.scrumgame.service.role;
 
 import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
@@ -44,7 +44,7 @@ public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUse
 
     @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.CHANGE_ROLES) and #name != 'ADMIN'")
     public GlobalUserRole updateGlobalUserRole(String name, UpdateGlobalUserRoleInput input) {
-        return update(name, entity -> entity.setGlobalPrivileges(input.getGlobalPrivileges()));
+        return update(name, input);
     }
 
     @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.DELETE_ROLE)")

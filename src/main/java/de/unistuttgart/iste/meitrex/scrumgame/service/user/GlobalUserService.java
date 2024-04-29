@@ -9,6 +9,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUser
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.role.GlobalUserRoleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

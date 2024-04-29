@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper;
 
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.Module;
@@ -15,6 +16,8 @@ public class GlobalUserRoleMapping implements Module {
         modelMapper.createTypeMap(CreateGlobalUserRoleInput.class, GlobalUserRoleEntity.class);
         // no special mappings needed
 
-        // no mapping for UpdateGlobalUserRoleInput -> GlobalUserRoleEntity needed
+        modelMapper.emptyTypeMap(UpdateGlobalUserRoleInput.class, GlobalUserRoleEntity.class)
+                .addMappings(mapper -> mapper.skip(GlobalUserRoleEntity::setName))
+                .implicitMappings();
     }
 }

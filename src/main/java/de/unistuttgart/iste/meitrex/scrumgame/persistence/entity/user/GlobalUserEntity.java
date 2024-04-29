@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "global_user")
 @AllArgsConstructor
@@ -20,17 +19,21 @@ public class GlobalUserEntity implements IWithId<UUID> {
 
     @Id
     @Column(name = "id", nullable = false)
+    @Setter
     private UUID id;
 
     @Column(name = "name")
+    @Setter
     private String username;
 
     @Column(name = "avatar")
+    @Setter
     @Lob
     private String avatar;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Builder.Default
+    @Setter
     private List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
     @OneToMany(

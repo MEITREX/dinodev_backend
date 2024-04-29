@@ -1,10 +1,14 @@
-package de.unistuttgart.iste.meitrex.scrumgame.controller;
+package de.unistuttgart.iste.meitrex.scrumgame.controller.role;
 
-import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.service.user.GlobalUserRoleService;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
+import de.unistuttgart.iste.meitrex.scrumgame.service.role.GlobalUserRoleService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.graphql.data.method.annotation.*;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -14,6 +18,8 @@ import java.util.List;
 public class GlobalUserRoleController {
 
     private final GlobalUserRoleService globalUserRoleService;
+
+    /* Query mappings */
 
     @QueryMapping
     public List<GlobalUserRole> globalUserRoles() {
@@ -25,6 +31,11 @@ public class GlobalUserRoleController {
     public GlobalUserRole globalUserRole(@Argument String name) {
         return globalUserRoleService.findGlobalUserRole(name).orElse(null);
     }
+
+    /* Schema mappings */
+    // none
+
+    /* Mutation mappings */
 
     @MutationMapping
     public GlobalUserRole createGlobalUserRole(@Argument CreateGlobalUserRoleInput input) {

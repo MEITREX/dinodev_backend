@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "global_user_role")
 @AllArgsConstructor
@@ -19,11 +18,13 @@ import java.util.List;
 public class GlobalUserRoleEntity implements IWithId<String> {
     @Id
     @Column(name = "name", nullable = false)
+    @Setter
     private String name;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     @Enumerated(EnumType.STRING)
+    @Setter
     private List<GlobalPrivilege> globalPrivileges = new ArrayList<>();
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)

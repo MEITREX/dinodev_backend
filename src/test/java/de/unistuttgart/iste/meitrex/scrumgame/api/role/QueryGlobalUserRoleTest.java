@@ -1,11 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.role;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -14,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
+import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleGlobalUserRoles.sampleGlobalUserRoleBuilder;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.GlobalUserRoleMatcher.matchingGlobalUserRoleEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -75,15 +74,7 @@ class QueryGlobalUserRoleTest {
                 .valueIsNull();
     }
 
-    private GlobalUserRoleEntity.GlobalUserRoleEntityBuilder sampleGlobalUserRoleBuilder() {
-        return GlobalUserRoleEntity.builder()
-                .name("Test Role")
-                .globalPrivileges(List.of(
-                        GlobalPrivilege.CREATE_PROJECT,
-                        GlobalPrivilege.READ_USER_PRIVATE_INFO));
-    }
-
-    private static @NotNull String getQueryAllUserRoles() {
+    private static String getQueryAllUserRoles() {
         return gql("""
                 query {
                     globalUserRoles {
@@ -94,7 +85,7 @@ class QueryGlobalUserRoleTest {
                 """);
     }
 
-    private static @NotNull String getQueryForSingleUserRole() {
+    private static String getQueryForSingleUserRole() {
         return gql("""
                 query($name: String!) {
                     globalUserRole(name: $name) {

@@ -5,7 +5,12 @@ type GlobalUser {
     roles: [GlobalUserRole!]!
 
     userInProject(projectId: UUID!): UserInProject
-    userInProjects: [UserInProject!]!
+    userInProjects: [UserInProject!]! @OnDemand
+}
+
+interface GlobalUserDependent {
+    userId: UUID!
+    user: GlobalUser! @OnDemand
 }
 
 input CreateGlobalUserInput {

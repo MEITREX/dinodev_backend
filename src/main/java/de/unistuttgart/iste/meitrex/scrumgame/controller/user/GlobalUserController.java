@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.meitrex.scrumgame.controller;
+package de.unistuttgart.iste.meitrex.scrumgame.controller.user;
 
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
