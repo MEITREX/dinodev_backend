@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.config;
 
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.*;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,10 +14,19 @@ public class ModelMapperConfiguration {
 
     @Bean
     public ModelMapper modelMapper() {
-        return new ModelMapper()
+        var modelMapper = new ModelMapper();
+
+        // Disable collections merge, instead collections are replaced
+        modelMapper.getConfiguration()
+                .setCollectionsMergeEnabled(false)
+                .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper
                 .registerModule(new GlobalUserMapping())
                 .registerModule(new UserInProjectMapping());
                 .registerModule(new GlobalUserRoleMapping())
                 .registerModule(new ProjectMapping())
+
+        return modelMapper;
     }
 }
