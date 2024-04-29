@@ -56,6 +56,14 @@ compileJava.dependsOn 'graphqlCodegen'
 // Add generated sources to your project source sets:
 sourceSets.main.java.srcDir "$buildDir/generated"
 
+tasks.register('generateApiDocs', Exec) {
+    commandLine 'cmd', '/c', 'generate_api_doc.bat'
+}
+
+tasks.named('assemble') {
+    finalizedBy('generateApiDocs')
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor

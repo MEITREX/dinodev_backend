@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### from api doc generation
+node_modules
+package.json
+package-lock.json
