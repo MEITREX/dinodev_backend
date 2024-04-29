@@ -11,5 +11,7 @@ import java.util.UUID;
 @Repository
 public interface UserInProjectRepository extends MeitrexRepository<UserInProjectEntity, UserProjectId> {
 
-    List<UserInProjectEntity> findAllByIdProjectId(UUID projectId);
+    List<UserInProjectEntity> findAllByProjectId(UUID projectId);
+
+    List<UserInProjectEntity> findAllByUserId(UUID userId);
 }

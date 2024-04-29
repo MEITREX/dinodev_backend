@@ -1,11 +1,13 @@
-type UserInProject {
-    userId: UUID!
-    user: GlobalUser!
-    projectId: UUID!
-    project: Project!
-    roles: [UserRoleInProject!]!
+type UserInProject implements GlobalUserDependent & ProjectDependent {
+    roles: [ProjectRole!]!
 
-    privateInfo: PrivateUserInfo!
+    privateInfo: PrivateUserInfo! @OnDemand
+
+    userId: UUID!
+    user: GlobalUser! @OnDemand
+
+    projectId: UUID!
+    project: Project! @OnDemand
 }
 
 type PrivateUserInfo {

@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.ProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,11 +31,17 @@ public class UserInProjectEntity implements IWithId<UserProjectId> {
     @JoinColumn(name = "project_id")
     private ProjectEntity project;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.DETACH)
     @Builder.Default
-    private List<UserRoleInProjectEntity> roles = new ArrayList<>();
+    private List<ProjectRoleEntity> roles = new ArrayList<>();
 
     @Embedded
     private PrivateUserInfoEmbeddable privateInfo;
+
+    @PreRemove
+    public void onDelete() {
+        project.getUsers().remove(this);
+        user.getUserInProjects().remove(this);
+    }
 
 }

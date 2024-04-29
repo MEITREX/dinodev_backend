@@ -10,11 +10,6 @@ public class UserInProjectMapping implements Module {
     @Override
     public void setupModule(ModelMapper modelMapper) {
         modelMapper.emptyTypeMap(UserInProjectEntity.class, UserInProject.class)
-                // fields resolved only if required using schema mapping
-                .addMappings(mapper -> mapper.skip(UserInProjectEntity::getProject, UserInProject::setProject))
-                .addMappings(mapper -> mapper.skip(UserInProjectEntity::getUser, UserInProject::setUser))
-                .addMappings(mapper -> mapper.skip(UserInProjectEntity::getPrivateInfo, UserInProject::setPrivateInfo))
-
                 // custom mappings
                 .addMapping(entity -> entity.getId().getProjectId(), UserInProject::setProjectId)
                 .addMapping(entity -> entity.getId().getUserId(), UserInProject::setUserId)
