@@ -1,8 +1,11 @@
 package de.unistuttgart.iste.meitrex.scrumgame.config;
 
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AudienceValidator;
+import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +17,10 @@ import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.Base64;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
@@ -22,8 +29,15 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecurityConfiguration {
 
     // URI to validate the JWT tokens. Defined in the application.properties file.
-    @Value("${meitrex.auth.issuer-uri}")
+    @Value("${meitrex.auth.issuer-uri:#{null}}")
+    @Nullable
     private String issuerUri;
+
+    // Secret to validate the JWT tokens. Defined in the application.properties file.
+    // Used if the issuer URI is not defined.
+    @Value("${meitrex.auth.secret:#{null}}")
+    @Nullable
+    private String secret;
 
     /**
      * Configures the security for the development environment.
@@ -70,14 +84,31 @@ public class SecurityConfiguration {
     @Bean
     @Profile({"prod", "dev"})
     public JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = JwtDecoders.fromOidcIssuerLocation(issuerUri);
-
-        OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
-        OAuth2TokenValidator<Jwt> withAudience = new DelegatingOAuth2TokenValidator<>(withIssuer, new AudienceValidator());
+        NimbusJwtDecoder jwtDecoder = initNimbusDecoder();
+        OAuth2TokenValidator<Jwt> withAudience = createAudienceValidator();
 
         jwtDecoder.setJwtValidator(withAudience);
 
         return jwtDecoder;
+    }
+
+    private OAuth2TokenValidator<Jwt> createAudienceValidator() {
+        if (issuerUri != null) {
+            OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
+            return new DelegatingOAuth2TokenValidator<>(withIssuer, new AudienceValidator());
+        }
+
+        return new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(),
+                new AudienceValidator());
+    }
+
+    private NimbusJwtDecoder initNimbusDecoder() {
+        if (issuerUri != null) {
+            return JwtDecoders.fromOidcIssuerLocation(issuerUri);
+        } else {
+            SecretKey secretKey = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
+            return NimbusJwtDecoder.withSecretKey(secretKey).build();
+        }
     }
 
 }
