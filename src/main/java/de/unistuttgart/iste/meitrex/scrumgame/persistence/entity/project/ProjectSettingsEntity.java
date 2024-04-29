@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "project_settings")
 @AllArgsConstructor
@@ -20,10 +19,12 @@ public class ProjectSettingsEntity {
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "code_repository_settings_id")
+    @Setter
     private CodeRepositorySettingsEntity codeRepositorySettings;
 
     @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ims_settings_id")
+    @Setter
     private ImsSettingsEntity imsSettings;
 
 }

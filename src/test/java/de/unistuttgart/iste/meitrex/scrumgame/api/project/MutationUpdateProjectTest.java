@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.project;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateProjectInput;
+import de.unistuttgart.iste.meitrex.scrumgame.data.SampleProjects;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
@@ -42,7 +44,7 @@ class MutationUpdateProjectTest {
         when(authService.hasPrivilege(UPDATE_PROJECT, project.getId())).thenReturn(true);
         when(authService.getCurrentUserId()).thenReturn(userId);
 
-        UpdateProjectInput input = getSampleUpdateProjectInput();
+        UpdateProjectInput input = SampleProjects.getSampleUpdateProjectInput();
         String mutation = getUpdateProjectMutation();
 
         // act
@@ -64,22 +66,7 @@ class MutationUpdateProjectTest {
     }
 
     private ProjectEntity createProject() {
-        return projectRepository.save(ProjectEntity.builder().id(UUID.randomUUID()).build());
-    }
-
-    private static UpdateProjectInput getSampleUpdateProjectInput() {
-        return UpdateProjectInput.builder()
-                .setName("Updated Test Project")
-                .setDescription("Updated Test Project")
-                .setProjectSettings(ProjectSettingsInput.builder()
-                        .setCodeRepositorySettings(CodeRepositorySettingsInput.builder()
-                                .setCodeRepositoryName("Updated Test IMS")
-                                .build())
-                        .setImsSettings(ImsSettingsInput.builder()
-                                .setImsName("Updated Test IMS")
-                                .build())
-                        .build())
-                .build();
+        return projectRepository.save(SampleProjects.sampleProjectBuilder().build());
     }
 
     private static @NotNull String getUpdateProjectMutation() {

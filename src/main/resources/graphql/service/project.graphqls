@@ -1,0 +1,121 @@
+type Project {
+    id: UUID!
+    name: String!
+    description: String
+
+    projectSettings: ProjectSettings!
+
+    currentSprint: Sprint @OnDemand
+    # previousSprint: Sprint
+    sprints: [Sprint!]! @OnDemand
+
+    users: [UserInProject!]! @OnDemand
+    currentUser: UserInProject @OnDemand
+
+    # meetings
+    activePlanningMeeting: PlanningMeeting @OnDemand
+    activeStandupMeeting: StandupMeeting @OnDemand
+    activeRetrospectiveMeeting: RetrospectiveMeeting @OnDemand
+
+    # roles
+    roles: [ProjectRole!]! @OnDemand
+    role(name: String!): ProjectRole @OnDemand
+
+    # issues
+    issues: [Issue!]! @OnDemand
+    issue(id: UUID!): Issue @OnDemand
+    projectBoard: ProjectBoard! @OnDemand
+}
+
+interface ProjectDependent {
+    projectId: UUID!
+    project: Project! @OnDemand
+}
+
+type ProjectSettings {
+    codeRepositorySettings: CodeRepositorySettings!
+    imsSettings: ImsSettings!
+}
+
+type ImsSettings {
+    imsName: String!
+    issueStates: [IssueState!]!
+    imsProjectId: ID!
+}
+
+type CodeRepositorySettings {
+    codeRepositoryName: String!
+}
+
+input CreateProjectInput {
+    name: String! @NotBlank
+    description: String
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input UpdateProjectInput {
+    name: String! @NotBlank
+    description: String
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input ProjectSettingsInput {
+    codeRepositorySettings: CodeRepositorySettingsInput!
+    imsSettings: ImsSettingsInput!
+}
+
+input ImsSettingsInput {
+    imsName: String!
+    imsProjectId: ID!
+    issueStates: [IssueStateInput!]!
+}
+
+input CodeRepositorySettingsInput {
+    codeRepositoryName: String!
+}
+
+type IssueState {
+    name: String!
+    type: IssueStateType!
+    imsStateId: ID!
+
+    issues: [Issue!]! @OnDemand
+}
+
+enum IssueStateType {
+    BACKLOG
+    SPRINT_BACKLOG
+    IN_PROGRESS
+    DONE_SPRINT
+    DONE
+}
+
+input IssueStateInput {
+    name: String! @NotBlank
+    type: IssueStateType! @NotBlank
+    imsStateId: ID! @NotBlank
+}
+
+type ProjectMutation implements ProjectDependent {
+    projectId: UUID!
+    project: Project! @OnDemand
+
+    joinMeeting(type: MeetingType!): Meeting! @OnDemand
+    leaveMeeting(type: MeetingType!): Meeting! @OnDemand
+    pingMeeting(type: MeetingType!): Meeting! @OnDemand
+    promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
+
+    createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting! @OnDemand
+    mutatePlanningMeeting: PlanningMeetingMutation! @OnDemand
+
+    createRole(input: CreateProjectRoleInput!): ProjectRole! @OnDemand
+    updateRole(name: String!, input: UpdateProjectRoleInput!): ProjectRole! @OnDemand
+    deleteRole(name: String!): Boolean! @OnDemand
+
+    createSprint(input: CreateSprintInput): Sprint! @OnDemand
+
+    mutateIssue(id: ID!): IssueMutation! @OnDemand
+    createIssue(input: CreateIssueInput!): Issue! @OnDemand
+}

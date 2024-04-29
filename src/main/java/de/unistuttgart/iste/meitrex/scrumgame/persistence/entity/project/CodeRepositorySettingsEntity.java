@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @Table(name = "code_repository_settings")
 @AllArgsConstructor
@@ -19,5 +18,6 @@ public class CodeRepositorySettingsEntity {
     private UUID id;
 
     @Column(name = "code_repository_name")
+    @Setter
     private String codeRepositoryName;
 }

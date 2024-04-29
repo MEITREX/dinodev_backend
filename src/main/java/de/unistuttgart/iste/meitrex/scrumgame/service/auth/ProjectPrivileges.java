@@ -28,5 +28,5 @@ public class ProjectPrivileges {
     public static final ProjectPrivilege CREATE_ROLE = ProjectPrivilege.CREATE_ROLE;
     public static final ProjectPrivilege UPDATE_ROLE = ProjectPrivilege.UPDATE_ROLE;
     public static final ProjectPrivilege DELETE_ROLE = ProjectPrivilege.DELETE_ROLE;
-
+    public static final ProjectPrivilege READ_USER_PRIVATE_INFO = ProjectPrivilege.READ_USER_PRIVATE_INFO;
 }

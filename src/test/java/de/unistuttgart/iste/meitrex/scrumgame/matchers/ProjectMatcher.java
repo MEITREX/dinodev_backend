@@ -1,7 +1,10 @@
 package de.unistuttgart.iste.meitrex.scrumgame.matchers;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.CodeRepositorySettingsEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ImsSettingsEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectSettingsEntity;
 import org.hamcrest.Matcher;
 
 import static org.hamcrest.Matchers.*;
@@ -52,13 +55,14 @@ public class ProjectMatcher {
                 hasProperty("codeRepositorySettings",
                         matchingCodeRepositorySettingsInput(projectSettingsInput.getCodeRepositorySettings())),
                 hasProperty("imsSettings",
-                        matchingIMSSettingsInput(projectSettingsInput.getImsSettings()))
+                        matchingImsSettingsInput(projectSettingsInput.getImsSettings()))
         );
     }
 
-    public static Matcher<IMSSettings> matchingImsSettingsEntity(ImsSettingsEntity imsSettings) {
+    public static Matcher<ImsSettings> matchingImsSettingsEntity(ImsSettingsEntity imsSettings) {
         return allOf(
-                hasProperty("imsName", is(imsSettings.getImsName()))
+                hasProperty("imsName", is(imsSettings.getImsName())),
+                hasProperty("imsProjectId", is(imsSettings.getImsProjectId()))
         );
     }
 
@@ -75,9 +79,10 @@ public class ProjectMatcher {
         );
     }
 
-    public static <T> Matcher<T> matchingIMSSettingsInput(ImsSettingsInput imsSettingsInput) {
+    public static <T> Matcher<T> matchingImsSettingsInput(ImsSettingsInput imsSettingsInput) {
         return allOf(
-                hasProperty("imsName", is(imsSettingsInput.getImsName()))
+                hasProperty("imsName", is(imsSettingsInput.getImsName())),
+                hasProperty("imsProjectId", is(imsSettingsInput.getImsProjectId()))
         );
     }
 }

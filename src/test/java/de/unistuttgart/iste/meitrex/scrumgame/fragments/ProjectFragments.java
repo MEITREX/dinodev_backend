@@ -13,6 +13,12 @@ public class ProjectFragments {
                 }
                 imsSettings {
                     imsName
+                    imsProjectId
+                    issueStates {
+                        name
+                        imsStateId
+                        type
+                    }
                 }
             }
             """);

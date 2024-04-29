@@ -2,7 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.api.project;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.List;
 
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
+import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleProjects.sampleProjectBuilder;
 import static de.unistuttgart.iste.meitrex.scrumgame.fragments.ProjectFragments.BASE_PROJECT_FRAGMENT;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.ProjectMatcher.matchingProjectEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -73,17 +74,4 @@ class QueryProjectApiTest {
         assertThat(result, matchingProjectEntity(project));
     }
 
-    private ProjectEntity.ProjectEntityBuilder sampleProjectBuilder() {
-        return ProjectEntity.builder()
-                .name("Test Project")
-                .description("Test Description")
-                .projectSettings(ProjectSettingsEntity.builder()
-                        .codeRepositorySettings(CodeRepositorySettingsEntity.builder()
-                                .codeRepositoryName("Test Repository")
-                                .build())
-                        .imsSettings(ImsSettingsEntity.builder()
-                                .imsName("Test IMS")
-                                .build())
-                        .build());
-    }
 }

@@ -1,10 +1,18 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.project;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateProjectInput;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
+import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
+import de.unistuttgart.iste.meitrex.scrumgame.data.SampleGlobalUsers;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.*;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
@@ -14,9 +22,8 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.UUID;
-
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
+import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleProjects.getSampleCreateProjectInput;
 import static de.unistuttgart.iste.meitrex.scrumgame.fragments.ProjectFragments.BASE_PROJECT_FRAGMENT;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.ProjectMatcher.matchingProjectInput;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -119,22 +126,7 @@ class MutationCreateProjectTest {
     }
 
     private GlobalUserEntity createUser() {
-        return globalUserRepository.save(GlobalUserEntity.builder().id(UUID.randomUUID()).build());
-    }
-
-    private static CreateProjectInput getSampleCreateProjectInput() {
-        return CreateProjectInput.builder()
-                .setName("Test Project")
-                .setDescription("Test Description")
-                .setProjectSettings(ProjectSettingsInput.builder()
-                        .setCodeRepositorySettings(CodeRepositorySettingsInput.builder()
-                                .setCodeRepositoryName("Test Repository")
-                                .build())
-                        .setImsSettings(ImsSettingsInput.builder()
-                                .setImsName("Test IMS")
-                                .build())
-                        .build())
-                .build();
+        return globalUserRepository.save(SampleGlobalUsers.sampleGlobalUserEntityBuilder().build());
     }
 
     private String getCreateProjectMutation() {

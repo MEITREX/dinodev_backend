@@ -3,7 +3,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.service;
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateProjectInput;
+import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.generated.dto.ProjectMutation;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateProjectInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.ProjectMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
@@ -13,7 +16,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Service for managing projects.
@@ -101,7 +106,7 @@ public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Pro
      * @return a project mutation object for the given project.
      */
     public ProjectMutation mutateProject(UUID projectId) {
-        return ProjectMutation.builder().setId(projectId).build();
+        return ProjectMutation.builder().setProjectId(projectId).build();
     }
 
     @Override

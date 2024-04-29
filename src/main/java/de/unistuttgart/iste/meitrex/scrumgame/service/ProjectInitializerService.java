@@ -2,8 +2,8 @@ package de.unistuttgart.iste.meitrex.scrumgame.service;
 
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.role.UserRoleInProjectService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserRoleInProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

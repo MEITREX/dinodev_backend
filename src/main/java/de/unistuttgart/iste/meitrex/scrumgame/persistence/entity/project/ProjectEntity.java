@@ -1,17 +1,18 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.SprintEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.SprintEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Getter
-@Setter
 @Entity
 @ToString(of = {"id", "name"})
 @Table(name = "project")
@@ -26,9 +27,11 @@ public class ProjectEntity implements IWithId<UUID> {
     private UUID id;
 
     @Column(name = "name")
+    @Setter
     private String name;
 
     @Column(name = "description")
+    @Setter
     private String description;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -37,7 +40,7 @@ public class ProjectEntity implements IWithId<UUID> {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<UserRoleInProjectEntity> userRoles = new ArrayList<>();
+    private List<ProjectRoleEntity> userRoles = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -53,5 +56,6 @@ public class ProjectEntity implements IWithId<UUID> {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_settings_id")
+    @Setter
     private ProjectSettingsEntity projectSettings;
 }

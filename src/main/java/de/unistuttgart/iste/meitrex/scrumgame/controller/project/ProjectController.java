@@ -1,11 +1,14 @@
-package de.unistuttgart.iste.meitrex.scrumgame.controller;
+package de.unistuttgart.iste.meitrex.scrumgame.controller.project;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ProjectService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.graphql.data.method.annotation.*;
+import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.MutationMapping;
+import org.springframework.graphql.data.method.annotation.QueryMapping;
+import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
@@ -18,6 +21,8 @@ public class ProjectController {
 
     private final ProjectService projectService;
 
+    /* Query Mappings */
+
     @QueryMapping
     public List<Project> projects() {
         return projectService.getAllProjects();
@@ -28,6 +33,15 @@ public class ProjectController {
     public Project project(@Argument UUID id) {
         return projectService.findProject(id).orElse(null);
     }
+
+    /* Schema Mappings */
+
+    @SchemaMapping
+    public Project project(UserInProject userInProject) {
+        return projectService.getProjectOrThrow(userInProject.getProjectId());
+    }
+
+    /* Mutation Mappings */
 
     @MutationMapping
     public Project createProject(@Argument CreateProjectInput input) {
@@ -47,10 +61,5 @@ public class ProjectController {
     @MutationMapping
     public ProjectMutation mutateProject(@Argument UUID id) {
         return projectService.mutateProject(id);
-    }
-
-    @SchemaMapping(typeName = "UserInProject", field = "project")
-    public Project project(UserInProject userInProject) {
-        return projectService.getProjectOrThrow(userInProject.getProjectId());
     }
 }
