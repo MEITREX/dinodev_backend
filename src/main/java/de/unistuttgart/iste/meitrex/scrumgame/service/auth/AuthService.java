@@ -61,7 +61,7 @@ public class AuthService {
      *
      * @return true if the user has the role, false otherwise
      */
-    public boolean hasScrumGameAdminKeycloakRole() {
+    public boolean hasScrumGameAdminRole() {
         Jwt jwt = getJwt();
         var claim = jwt.getClaim(REALM_ACCESS_CLAIM);
         if (claim instanceof Map<?, ?> map) {

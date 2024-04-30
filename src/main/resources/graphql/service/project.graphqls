@@ -25,6 +25,7 @@ type Project {
     issues: [Issue!]! @OnDemand
     issue(id: UUID!): Issue @OnDemand
     projectBoard: ProjectBoard! @OnDemand
+    imsSpecificData: ImsSpecificData! @OnDemand
 }
 
 interface ProjectDependent {

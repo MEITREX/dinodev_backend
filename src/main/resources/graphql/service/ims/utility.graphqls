@@ -1,0 +1,10 @@
+type ImsSpecificData {
+    projectId: UUID!
+
+    currentUser: ImsUser! @OnDemand
+}
+
+type ImsUser {
+    id: ID!
+    isAdmin: Boolean!
+}

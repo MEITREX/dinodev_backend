@@ -9,6 +9,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUser
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsUtilityService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.role.GlobalUserRoleService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,10 +27,11 @@ import java.util.UUID;
 @Transactional
 public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntity, GlobalUser> {
 
-    private final AuthService auth;
+    private final AuthService          auth;
     private final GlobalUserRepository globalUserRepository;
-    private final ModelMapper modelMapper;
+    private final ModelMapper          modelMapper;
     private final GlobalUserRoleService globalUserRoleService;
+    private final ImsUtilityService    imsUtilityService;
 
     public List<GlobalUser> getAllGlobalUsers() {
         return getAll();
@@ -84,11 +86,15 @@ public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntit
     private List<GlobalUserRoleEntity> getRolesForNewUser() {
         List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
-        if (auth.hasScrumGameAdminKeycloakRole()) {
+        if (auth.hasScrumGameAdminRole() || isAdminInIms()) {
             roles.add(globalUserRoleService.getOrCreateAdminRole());
         }
 
         return roles;
+    }
+
+    private boolean isAdminInIms() {
+        return imsUtilityService.getCurrentUser().getIsAdmin();
     }
 
     @Override

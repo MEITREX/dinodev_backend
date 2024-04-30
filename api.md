@@ -10,10 +10,9 @@
     * [CodeRepositorySettings](#coderepositorysettings)
     * [GlobalUser](#globaluser)
     * [GlobalUserRole](#globaluserrole)
-    * [GropiusIssueStateMapping](#gropiusissuestatemapping)
-    * [GropiusIssueTypeMapping](#gropiusissuetypemapping)
-    * [GropiusSettings](#gropiussettings)
     * [ImsSettings](#imssettings)
+    * [ImsSpecificData](#imsspecificdata)
+    * [ImsUser](#imsuser)
     * [Issue](#issue)
     * [IssueEstimation](#issueestimation)
     * [IssueEstimations](#issueestimations)
@@ -30,6 +29,7 @@
     * [Project](#project)
     * [ProjectBoard](#projectboard)
     * [ProjectMutation](#projectmutation)
+    * [ProjectRole](#projectrole)
     * [ProjectSettings](#projectsettings)
     * [RetrospectiveMeeting](#retrospectivemeeting)
     * [ShopItem](#shopitem)
@@ -39,7 +39,6 @@
     * [StoryPointVote](#storypointvote)
     * [Subscription](#subscription)
     * [UserInProject](#userinproject)
-    * [UserRoleInProject](#userroleinproject)
     * [UserStats](#userstats)
     * [Vote](#vote)
     * [VotingState](#votingstate)
@@ -94,7 +93,6 @@
 </details>
 
 ## Query
-
 <table>
 <thead>
 <tr>
@@ -159,7 +157,6 @@
 </table>
 
 ## Mutation
-
 <table>
 <thead>
 <tr>
@@ -460,91 +457,6 @@
 </tbody>
 </table>
 
-### GropiusIssueStateMapping
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>gropiusStateId</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>issueStateName</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### GropiusIssueTypeMapping
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>gropiusTypeId</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>issueTypeName</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### GropiusSettings
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>issueTypeMappings</strong></td>
-<td valign="top">[<a href="#gropiusissuetypemapping">GropiusIssueTypeMapping</a>!]!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>issueStateMappings</strong></td>
-<td valign="top">[<a href="#gropiusissuestatemapping">GropiusIssueStateMapping</a>!]!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>gropiusProjectId</strong></td>
-<td valign="top"><a href="#id">ID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>gropiusUrl</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
 ### ImsSettings
 
 <table>
@@ -570,6 +482,56 @@
 <tr>
 <td colspan="2" valign="top"><strong>imsProjectId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### ImsSpecificData
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>currentUser</strong></td>
+<td valign="top"><a href="#imsuser">ImsUser</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### ImsUser
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>isAdmin</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1331,12 +1293,12 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>roles</strong></td>
-<td valign="top">[<a href="#userroleinproject">UserRoleInProject</a>!]!</td>
+<td valign="top">[<a href="#projectrole">ProjectRole</a>!]!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>role</strong></td>
-<td valign="top"><a href="#userroleinproject">UserRoleInProject</a></td>
+<td valign="top"><a href="#projectrole">ProjectRole</a></td>
 <td></td>
 </tr>
 <tr>
@@ -1362,6 +1324,11 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>projectBoard</strong></td>
 <td valign="top"><a href="#projectboard">ProjectBoard</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsSpecificData</strong></td>
+<td valign="top"><a href="#imsspecificdata">ImsSpecificData</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1476,7 +1443,7 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>createRole</strong></td>
-<td valign="top"><a href="#userroleinproject">UserRoleInProject</a>!</td>
+<td valign="top"><a href="#projectrole">ProjectRole</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1486,7 +1453,7 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>updateRole</strong></td>
-<td valign="top"><a href="#userroleinproject">UserRoleInProject</a>!</td>
+<td valign="top"><a href="#projectrole">ProjectRole</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1537,6 +1504,46 @@ Whether there is a next page.
 <tr>
 <td colspan="2" align="right" valign="top">input</td>
 <td valign="top"><a href="#createissueinput">CreateIssueInput</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### ProjectRole
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>gamifiedName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectPrivileges</strong></td>
+<td valign="top">[<a href="#projectprivilege">ProjectPrivilege</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1901,7 +1908,7 @@ Whether there is a next page.
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>roles</strong></td>
-<td valign="top">[<a href="#userroleinproject">UserRoleInProject</a>!]!</td>
+<td valign="top">[<a href="#projectrole">ProjectRole</a>!]!</td>
 <td></td>
 </tr>
 <tr>
@@ -1927,46 +1934,6 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>project</strong></td>
 <td valign="top"><a href="#project">Project</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### UserRoleInProject
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>gamifiedName</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>project</strong></td>
-<td valign="top"><a href="#project">Project</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>projectPrivileges</strong></td>
-<td valign="top">[<a href="#projectprivilege">ProjectPrivilege</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2241,7 +2208,7 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>privileges</strong></td>
+<td colspan="2" valign="top"><strong>projectPrivileges</strong></td>
 <td valign="top">[<a href="#projectprivilege">ProjectPrivilege</a>!]!</td>
 <td></td>
 </tr>
@@ -2661,7 +2628,7 @@ If true, the filter is case-insensitive.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>privileges</strong></td>
+<td colspan="2" valign="top"><strong>projectPrivileges</strong></td>
 <td valign="top">[<a href="#projectprivilege">ProjectPrivilege</a>!]!</td>
 <td></td>
 </tr>

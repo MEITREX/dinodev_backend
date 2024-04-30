@@ -81,7 +81,7 @@ public class AuthServiceTest {
         when(jwt.getClaim("realm_access")).thenReturn(Map.of("roles", List.of("scrum-game-admin")));
         injectJwtMock(jwt);
 
-        boolean hasRole = authService.hasScrumGameAdminKeycloakRole();
+        boolean hasRole = authService.hasScrumGameAdminRole();
 
         assertThat(hasRole, is(true));
 
@@ -94,7 +94,7 @@ public class AuthServiceTest {
         when(jwt.getClaim("realm_access")).thenReturn(Map.of("roles", List.of("not-scrum-game-admin")));
         injectJwtMock(jwt);
 
-        boolean hasRole = authService.hasScrumGameAdminKeycloakRole();
+        boolean hasRole = authService.hasScrumGameAdminRole();
 
         assertThat(hasRole, is(false));
 
