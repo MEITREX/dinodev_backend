@@ -1,8 +1,8 @@
-type UserRoleInProject {
+type ProjectRole {
     name: String!
     gamifiedName: String!
     projectId: UUID!
-    project: Project!
+    project: Project! @OnDemand
     projectPrivileges: [ProjectPrivilege!]!
 }
 
@@ -56,10 +56,10 @@ input UpdateGlobalUserRoleInput {
 input CreateProjectRoleInput {
     name: String!
     gamifiedName: String!
-    privileges: [ProjectPrivilege!]!
+    projectPrivileges: [ProjectPrivilege!]!
 }
 
 input UpdateProjectRoleInput {
     gamifiedName: String!
-    privileges: [ProjectPrivilege!]!
+    projectPrivileges: [ProjectPrivilege!]!
 }

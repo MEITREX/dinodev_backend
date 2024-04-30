@@ -2,7 +2,9 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -11,7 +13,7 @@ import java.util.UUID;
 @Embeddable
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserRoleInProjectId implements Serializable {
+public class ProjectRoleId implements Serializable {
 
     @Column(name = "name")
     private String name;

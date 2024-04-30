@@ -4,15 +4,15 @@ import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRoleRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserRoleInProjectRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,8 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Service for authorization checks.
- * Can be used in Spring Security expressions using {@code @auth}.
+ * Service for authorization checks. Can be used in Spring Security expressions using {@code @auth}.
  */
 @Service("auth")
 @RequiredArgsConstructor
@@ -36,18 +35,16 @@ public class AuthService {
     private static final String REALM_ACCESS_CLAIM = "realm_access";
     private static final String SCRUM_GAME_ADMIN_ROLE = "scrum-game-admin";
 
-    private final GlobalUserRepository globalUserRepository;
-    private final UserInProjectRepository userInProjectRepository;
-    private final GlobalUserRoleRepository    globalUserRoleRepository;
-    private final UserRoleInProjectRepository userRoleInProjectRepository;
+    private final GlobalUserRepository     globalUserRepository;
+    private final UserInProjectRepository  userInProjectRepository;
+    private final GlobalUserRoleRepository globalUserRoleRepository;
+    private final ProjectRoleRepository    userRoleInProjectRepository;
 
     /**
-     * Retrieves the user ID of the currently authenticated user.
-     * This is read from the JWT token.
+     * Retrieves the user ID of the currently authenticated user. This is read from the JWT token.
      *
      * @return the user UUID
-     * @throws AccessDeniedException    if the principal is not a JWT or
-     * the subject of the JWT is not a valid UUID
+     * @throws AccessDeniedException if the principal is not a JWT or the subject of the JWT is not a valid UUID
      */
     public UUID getCurrentUserId() {
         String subject = getJwt().getSubject();
@@ -59,8 +56,8 @@ public class AuthService {
     }
 
     /**
-     * Checks if the currently authenticated user has the scrum-game-admin role in Keycloak.
-     * This is read from the realm_access claim in the JWT token.
+     * Checks if the currently authenticated user has the scrum-game-admin role in Keycloak. This is read from the
+     * realm_access claim in the JWT token.
      *
      * @return true if the user has the role, false otherwise
      */
@@ -136,8 +133,8 @@ public class AuthService {
      */
     public boolean hasPrivilegesOfProjectRole(String roleName, UUID projectId) {
         UUID userId = getCurrentUserId();
-        UserRoleInProjectEntity role = userRoleInProjectRepository
-                .findByIdOrThrow(new UserRoleInProjectId(roleName, projectId));
+        ProjectRoleEntity role = userRoleInProjectRepository
+                .findByIdOrThrow(new ProjectRoleId(roleName, projectId));
 
         return getProjectPrivileges(userId, projectId)
                 .containsAll(role.getProjectPrivileges());
@@ -146,7 +143,7 @@ public class AuthService {
     private Set<ProjectPrivilege> getProjectPrivileges(UUID userId, UUID projectId) {
         UserProjectId userProjectId = new UserProjectId(userId, projectId);
 
-        List<UserRoleInProjectEntity> roles = userInProjectRepository.findById(userProjectId)
+        List<ProjectRoleEntity> roles = userInProjectRepository.findById(userProjectId)
                 .map(UserInProjectEntity::getRoles)
                 .orElse(Collections.emptyList());
 

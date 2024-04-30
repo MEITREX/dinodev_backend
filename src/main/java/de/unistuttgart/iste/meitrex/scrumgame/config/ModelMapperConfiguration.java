@@ -23,9 +23,11 @@ public class ModelMapperConfiguration {
 
         modelMapper
                 .registerModule(new GlobalUserMapping())
-                .registerModule(new UserInProjectMapping());
                 .registerModule(new GlobalUserRoleMapping())
+                .registerModule(new UserInProjectMapping())
+                .registerModule(new ProjectRoleMapping())
                 .registerModule(new ProjectMapping())
+                .registerModule(new MeetingMapping());
 
         return modelMapper;
     }

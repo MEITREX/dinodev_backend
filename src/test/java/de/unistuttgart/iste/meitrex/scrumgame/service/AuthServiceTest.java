@@ -3,8 +3,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.service;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.UserRoleInProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
@@ -22,7 +24,10 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -145,10 +150,10 @@ public class AuthServiceTest {
         when(userInProjectRepository.findById(new UserProjectId(userId, projectId)))
                 .thenReturn(Optional.of(UserInProjectEntity.builder()
                         .id(new UserProjectId(userId, projectId))
-                        .roles(List.of(UserRoleInProjectEntity.builder()
+                        .roles(List.of(ProjectRoleEntity.builder()
                                         .projectPrivileges(List.of(ProjectPrivilege.UPDATE_PROJECT))
                                         .build(),
-                                UserRoleInProjectEntity.builder()
+                                ProjectRoleEntity.builder()
                                         .projectPrivileges(List.of(ProjectPrivilege.CREATE_SPRINT, ProjectPrivilege.UPDATE_SPRINT))
                                         .build()))
                         .build()));

@@ -2,7 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.service;
 
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.role.UserRoleInProjectService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.role.ProjectRoleService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 public class ProjectInitializerService {
 
     private final UserInProjectService userInProjectService;
-    private final AuthService auth;
-    private final UserRoleInProjectService userRoleInProjectService;
+    private final AuthService        auth;
+    private final ProjectRoleService userRoleInProjectService;
 
     /**
      * Initializes a new project by creating the necessary roles and adding the current user as an admin.
@@ -29,6 +29,6 @@ public class ProjectInitializerService {
         userInProjectService.grantRoleToUser(
                 auth.getCurrentUserId(),
                 project.getId(),
-                UserRoleInProjectService.ADMIN_ROLE_NAME);
+                ProjectRoleService.ADMIN_ROLE_NAME);
     }
 }
