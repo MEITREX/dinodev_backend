@@ -14,10 +14,23 @@ public class ProjectFragments {
                 imsSettings {
                     imsName
                     imsProjectId
+                    imsIssueTemplateId
                     issueStates {
                         name
                         imsStateId
                         type
+                    }
+                }
+                definitionOfDone {
+                    text
+                    required
+                    implies {
+                        text
+                        required
+                        implies {
+                            text
+                            required
+                        }                        
                     }
                 }
             }
@@ -28,6 +41,7 @@ public class ProjectFragments {
                                                                        id
                                                                        name
                                                                        description
+                                                                       currentSprintNumber
                                                                        projectSettings {
                                                                            ...ProjectSettingsFragment
                                                                        }

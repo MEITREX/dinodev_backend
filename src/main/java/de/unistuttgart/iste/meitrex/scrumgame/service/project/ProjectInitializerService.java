@@ -1,6 +1,8 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service;
+package de.unistuttgart.iste.meitrex.scrumgame.service.project;
 
+import de.unistuttgart.iste.meitrex.generated.dto.CreateSprintInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.service.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.role.ProjectRoleService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
@@ -14,6 +16,7 @@ public class ProjectInitializerService {
     private final UserInProjectService userInProjectService;
     private final AuthService        auth;
     private final ProjectRoleService userRoleInProjectService;
+    private final SprintService      sprintService;
 
     /**
      * Initializes a new project by creating the necessary roles and adding the current user as an admin.
@@ -30,5 +33,9 @@ public class ProjectInitializerService {
                 auth.getCurrentUserId(),
                 project.getId(),
                 ProjectRoleService.ADMIN_ROLE_NAME);
+
+        for (int i = 1; i < project.getCurrentSprintNumber(); i++) {
+            sprintService.createSprint(project.getId(), CreateSprintInput.builder().build());
+        }
     }
 }

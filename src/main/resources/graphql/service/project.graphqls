@@ -5,6 +5,7 @@ type Project {
 
     projectSettings: ProjectSettings!
 
+    currentSprintNumber: Int
     currentSprint: Sprint @OnDemand
     # previousSprint: Sprint
     sprints: [Sprint!]! @OnDemand
@@ -26,6 +27,9 @@ type Project {
     issue(id: UUID!): Issue @OnDemand
     projectBoard: ProjectBoard! @OnDemand
     imsSpecificData: ImsSpecificData! @OnDemand
+
+    # events
+    events(page: Int, size: Int, minVisibility: EventVisibility): [Event!]! @OnDemand
 }
 
 interface ProjectDependent {
@@ -36,12 +40,21 @@ interface ProjectDependent {
 type ProjectSettings {
     codeRepositorySettings: CodeRepositorySettings!
     imsSettings: ImsSettings!
+
+    definitionOfDone: [DefinitionOfDoneItem!]!
+}
+
+type DefinitionOfDoneItem {
+    text: String!
+    required: Boolean!
+    implies: [DefinitionOfDoneItem!]!
 }
 
 type ImsSettings {
     imsName: String!
     issueStates: [IssueState!]!
     imsProjectId: ID!
+    imsIssueTemplateId: ID!
 }
 
 type CodeRepositorySettings {
@@ -50,14 +63,16 @@ type CodeRepositorySettings {
 
 input CreateProjectInput {
     name: String! @NotBlank
-    description: String
+    description: String @NotBlank
+
+    startingSprintNumber: Int! = 1
 
     projectSettings: ProjectSettingsInput!
 }
 
 input UpdateProjectInput {
     name: String! @NotBlank
-    description: String
+    description: String @NotBlank
 
     projectSettings: ProjectSettingsInput!
 }
@@ -65,32 +80,25 @@ input UpdateProjectInput {
 input ProjectSettingsInput {
     codeRepositorySettings: CodeRepositorySettingsInput!
     imsSettings: ImsSettingsInput!
+
+    definitionOfDone: [DefinitionOfDoneItemInput!]! = []
 }
 
 input ImsSettingsInput {
     imsName: String!
     imsProjectId: ID!
     issueStates: [IssueStateInput!]!
+    imsIssueTemplateId: ID!
 }
 
 input CodeRepositorySettingsInput {
     codeRepositoryName: String!
 }
 
-type IssueState {
-    name: String!
-    type: IssueStateType!
-    imsStateId: ID!
-
-    issues: [Issue!]! @OnDemand
-}
-
-enum IssueStateType {
-    BACKLOG
-    SPRINT_BACKLOG
-    IN_PROGRESS
-    DONE_SPRINT
-    DONE
+input DefinitionOfDoneItemInput {
+    text: String! @NotBlank
+    required: Boolean! @NotBlank
+    implies: [DefinitionOfDoneItemInput!]! = []
 }
 
 input IssueStateInput {
@@ -99,9 +107,8 @@ input IssueStateInput {
     imsStateId: ID! @NotBlank
 }
 
-type ProjectMutation implements ProjectDependent {
-    projectId: UUID!
-    project: Project! @OnDemand
+type ProjectMutation {
+    project: Project!
 
     joinMeeting(type: MeetingType!): Meeting! @OnDemand
     leaveMeeting(type: MeetingType!): Meeting! @OnDemand
@@ -119,4 +126,8 @@ type ProjectMutation implements ProjectDependent {
 
     mutateIssue(id: ID!): IssueMutation! @OnDemand
     createIssue(input: CreateIssueInput!): Issue! @OnDemand
+
+    createEventType(input: CreateEventTypeInput!): EventType! @OnDemand
+    updateEventType(id: UUID!, input: UpdateEventTypeInput!): EventType! @OnDemand
+    deleteEventType(id: UUID!): Boolean! @OnDemand
 }

@@ -2,15 +2,21 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-@Getter
 @Entity
 @Table(name = "project_settings")
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(of = "id")
+@Accessors(chain = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectSettingsEntity {
 
     @Id
@@ -26,5 +32,10 @@ public class ProjectSettingsEntity {
     @JoinColumn(name = "ims_settings_id")
     @Setter
     private ImsSettingsEntity imsSettings;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    @Setter
+    private List<DefinitionOfDoneItemEntity> definitionOfDone = new ArrayList<>();
 
 }

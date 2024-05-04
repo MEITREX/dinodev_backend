@@ -3,6 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.data;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SampleProjects {
@@ -22,6 +23,7 @@ public class SampleProjects {
                         .setImsSettings(ImsSettingsInput.builder()
                                 .setImsName("Test IMS")
                                 .setImsProjectId("Test IMS Project ID")
+                                .setImsIssueTemplateId("Test IMS Issue Template ID")
                                 .setIssueStates(List.of(
                                         IssueStateInput.builder()
                                                 .setName("Test State")
@@ -34,6 +36,20 @@ public class SampleProjects {
                                                 .setType(IssueStateType.IN_PROGRESS)
                                                 .build()))
                                 .build())
+                        .setDefinitionOfDone(List.of(
+                                DefinitionOfDoneItemInput.builder()
+                                        .setText("Test DoD Item")
+                                        .setRequired(true)
+                                        .build(),
+                                DefinitionOfDoneItemInput.builder()
+                                        .setText("Test DoD Item 2")
+                                        .setRequired(false)
+                                        .setImplies(List.of(
+                                                DefinitionOfDoneItemInput.builder()
+                                                        .setText("Test DoD Item 3")
+                                                        .setRequired(true)
+                                                        .build()))
+                                        .build()))
                         .build())
                 .build();
     }
@@ -49,6 +65,7 @@ public class SampleProjects {
                         .setImsSettings(ImsSettingsInput.builder()
                                 .setImsName("Updated Test IMS")
                                 .setImsProjectId("Updated Test IMS Project ID")
+                                .setImsIssueTemplateId("Updated Test IMS Issue Template ID")
                                 .setIssueStates(List.of(
                                         IssueStateInput.builder()
                                                 .setName("Updated Test State")
@@ -61,6 +78,20 @@ public class SampleProjects {
                                                 .setType(IssueStateType.DONE_SPRINT)
                                                 .build()))
                                 .build())
+                        .setDefinitionOfDone(List.of(
+                                DefinitionOfDoneItemInput.builder()
+                                        .setText("Updated Test DoD Item")
+                                        .setRequired(true)
+                                        .build(),
+                                DefinitionOfDoneItemInput.builder()
+                                        .setText("Updated Test DoD Item 2")
+                                        .setRequired(false)
+                                        .setImplies(List.of(
+                                                DefinitionOfDoneItemInput.builder()
+                                                        .setText("Updated Test DoD Item 3")
+                                                        .setRequired(true)
+                                                        .build()))
+                                        .build()))
                         .build())
                 .build();
     }
@@ -76,7 +107,8 @@ public class SampleProjects {
                         .imsSettings(ImsSettingsEntity.builder()
                                 .imsName("Test IMS")
                                 .imsProjectId("Test IMS Project ID")
-                                .issueStates(List.of(
+                                .imsIssueTemplateId("Test IMS Issue Template ID")
+                                .issueStates(new ArrayList<>(List.of(
                                         IssueStateEmbeddable.builder()
                                                 .name("Test State")
                                                 .imsStateId("Test IMS State ID")
@@ -86,8 +118,22 @@ public class SampleProjects {
                                                 .name("Test State 2")
                                                 .imsStateId("Test IMS State ID 2")
                                                 .type(IssueStateType.IN_PROGRESS)
-                                                .build()))
+                                                .build())))
                                 .build())
+                        .definitionOfDone(List.of(
+                                DefinitionOfDoneItemEntity.builder()
+                                        .text("Test DoD Item")
+                                        .required(true)
+                                        .build(),
+                                DefinitionOfDoneItemEntity.builder()
+                                        .text("Test DoD Item 2")
+                                        .required(false)
+                                        .implies(List.of(
+                                                DefinitionOfDoneItemEntity.builder()
+                                                        .text("Test DoD Item 3")
+                                                        .required(true)
+                                                        .build()))
+                                        .build()))
                         .build());
     }
 }

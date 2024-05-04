@@ -17,12 +17,16 @@ public class ProjectMapping implements Module {
         // no special mappings needed
 
         /* CreateProjectInput -> ProjectEntity */
-        modelMapper.createTypeMap(CreateProjectInput.class, ProjectEntity.class);
-        // no special mappings needed
+        modelMapper.createTypeMap(CreateProjectInput.class, ProjectEntity.class)
+                .addMapping(CreateProjectInput::getStartingSprintNumber, ProjectEntity::setCurrentSprintNumber);
 
         /* UpdateProjectInput -> ProjectEntity */
-        modelMapper.createTypeMap(UpdateProjectInput.class, ProjectEntity.class);
-        // no special mappings needed
+        modelMapper.emptyTypeMap(UpdateProjectInput.class, ProjectEntity.class)
+
+                // updating the current sprint number is not allowed externally
+                .addMappings(mapper -> mapper.skip(ProjectEntity::setCurrentSprintNumber))
+
+                .implicitMappings();
     }
 
 }

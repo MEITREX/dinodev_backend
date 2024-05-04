@@ -1,7 +1,6 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service;
+package de.unistuttgart.iste.meitrex.scrumgame.service.project;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
-import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateProjectInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
@@ -10,6 +9,8 @@ import de.unistuttgart.iste.meitrex.generated.dto.UpdateProjectInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.ProjectMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -28,9 +29,13 @@ import java.util.UUID;
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Getter(AccessLevel.PROTECTED)
 public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Project> {
 
-    private final ProjectRepository projectRepository;
+    private final Class<ProjectEntity> entityClass = ProjectEntity.class;
+    private final Class<Project>       dtoClass    = Project.class;
+
+    private final ProjectRepository repository;
     private final ProjectInitializerService projectInitializerService;
     private final ModelMapper modelMapper;
 
@@ -106,27 +111,7 @@ public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Pro
      * @return a project mutation object for the given project.
      */
     public ProjectMutation mutateProject(UUID projectId) {
-        return ProjectMutation.builder().setProjectId(projectId).build();
-    }
-
-    @Override
-    protected Class<ProjectEntity> getEntityClass() {
-        return ProjectEntity.class;
-    }
-
-    @Override
-    protected Class<Project> getDtoClass() {
-        return Project.class;
-    }
-
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<ProjectEntity, UUID> getRepository() {
-        return projectRepository;
+        return new ProjectMutation(getProjectOrThrow(projectId));
     }
 
 }

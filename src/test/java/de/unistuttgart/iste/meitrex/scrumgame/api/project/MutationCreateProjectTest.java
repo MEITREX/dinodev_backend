@@ -12,6 +12,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProj
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.SprintRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
@@ -35,13 +36,15 @@ import static org.mockito.Mockito.*;
 class MutationCreateProjectTest {
 
     @Autowired
-    private ProjectRepository projectRepository;
+    private ProjectRepository    projectRepository;
     @Autowired
     private UserInProjectRepository userInProjectRepository;
     @Autowired
     private GlobalUserRepository globalUserRepository;
+    @Autowired
+    private SprintRepository     sprintRepository;
     @MockBean
-    private AuthService authService;
+    private AuthService          authService;
 
     @Test
     @Transactional
@@ -106,6 +109,7 @@ class MutationCreateProjectTest {
 
         String mutation = getCreateProjectMutation();
         CreateProjectInput input = getSampleCreateProjectInput();
+        input.setStartingSprintNumber(4);
 
         // act
         graphQlTester.document(mutation).variable("input", input).executeAndVerify();
@@ -119,6 +123,9 @@ class MutationCreateProjectTest {
         assertThat(userInProjectEntity.getRoles(), hasSize(1));
         assertThat(userInProjectEntity.getRoles().getFirst().getProjectPrivileges(),
                 containsInAnyOrder(ProjectPrivilege.values()));
+
+        // assert that sprints were created
+        assertThat(sprintRepository.findAllByProjectId(projectEntity.getId()), hasSize(3));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivilege.CREATE_PROJECT);

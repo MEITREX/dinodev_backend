@@ -7,6 +7,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.SprintEn
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.Accessors;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.UUID;
 @Entity
 @ToString(of = {"id", "name"})
 @Table(name = "project")
-@AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+@Accessors(chain = true)
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ProjectEntity implements IWithId<UUID> {
 
     @Id
@@ -33,6 +36,10 @@ public class ProjectEntity implements IWithId<UUID> {
     @Column(name = "description")
     @Setter
     private String description;
+
+    @Column
+    @Setter
+    private int currentSprintNumber;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default

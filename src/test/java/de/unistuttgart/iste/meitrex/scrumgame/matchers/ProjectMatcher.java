@@ -1,15 +1,14 @@
 package de.unistuttgart.iste.meitrex.scrumgame.matchers;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.CodeRepositorySettingsEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ImsSettingsEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectSettingsEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.*;
 import org.hamcrest.Matcher;
 
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.each;
 import static org.hamcrest.Matchers.*;
 
 public class ProjectMatcher {
+
     private ProjectMatcher() {
     }
 
@@ -18,6 +17,7 @@ public class ProjectMatcher {
                 hasProperty("id", is(project.getId())),
                 hasProperty("name", is(project.getName())),
                 hasProperty("description", is(project.getDescription())),
+                hasProperty("currentSprintNumber", is(project.getCurrentSprintNumber())),
                 hasProperty("projectSettings",
                         matchingProjectSettingsEntity(project.getProjectSettings()))
         );
@@ -46,7 +46,10 @@ public class ProjectMatcher {
                 hasProperty("codeRepositorySettings",
                         matchingCodeRepositorySettingsEntity(projectSettings.getCodeRepositorySettings())),
                 hasProperty("imsSettings",
-                        matchingImsSettingsEntity(projectSettings.getImsSettings()))
+                        matchingImsSettingsEntity(projectSettings.getImsSettings())),
+                hasProperty("definitionOfDone",
+                        containsInAnyOrder(each(projectSettings.getDefinitionOfDone(),
+                                ProjectMatcher::matchingDodEntity)))
         );
     }
 
@@ -55,14 +58,30 @@ public class ProjectMatcher {
                 hasProperty("codeRepositorySettings",
                         matchingCodeRepositorySettingsInput(projectSettingsInput.getCodeRepositorySettings())),
                 hasProperty("imsSettings",
-                        matchingImsSettingsInput(projectSettingsInput.getImsSettings()))
+                        matchingImsSettingsInput(projectSettingsInput.getImsSettings())),
+                hasProperty("definitionOfDone",
+                        containsInAnyOrder(each(projectSettingsInput.getDefinitionOfDone(),
+                                ProjectMatcher::matchingDodInput)))
         );
     }
 
     public static Matcher<ImsSettings> matchingImsSettingsEntity(ImsSettingsEntity imsSettings) {
         return allOf(
                 hasProperty("imsName", is(imsSettings.getImsName())),
-                hasProperty("imsProjectId", is(imsSettings.getImsProjectId()))
+                hasProperty("imsProjectId", is(imsSettings.getImsProjectId())),
+                hasProperty("issueStates",
+                        containsInAnyOrder(each(imsSettings.getIssueStates(),
+                                ProjectMatcher::matchingIssueStateEntity))),
+                hasProperty("imsIssueTemplateId", is(imsSettings.getImsIssueTemplateId()))
+
+        );
+    }
+
+    public static Matcher<IssueState> matchingIssueStateEntity(IssueStateEmbeddable issueState) {
+        return allOf(
+                hasProperty("name", is(issueState.getName())),
+                hasProperty("imsStateId", is(issueState.getImsStateId())),
+                hasProperty("type", is(issueState.getType()))
         );
     }
 
@@ -82,7 +101,37 @@ public class ProjectMatcher {
     public static <T> Matcher<T> matchingImsSettingsInput(ImsSettingsInput imsSettingsInput) {
         return allOf(
                 hasProperty("imsName", is(imsSettingsInput.getImsName())),
-                hasProperty("imsProjectId", is(imsSettingsInput.getImsProjectId()))
+                hasProperty("imsProjectId", is(imsSettingsInput.getImsProjectId())),
+                hasProperty("issueStates",
+                        containsInAnyOrder(each(imsSettingsInput.getIssueStates(),
+                                ProjectMatcher::matchingIssueStateInput))),
+                hasProperty("imsIssueTemplateId", is(imsSettingsInput.getImsIssueTemplateId()))
+        );
+    }
+
+    public static <T> Matcher<T> matchingIssueStateInput(IssueStateInput issueStateInput) {
+        return allOf(
+                hasProperty("name", is(issueStateInput.getName())),
+                hasProperty("imsStateId", is(issueStateInput.getImsStateId())),
+                hasProperty("type", is(issueStateInput.getType()))
+        );
+    }
+
+    public static <T> Matcher<T> matchingDodEntity(DefinitionOfDoneItemEntity dodItem) {
+        return allOf(
+                hasProperty("text", is(dodItem.getText())),
+                hasProperty("required", is(dodItem.isRequired())),
+                hasProperty("implies",
+                        containsInAnyOrder(each(dodItem.getImplies(), ProjectMatcher::matchingDodEntity)))
+        );
+    }
+
+    public static <T> Matcher<T> matchingDodInput(DefinitionOfDoneItemInput dodItem) {
+        return allOf(
+                hasProperty("text", is(dodItem.getText())),
+                hasProperty("required", is(dodItem.getRequired())),
+                hasProperty("implies",
+                        containsInAnyOrder(each(dodItem.getImplies(), ProjectMatcher::matchingDodInput)))
         );
     }
 }
