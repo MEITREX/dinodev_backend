@@ -1,9 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.user;
 
-import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
-import de.unistuttgart.iste.meitrex.generated.dto.PrivateUserInfo;
-import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +46,11 @@ public class UserInProjectController {
     @SchemaMapping
     public PrivateUserInfo privateInfo(UserInProject userInProject) {
         return userInProjectService.getPrivateInfo(userInProject.getUserId(), userInProject.getProjectId());
+    }
+
+    @SchemaMapping
+    public List<UserInProject> assignees(Issue issue) {
+        return userInProjectService.getUsers(issue.getProjectId(), issue.getAssigneeIds());
     }
 
     @MutationMapping

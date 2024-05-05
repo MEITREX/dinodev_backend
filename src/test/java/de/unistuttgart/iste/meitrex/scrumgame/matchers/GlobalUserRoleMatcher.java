@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.matchers;
 
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
+import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import org.hamcrest.Matcher;
 
@@ -11,7 +12,7 @@ public class GlobalUserRoleMatcher {
     private GlobalUserRoleMatcher() {
     }
 
-    public static Matcher<GlobalUserRole> matchingGlobalUserRoleEntity(GlobalUserRoleEntity globalUserRole) {
+    public static <T> Matcher<T> matchingGlobalUserRoleEntity(GlobalUserRoleEntity globalUserRole) {
         return allOf(
                 hasProperty("name", is(globalUserRole.getName())),
                 hasProperty("globalPrivileges",

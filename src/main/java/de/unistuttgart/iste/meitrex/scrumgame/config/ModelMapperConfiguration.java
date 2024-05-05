@@ -19,6 +19,7 @@ public class ModelMapperConfiguration {
         // Disable collections merge, instead collections are replaced
         modelMapper.getConfiguration()
                 .setCollectionsMergeEnabled(false)
+                // only map fields with the exact same name
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper
@@ -27,7 +28,8 @@ public class ModelMapperConfiguration {
                 .registerModule(new UserInProjectMapping())
                 .registerModule(new ProjectRoleMapping())
                 .registerModule(new ProjectMapping())
-                .registerModule(new MeetingMapping());
+                .registerModule(new MeetingMapping())
+                .registerModule(new EventTypeMapping());
 
         return modelMapper;
     }

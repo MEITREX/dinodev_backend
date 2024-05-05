@@ -32,18 +32,18 @@ public class ProjectRoleController {
     @SchemaMapping(typeName = "ProjectMutation", field = "createRole")
     public ProjectRole createRole(ProjectMutation projectMutation,
             @Argument CreateProjectRoleInput input) {
-        return userRoleInProjectService.createRole(projectMutation.getProjectId(), input);
+        return userRoleInProjectService.createRole(projectMutation.getProject().getId(), input);
     }
 
     @SchemaMapping(typeName = "ProjectMutation", field = "updateRole")
     public ProjectRole updateRole(ProjectMutation projectMutation,
                                         @Argument String name,
             @Argument UpdateProjectRoleInput input) {
-        return userRoleInProjectService.updateRole(projectMutation.getProjectId(), name, input);
+        return userRoleInProjectService.updateRole(projectMutation.getProject().getId(), name, input);
     }
 
     @SchemaMapping(typeName = "ProjectMutation", field = "deleteRole")
     public boolean deleteRole(ProjectMutation projectMutation, @Argument String name) {
-        return userRoleInProjectService.deleteRole(projectMutation.getProjectId(), name);
+        return userRoleInProjectService.deleteRole(projectMutation.getProject().getId(), name);
     }
 }

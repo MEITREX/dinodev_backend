@@ -15,6 +15,12 @@ public class ProjectFragments {
                     imsName
                     imsProjectId
                     imsIssueTemplateId
+                    effortEstimationFieldName
+                    sprintFieldName
+                    issuePriorities {
+                        imsPriorityId
+                        issuePriority
+                    }
                     issueStates {
                         name
                         imsStateId
@@ -30,7 +36,7 @@ public class ProjectFragments {
                         implies {
                             text
                             required
-                        }                        
+                        }
                     }
                 }
             }

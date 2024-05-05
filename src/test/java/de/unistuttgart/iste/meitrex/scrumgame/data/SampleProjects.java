@@ -24,6 +24,17 @@ public class SampleProjects {
                                 .setImsName("Test IMS")
                                 .setImsProjectId("Test IMS Project ID")
                                 .setImsIssueTemplateId("Test IMS Issue Template ID")
+                                .setEffortEstimationFieldName("Test Effort Estimation Field Name")
+                                .setSprintFieldName("Test Sprint Field Name")
+                                .setIssuePriorities(List.of(
+                                        IssuePriorityInput.builder()
+                                                .setImsPriorityId("Test IMS Priority ID")
+                                                .setIssuePriority(IssuePriority.HIGH)
+                                                .build(),
+                                        IssuePriorityInput.builder()
+                                                .setImsPriorityId("Test IMS Priority ID 2")
+                                                .setIssuePriority(IssuePriority.LOW)
+                                                .build()))
                                 .setIssueStates(List.of(
                                         IssueStateInput.builder()
                                                 .setName("Test State")
@@ -66,6 +77,17 @@ public class SampleProjects {
                                 .setImsName("Updated Test IMS")
                                 .setImsProjectId("Updated Test IMS Project ID")
                                 .setImsIssueTemplateId("Updated Test IMS Issue Template ID")
+                                .setEffortEstimationFieldName("Updated Test Effort Estimation Field Name")
+                                .setSprintFieldName("Updated Test Sprint Field Name")
+                                .setIssuePriorities(List.of(
+                                        IssuePriorityInput.builder()
+                                                .setImsPriorityId("Updated Test IMS Priority ID")
+                                                .setIssuePriority(IssuePriority.HIGH)
+                                                .build(),
+                                        IssuePriorityInput.builder()
+                                                .setImsPriorityId("Updated Test IMS Priority ID 2")
+                                                .setIssuePriority(IssuePriority.LOW)
+                                                .build()))
                                 .setIssueStates(List.of(
                                         IssueStateInput.builder()
                                                 .setName("Updated Test State")
@@ -108,6 +130,17 @@ public class SampleProjects {
                                 .imsName("Test IMS")
                                 .imsProjectId("Test IMS Project ID")
                                 .imsIssueTemplateId("Test IMS Issue Template ID")
+                                .effortEstimationFieldName("Test Effort Estimation Field Name")
+                                .sprintFieldName("Test Sprint Field Name")
+                                .issuePriorities(new ArrayList<>(List.of(
+                                        IssuePriorityEmbeddable.builder()
+                                                .imsPriorityId("Test IMS Priority ID")
+                                                .issuePriority(IssuePriority.HIGH)
+                                                .build(),
+                                        IssuePriorityEmbeddable.builder()
+                                                .imsPriorityId("Test IMS Priority ID 2")
+                                                .issuePriority(IssuePriority.LOW)
+                                                .build())))
                                 .issueStates(new ArrayList<>(List.of(
                                         IssueStateEmbeddable.builder()
                                                 .name("Test State")

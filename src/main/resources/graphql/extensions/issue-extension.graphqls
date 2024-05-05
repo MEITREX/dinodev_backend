@@ -1,0 +1,6 @@
+extend type Issue {
+    sprint: Sprint @OnDemand
+    assignees: [UserInProject]! @OnDemand
+}
+
+
