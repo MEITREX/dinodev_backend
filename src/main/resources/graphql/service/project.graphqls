@@ -55,6 +55,16 @@ type ImsSettings {
     issueStates: [IssueState!]!
     imsProjectId: ID!
     imsIssueTemplateId: ID!
+
+    effortEstimationFieldName: String!
+    sprintFieldName: String!
+
+    issuePriorities: [IssuePriorityConfiguration!]!
+}
+
+type IssuePriorityConfiguration {
+    imsPriorityId: ID!
+    issuePriority: IssuePriority!
 }
 
 type CodeRepositorySettings {
@@ -89,6 +99,16 @@ input ImsSettingsInput {
     imsProjectId: ID!
     issueStates: [IssueStateInput!]!
     imsIssueTemplateId: ID!
+
+    effortEstimationFieldName: String!
+    sprintFieldName: String!
+
+    issuePriorities: [IssuePriorityInput!]!
+}
+
+input IssuePriorityInput {
+    imsPriorityId: ID!
+    issuePriority: IssuePriority!
 }
 
 input CodeRepositorySettingsInput {

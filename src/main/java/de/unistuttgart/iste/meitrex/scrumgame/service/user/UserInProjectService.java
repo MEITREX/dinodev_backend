@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
-import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.PrivateUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.PrivateUserInfoEmbeddable;
@@ -10,6 +10,8 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjec
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -22,10 +24,11 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Getter(AccessLevel.PROTECTED)
 public class UserInProjectService
         extends AbstractCrudService<UserProjectId, UserInProjectEntity, UserInProject> {
 
-    private final UserInProjectRepository         userInProjectRepository;
+    private final UserInProjectRepository repository;
     private final ModelMapper                     modelMapper;
     private final AuthService                     authService;
     private final UserInProjectInitializerService userInProjectInitializerService;
@@ -48,7 +51,7 @@ public class UserInProjectService
      * @return the list of users in project
      */
     public List<UserInProject> getUsersInProjectByProjectId(UUID projectId) {
-        List<UserInProjectEntity> userInProjectEntities = userInProjectRepository.findAllByProjectId(projectId);
+        List<UserInProjectEntity> userInProjectEntities = repository.findAllByProjectId(projectId);
         return convertToDtos(userInProjectEntities);
     }
 
@@ -59,7 +62,7 @@ public class UserInProjectService
      * @return the list of {@link UserInProject}s of the user
      */
     public List<UserInProject> getUserInProjectsByUserId(UUID userId) {
-        List<UserInProjectEntity> userInProjectEntities = userInProjectRepository.findAllByUserId(userId);
+        List<UserInProjectEntity> userInProjectEntities = repository.findAllByUserId(userId);
         return convertToDtos(userInProjectEntities);
     }
 
@@ -85,7 +88,7 @@ public class UserInProjectService
     @PreAuthorize("@auth.currentUserId.equals(#userId) " +
                   "or @auth.hasPrivilege(@projectPrivileges.READ_USER_PRIVATE_INFO, #projectId)")
     public PrivateUserInfo getPrivateInfo(UUID userId, UUID projectId) {
-        PrivateUserInfoEmbeddable privateInfo = userInProjectRepository
+        PrivateUserInfoEmbeddable privateInfo = repository
                 .findByIdOrThrow(new UserProjectId(userId, projectId))
                 .getPrivateInfo();
 
@@ -112,6 +115,11 @@ public class UserInProjectService
         return createUserInProject(currentUserId, projectId);
     }
 
+    public List<UserInProject> getUsers(UUID projectId, List<UUID> userIds) {
+        List<UserInProject> allUsers = getUsersInProjectByProjectId(projectId);
+        return MeitrexCollectionUtils.sortByKeys(allUsers, userIds, UserInProject::getUserId);
+    }
+
     @Override
     protected Class<UserInProjectEntity> getEntityClass() {
         return UserInProjectEntity.class;
@@ -122,13 +130,4 @@ public class UserInProjectService
         return UserInProject.class;
     }
 
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<UserInProjectEntity, UserProjectId> getRepository() {
-        return userInProjectRepository;
-    }
 }

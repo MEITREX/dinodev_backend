@@ -1,20 +1,20 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.ims;
 
-import de.unistuttgart.iste.meitrex.generated.dto.IssueMutation;
-import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.generated.dto.ProjectBoard;
-import de.unistuttgart.iste.meitrex.generated.dto.ProjectMutation;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.dto.Issue;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
+import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 public class ImsController {
 
@@ -32,19 +32,35 @@ public class ImsController {
         return imsService.findIssue(project, id).orElse(null);
     }
 
+
+    /* ProjectBoard mappings */
+
     @SchemaMapping
     public ProjectBoard projectBoard(Project project) {
         return imsService.getProjectBoard(project);
     }
 
-    /* ProjectBoard mappings */
+    @SchemaMapping
+    public List<IssueStateInBoard> states(ProjectBoard board) {
+        return imsService.getIssueStates(board);
+    }
+
+    @BatchMapping
+    public Map<IssueStateInBoard, List<Issue>> issues(List<IssueStateInBoard> states) {
+        return imsService.getIssuesByStates(states);
+    }
+
+    @BatchMapping(typeName = "Sprint", field = "issues")
+    public Map<Sprint, List<Issue>> issuesOfSprints(List<Sprint> sprints) {
+        return imsService.getIssuesBySprints(sprints);
+    }
+
+    /* IssueMutation mappings */
 
     @SchemaMapping
     public IssueMutation mutateIssue(ProjectMutation projectMutation, @Argument String id) {
         return imsService.mutateIssue(projectMutation, id);
     }
-
-    /* IssueMutation mappings */
 
     @SchemaMapping
     public Issue changeIssueTitle(IssueMutation issueMutation, @Argument String title) {
@@ -69,6 +85,19 @@ public class ImsController {
     @SchemaMapping
     public Issue assignIssue(IssueMutation issueMutation, @Argument UUID assigneeId) {
         return imsService.assignIssue(issueMutation, assigneeId);
+    }
+
+    @SchemaMapping
+    public Issue finishIssue(IssueMutation issueMutation,
+            @Argument List<DefinitionOfDoneConfirmState> dodConfirmStates,
+            @Argument String doneStateName) {
+        log.info("Finishing issue {} with DOD confirm states: {}", issueMutation.getIssueId(), dodConfirmStates);
+        return imsService.finishIssue(issueMutation, dodConfirmStates, doneStateName);
+    }
+
+    @SchemaMapping
+    public Issue changeSprint(IssueMutation issueMutation, @Argument Integer sprintNumber) {
+        return imsService.changeSprint(issueMutation, sprintNumber);
     }
 
 }

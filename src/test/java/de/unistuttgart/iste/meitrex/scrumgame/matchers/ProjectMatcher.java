@@ -7,6 +7,9 @@ import org.hamcrest.Matcher;
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.each;
 import static org.hamcrest.Matchers.*;
 
+/**
+ * Contains matchers for Project related entities and inputs.
+ */
 public class ProjectMatcher {
 
     private ProjectMatcher() {
@@ -72,7 +75,12 @@ public class ProjectMatcher {
                 hasProperty("issueStates",
                         containsInAnyOrder(each(imsSettings.getIssueStates(),
                                 ProjectMatcher::matchingIssueStateEntity))),
-                hasProperty("imsIssueTemplateId", is(imsSettings.getImsIssueTemplateId()))
+                hasProperty("imsIssueTemplateId", is(imsSettings.getImsIssueTemplateId())),
+                hasProperty("effortEstimationFieldName", is(imsSettings.getEffortEstimationFieldName())),
+                hasProperty("sprintFieldName", is(imsSettings.getSprintFieldName())),
+                hasProperty("issuePriorities",
+                        containsInAnyOrder(each(imsSettings.getIssuePriorities(),
+                                ProjectMatcher::matchingIssuePriorityEntity)))
 
         );
     }
@@ -105,7 +113,12 @@ public class ProjectMatcher {
                 hasProperty("issueStates",
                         containsInAnyOrder(each(imsSettingsInput.getIssueStates(),
                                 ProjectMatcher::matchingIssueStateInput))),
-                hasProperty("imsIssueTemplateId", is(imsSettingsInput.getImsIssueTemplateId()))
+                hasProperty("imsIssueTemplateId", is(imsSettingsInput.getImsIssueTemplateId())),
+                hasProperty("effortEstimationFieldName", is(imsSettingsInput.getEffortEstimationFieldName())),
+                hasProperty("sprintFieldName", is(imsSettingsInput.getSprintFieldName())),
+                hasProperty("issuePriorities",
+                        containsInAnyOrder(each(imsSettingsInput.getIssuePriorities(),
+                                ProjectMatcher::matchingIssuePriorityInput)))
         );
     }
 
@@ -132,6 +145,20 @@ public class ProjectMatcher {
                 hasProperty("required", is(dodItem.getRequired())),
                 hasProperty("implies",
                         containsInAnyOrder(each(dodItem.getImplies(), ProjectMatcher::matchingDodInput)))
+        );
+    }
+
+    public static Matcher<IssuePriority> matchingIssuePriorityEntity(IssuePriorityEmbeddable issuePriority) {
+        return allOf(
+                hasProperty("issuePriority", is(issuePriority.getIssuePriority())),
+                hasProperty("imsPriorityId", is(issuePriority.getImsPriorityId()))
+        );
+    }
+
+    public static <T> Matcher<T> matchingIssuePriorityInput(IssuePriorityInput issuePriorityInput) {
+        return allOf(
+                hasProperty("issuePriority", is(issuePriorityInput.getIssuePriority())),
+                hasProperty("imsPriorityId", is(issuePriorityInput.getImsPriorityId()))
         );
     }
 }

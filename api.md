@@ -8,6 +8,10 @@
 * [Objects](#objects)
     * [AnimalVoting](#animalvoting)
     * [CodeRepositorySettings](#coderepositorysettings)
+  * [DefinitionOfDoneItem](#definitionofdoneitem)
+  * [Event](#event)
+  * [EventType](#eventtype)
+  * [FieldSchemaDefinition](#fieldschemadefinition)
     * [GlobalUser](#globaluser)
     * [GlobalUserRole](#globaluserrole)
     * [ImsSettings](#imssettings)
@@ -18,6 +22,7 @@
     * [IssueEstimations](#issueestimations)
     * [IssueMutation](#issuemutation)
     * [IssueState](#issuestate)
+  * [IssueStateInBoard](#issuestateinboard)
     * [IssueType](#issuetype)
     * [MeetingAttendee](#meetingattendee)
     * [NameVoting](#namevoting)
@@ -32,6 +37,8 @@
     * [ProjectRole](#projectrole)
     * [ProjectSettings](#projectsettings)
     * [RetrospectiveMeeting](#retrospectivemeeting)
+  * [Rule](#rule)
+  * [SchemaDefinition](#schemadefinition)
     * [ShopItem](#shopitem)
     * [Sprint](#sprint)
     * [SprintGoalVoting](#sprintgoalvoting)
@@ -44,6 +51,7 @@
     * [VotingState](#votingstate)
 * [Inputs](#inputs)
     * [CodeRepositorySettingsInput](#coderepositorysettingsinput)
+  * [CreateEventTypeInput](#createeventtypeinput)
     * [CreateGlobalUserInput](#createglobaluserinput)
     * [CreateGlobalUserRoleInput](#createglobaluserroleinput)
     * [CreateIssueInput](#createissueinput)
@@ -51,6 +59,9 @@
     * [CreateProjectRoleInput](#createprojectroleinput)
     * [CreateSprintInput](#createsprintinput)
     * [DateTimeFilter](#datetimefilter)
+  * [DefinitionOfDoneConfirmState](#definitionofdoneconfirmstate)
+  * [DefinitionOfDoneItemInput](#definitionofdoneiteminput)
+  * [FieldSchemaDefinitionInput](#fieldschemadefinitioninput)
     * [ImsSettingsInput](#imssettingsinput)
     * [IntFilter](#intfilter)
     * [IssueStateInput](#issuestateinput)
@@ -58,13 +69,18 @@
     * [PlanningMeetingInput](#planningmeetinginput)
     * [PlanningSettingsInput](#planningsettingsinput)
     * [ProjectSettingsInput](#projectsettingsinput)
+  * [SchemaDefinitionInput](#schemadefinitioninput)
     * [StringFilter](#stringfilter)
+  * [UpdateEventTypeInput](#updateeventtypeinput)
     * [UpdateGlobalUserInput](#updateglobaluserinput)
     * [UpdateGlobalUserRoleInput](#updateglobaluserroleinput)
     * [UpdateProjectInput](#updateprojectinput)
     * [UpdateProjectRoleInput](#updateprojectroleinput)
 * [Enums](#enums)
+    * [AllowedDataType](#alloweddatatype)
+    * [EventVisibility](#eventvisibility)
     * [GlobalPrivilege](#globalprivilege)
+    * [IssuePriority](#issuepriority)
     * [IssueStateType](#issuestatetype)
     * [MeetingRole](#meetingrole)
     * [MeetingState](#meetingstate)
@@ -73,6 +89,7 @@
     * [ProjectPrivilege](#projectprivilege)
     * [SortDirection](#sortdirection)
     * [StoryPoints](#storypoints)
+    * [TShirtSizeEstimation](#tshirtsizeestimation)
     * [UserState](#userstate)
 * [Scalars](#scalars)
     * [Boolean](#boolean)
@@ -80,6 +97,7 @@
     * [DateTime](#datetime)
     * [ID](#id)
     * [Int](#int)
+  * [JSON](#json)
     * [LocalTime](#localtime)
     * [String](#string)
     * [Time](#time)
@@ -151,6 +169,21 @@
 <tr>
 <td colspan="2" align="right" valign="top">name</td>
 <td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventTypes</strong></td>
+<td valign="top">[<a href="#eventtype">EventType</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -382,6 +415,191 @@
 </tbody>
 </table>
 
+### DefinitionOfDoneItem
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>text</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>implies</strong></td>
+<td valign="top">[<a href="#definitionofdoneitem">DefinitionOfDoneItem</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Event
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>visibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>user</strong></td>
+<td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>timestamp</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>message</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mostRecentChildTimestamp</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>children</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>parent</strong></td>
+<td valign="top"><a href="#event">Event</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventData</strong></td>
+<td valign="top"><a href="#json">JSON</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### EventType
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>defaultVisibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventSchema</strong></td>
+<td valign="top"><a href="#schemadefinition">SchemaDefinition</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>messageTemplate</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### FieldSchemaDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>allowedValues</strong></td>
+<td valign="top">[<a href="#string">String</a>!]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### GlobalUser
 
 <table>
@@ -484,6 +702,11 @@
 <td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsIssueTemplateId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -539,6 +762,8 @@
 
 ### Issue
 
+Represents an issue in a project management system.
+
 <table>
 <thead>
 <tr>
@@ -552,32 +777,102 @@
 <tr>
 <td colspan="2" valign="top"><strong>id</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
-<td></td>
+<td>
+
+Unique identifier for the issue.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td>
+
+Unique identifier of the scrum game the issue belongs to.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>title</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Title of the issue, providing a brief summary.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>description</strong></td>
 <td valign="top"><a href="#string">String</a></td>
-<td></td>
+<td>
+
+Detailed description of the issue. GitLab-flavored markdown is supported.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>state</strong></td>
 <td valign="top"><a href="#issuestate">IssueState</a>!</td>
-<td></td>
+<td>
+
+Current state of the issue.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>type</strong></td>
 <td valign="top"><a href="#issuetype">IssueType</a>!</td>
-<td></td>
+<td>
+
+Categorization of the issue by type.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>priority</strong></td>
+<td valign="top"><a href="#issuepriority">IssuePriority</a>!</td>
+<td>
+
+Priority of the issue.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>sprintNumber</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
-<td></td>
+<td>
+
+Sprint number associated with the issue, if applicable.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>storyPoints</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
+<td>
+
+Story points associated with the issue. If not set, the issue is considered to not have an estimation yet.
+Might also be calculated based on the effort estimation.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>effortEstimation</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
+<td>
+
+Effort estimation associated with the issue. If not set, the issue is considered to not have an estimation yet.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>assigneeIds</strong></td>
+<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
+<td>
+
+List of user UUIDs representing the assignees of the issue.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>sprint</strong></td>
@@ -585,13 +880,8 @@
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>assigneeIds</strong></td>
-<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
-<td></td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>assignees</strong></td>
-<td valign="top">[<a href="#globaluser">GlobalUser</a>!]!</td>
+<td valign="top">[<a href="#userinproject">UserInProject</a>]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -705,8 +995,8 @@
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -755,6 +1045,31 @@
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>changeSprint</strong></td>
+<td valign="top"><a href="#issue">Issue</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">sprintNumber</td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>finishIssue</strong></td>
+<td valign="top"><a href="#issue">Issue</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">dodConfirmStates</td>
+<td valign="top">[<a href="#definitionofdoneconfirmstate">DefinitionOfDoneConfirmState</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">doneStateName</td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>assignIssue</strong></td>
 <td valign="top"><a href="#issue">Issue</a>!</td>
 <td></td>
@@ -769,6 +1084,8 @@
 
 ### IssueState
 
+Represents the state of an issue within its lifecycle.
+
 <table>
 <thead>
 <tr>
@@ -782,16 +1099,53 @@
 <tr>
 <td colspan="2" valign="top"><strong>name</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Name of the state.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>type</strong></td>
 <td valign="top"><a href="#issuestatetype">IssueStateType</a>!</td>
-<td></td>
+<td>
+
+Type of the state, categorizing its position in the workflow.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>imsStateId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
+<td>
+
+Identifier for the state in an issue management system.
+
+</td>
+</tr>
+</tbody>
+</table>
+
+### IssueStateInBoard
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>state</strong></td>
+<td valign="top"><a href="#issuestate">IssueState</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectBoard</strong></td>
+<td valign="top"><a href="#projectboard">ProjectBoard</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -804,6 +1158,8 @@
 
 ### IssueType
 
+Defines the type of an issue, such as bug, feature, etc.
+
 <table>
 <thead>
 <tr>
@@ -817,17 +1173,29 @@
 <tr>
 <td colspan="2" valign="top"><strong>name</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Name of the issue type.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>description</strong></td>
 <td valign="top"><a href="#string">String</a></td>
-<td></td>
+<td>
+
+Description of what the issue type entails.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>iconPath</strong></td>
 <td valign="top"><a href="#string">String</a></td>
-<td></td>
+<td>
+
+Path to an icon visually representing the issue type.
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -1257,6 +1625,11 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>currentSprintNumber</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>currentSprint</strong></td>
 <td valign="top"><a href="#sprint">Sprint</a></td>
 <td></td>
@@ -1331,6 +1704,26 @@ Whether there is a next page.
 <td valign="top"><a href="#imsspecificdata">ImsSpecificData</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>events</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">page</td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">size</td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">minVisibility</td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -1347,13 +1740,13 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>states</strong></td>
-<td valign="top">[<a href="#issuestate">IssueState</a>!]!</td>
+<td valign="top">[<a href="#issuestateinboard">IssueStateInBoard</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1371,11 +1764,6 @@ Whether there is a next page.
 </tr>
 </thead>
 <tbody>
-<tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
 <tr>
 <td colspan="2" valign="top"><strong>project</strong></td>
 <td valign="top"><a href="#project">Project</a>!</td>
@@ -1506,6 +1894,41 @@ Whether there is a next page.
 <td valign="top"><a href="#createissueinput">CreateIssueInput</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>createEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#createeventtypeinput">CreateEventTypeInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>updateEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#updateeventtypeinput">UpdateEventTypeInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>deleteEventType</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -1571,6 +1994,11 @@ Whether there is a next page.
 <td valign="top"><a href="#imssettings">ImsSettings</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>definitionOfDone</strong></td>
+<td valign="top">[<a href="#definitionofdoneitem">DefinitionOfDoneItem</a>!]!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -1614,6 +2042,71 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>projectId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Rule
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>forEventTypeIdentifier</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>forEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>script</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### SchemaDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>fields</strong></td>
+<td valign="top">[<a href="#fieldschemadefinition">FieldSchemaDefinition</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1672,6 +2165,11 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>id</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
@@ -1683,22 +2181,22 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>startDate</strong></td>
-<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td valign="top"><a href="#datetime">DateTime</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>endDate</strong></td>
-<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td valign="top"><a href="#datetime">DateTime</a></td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>active</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td colspan="2" valign="top"><strong>issues</strong></td>
+<td valign="top">[<a href="#issue">Issue</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2065,6 +2563,45 @@ Whether there is a next page.
 </tbody>
 </table>
 
+### CreateEventTypeInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>identifier</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>defaultVisibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventSchema</strong></td>
+<td valign="top"><a href="#schemadefinitioninput">SchemaDefinitionInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>messageTemplate</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### CreateGlobalUserInput
 
 <table>
@@ -2115,6 +2652,8 @@ Whether there is a next page.
 
 ### CreateIssueInput
 
+Input type for creating a new issue.
+
 <table>
 <thead>
 <tr>
@@ -2127,32 +2666,47 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>title</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Title of the new issue.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>description</strong></td>
 <td valign="top"><a href="#string">String</a></td>
-<td></td>
+<td>
+
+Detailed description of the new issue. Can be GitLab-flavored markdown.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>stateName</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Name of the state the issue should be initially set to.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>typeName</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
-<td></td>
+<td>
+
+Name of the type the issue should be categorized under.
+
+</td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>sprintNumber</strong></td>
 <td valign="top"><a href="#int">Int</a></td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>assigneeIds</strong></td>
-<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
-<td></td>
+<td>
+
+Sprint number the issue is associated with, if applicable.
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -2176,6 +2730,11 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>description</strong></td>
 <td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>startingSprintNumber</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2279,6 +2838,108 @@ If specified, filters for dates before the specified value.
 </tbody>
 </table>
 
+### DefinitionOfDoneConfirmState
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>dodText</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>checked</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>reasonIfNotChecked</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>children</strong></td>
+<td valign="top">[<a href="#definitionofdoneconfirmstate">DefinitionOfDoneConfirmState</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### DefinitionOfDoneItemInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>text</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>implies</strong></td>
+<td valign="top">[<a href="#definitionofdoneiteminput">DefinitionOfDoneItemInput</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### FieldSchemaDefinitionInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>allowedValues</strong></td>
+<td valign="top">[<a href="#string">String</a>!]</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### ImsSettingsInput
 
 <table>
@@ -2303,6 +2964,11 @@ If specified, filters for dates before the specified value.
 <tr>
 <td colspan="2" valign="top"><strong>issueStates</strong></td>
 <td valign="top">[<a href="#issuestateinput">IssueStateInput</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsIssueTemplateId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2492,6 +3158,30 @@ The number of elements per page.
 <td valign="top"><a href="#imssettingsinput">ImsSettingsInput</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>definitionOfDone</strong></td>
+<td valign="top">[<a href="#definitionofdoneiteminput">DefinitionOfDoneItemInput</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### SchemaDefinitionInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>fields</strong></td>
+<td valign="top">[<a href="#fieldschemadefinitioninput">FieldSchemaDefinitionInput</a>!]!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -2535,6 +3225,40 @@ A string value that must be contained in the field that is being filtered.
 If true, the filter is case-insensitive.
 
 </td>
+</tr>
+</tbody>
+</table>
+
+### UpdateEventTypeInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>defaultVisibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventSchema</strong></td>
+<td valign="top"><a href="#schemadefinitioninput">SchemaDefinitionInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>messageTemplate</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -2637,6 +3361,56 @@ If true, the filter is case-insensitive.
 
 ## Enums
 
+### AllowedDataType
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>STRING</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>INTEGER</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>DOUBLE</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>BOOLEAN</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### EventVisibility
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>INTERNAL</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>PRIVATE</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>PUBLIC</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### GlobalPrivilege
 
 <table>
@@ -2684,7 +3458,34 @@ If true, the filter is case-insensitive.
 </tbody>
 </table>
 
+### IssuePriority
+
+Enumeration of priorities for issues.
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>LOW</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>MEDIUM</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>HIGH</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### IssueStateType
+
+Enumeration of possible states an issue can be in during its lifecycle.
 
 <table>
 <thead>
@@ -2950,6 +3751,39 @@ Specifies the sort direction, either ascending or descending.
 </tbody>
 </table>
 
+### TShirtSizeEstimation
+
+Enumeration of possible sizes for a T-shirt estimation.
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>XS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>S</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>M</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>L</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>XL</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### UserState
 
 <table>
@@ -2993,6 +3827,8 @@ type, any string (such as `"4"`) or integer (such as `4`) input value will be ac
 
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31)
 and 2^31 - 1.
+
+### JSON
 
 ### LocalTime
 

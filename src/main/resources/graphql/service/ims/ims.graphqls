@@ -1,0 +1,32 @@
+type IssueMutation {
+    project: Project!
+    issueId: ID!
+
+    changeIssueTitle(title: String!): Issue!
+    changeIssueDescription(description: String): Issue!
+    changeIssueState(stateName: String!): Issue!
+    changeIssueType(typeName: String!): Issue!
+    changeSprint(sprintNumber: Int): Issue!
+
+    finishIssue(dodConfirmStates: [DefinitionOfDoneConfirmState!]!, doneStateName: String): Issue!
+
+    assignIssue(assigneeId: UUID): Issue!
+}
+
+input DefinitionOfDoneConfirmState {
+    dodText: String!
+    checked: Boolean!
+    reasonIfNotChecked: String
+    children: [DefinitionOfDoneConfirmState!]!
+}
+
+type ProjectBoard {
+    project: Project!
+    states: [IssueStateInBoard!]! @OnDemand
+}
+
+type IssueStateInBoard {
+    state: IssueState!
+    projectBoard: ProjectBoard!
+    issues: [Issue!]! @OnDemand
+}

@@ -1,19 +1,38 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 
 import de.unistuttgart.iste.meitrex.generated.dto.ImsSettings;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.IssueMappingConfiguration;
+import de.unistuttgart.iste.meitrex.generated.dto.IssuePriorityConfiguration;
+import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.IssuePriorityMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.IssueStateConverter;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.UserIdMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusIssueMappingConfiguration;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor(staticName = "of")
-public class DefaultIssueMappingConfiguration implements IssueMappingConfiguration {
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-    private final ImsSettings imsSettings;
+@RequiredArgsConstructor(staticName = "of")
+public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConfiguration {
+
+    private final Project project;
 
     @Override
+    public UUID getScrumGameProjectId() {
+        return project.getId();
+    }
+
+    @Override
+    public String getImsProjectId() {
+        return getImsSettings().getImsProjectId();
+    }
+
+    private ImsSettings getImsSettings() {
+        return project.getProjectSettings().getImsSettings();
+    }
+
     public IssueStateConverter issueStateConverter() {
-        return new IssueStateConverter(imsSettings.getIssueStates());
+        return new IssueStateConverter(getImsSettings().getIssueStates());
     }
 
     @Override
@@ -23,11 +42,25 @@ public class DefaultIssueMappingConfiguration implements IssueMappingConfigurati
 
     @Override
     public String getSprintFieldName() {
-        return "Sprint"; // todo make configurable
+        return getImsSettings().getSprintFieldName();
     }
 
     @Override
     public String getEstimationTemplateFieldName() {
-        return "Estimated Effort";
+        return getImsSettings().getEffortEstimationFieldName();
+    }
+
+    @Override
+    public String getIssueTemplateId() {
+        return getImsSettings().getImsIssueTemplateId();
+    }
+
+    @Override
+    public IssuePriorityMapping issuePriorityMapping() {
+        return new IssuePriorityMapping(
+                getImsSettings().getIssuePriorities().stream()
+                        .collect(Collectors.toMap(
+                                IssuePriorityConfiguration::getImsPriorityId,
+                                IssuePriorityConfiguration::getIssuePriority)));
     }
 }

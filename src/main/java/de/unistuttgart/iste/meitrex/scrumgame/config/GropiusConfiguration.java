@@ -1,6 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.config;
 
-import de.unistuttgart.iste.meitrex.scrumgame.graphql.GraphQlRequestExecutor;
+import de.unistuttgart.iste.meitrex.common.graphqlclient.GraphQlRequestExecutor;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsUtilityConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusConnector;
@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.graphql.client.HttpGraphQlClient;
+import org.springframework.graphql.client.WebGraphQlClient;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -49,7 +50,7 @@ public class GropiusConfiguration {
     private String gropiusUrl;
 
     @Bean
-    public HttpGraphQlClient graphQlClient() {
+    public HttpGraphQlClient baseGraphQlClient() {
         WebClient webClient = WebClient.builder()
                 .baseUrl(gropiusUrl + "/graphql")
                 .build();
@@ -58,9 +59,16 @@ public class GropiusConfiguration {
     }
 
     @Bean
-    public GraphQlRequestExecutor graphQlRequestExecutor(HttpGraphQlClient graphQlClient,
-            Supplier<String> tokenSupplier) {
-        return new GraphQlRequestExecutor(graphQlClient, tokenSupplier);
+    public Supplier<WebGraphQlClient> graphQlClientWithAuthTokenSupplier() {
+        return () -> baseGraphQlClient()
+                .mutate()
+                .headers(headers -> headers.setBearerAuth(tokenSupplier().get()))
+                .build();
+    }
+
+    @Bean
+    public GraphQlRequestExecutor graphQlRequestExecutor(Supplier<WebGraphQlClient> graphQlClientWithAuthTokenSupplier) {
+        return new GraphQlRequestExecutor(graphQlClientWithAuthTokenSupplier);
     }
 
     @Bean
