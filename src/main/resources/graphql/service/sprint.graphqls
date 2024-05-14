@@ -1,0 +1,48 @@
+type Sprint {
+    project: Project!
+
+    id: UUID!
+    number: Int!
+
+    startDate: DateTime
+    endDate: DateTime
+
+    storyPointsPlanned: Int
+    sprintMascot: SprintMascot
+
+    issues: [Issue!]! @OnDemand
+    stats: SprintStats! @OnDemand
+}
+
+type SprintMascot {
+    sprint: Sprint!
+
+    name: String!
+    species: String! # todo enum
+}
+
+enum SprintMascotSpecies {
+    STEGOSAURUS
+}
+
+type SprintStats {
+    Sprint: Sprint!
+
+    totalStoryPoints: Int!
+    averageStoryPoints: Float!
+    percentageStoryPointsCompleted: Float!
+    percentageStoryPointsInProgress: Float!
+    percentageStoryPointsNotStarted: Float!
+    issueCount: Int!
+    daysLeft: Int!
+    daysElapsed: Int!
+    percentageTimeElapsed: Float!
+}
+
+input CreateSprintInput {
+    name: String!
+    startDate: DateTime!
+    endDate: DateTime!
+
+    # todo animal info
+}
