@@ -22,7 +22,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 /**
  * Service for authorization checks. Can be used in Spring Security expressions using {@code @auth}.
@@ -31,9 +31,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class AuthService {
-
-    private static final String REALM_ACCESS_CLAIM = "realm_access";
-    private static final String SCRUM_GAME_ADMIN_ROLE = "scrum-game-admin";
 
     private final GlobalUserRepository     globalUserRepository;
     private final UserInProjectRepository  userInProjectRepository;
@@ -53,24 +50,6 @@ public class AuthService {
         } catch (IllegalArgumentException e) {
             throw new AccessDeniedException("Subject in JWT is not a valid UUID: " + subject, e);
         }
-    }
-
-    /**
-     * Checks if the currently authenticated user has the scrum-game-admin role in Keycloak. This is read from the
-     * realm_access claim in the JWT token.
-     *
-     * @return true if the user has the role, false otherwise
-     */
-    public boolean hasScrumGameAdminRole() {
-        Jwt jwt = getJwt();
-        var claim = jwt.getClaim(REALM_ACCESS_CLAIM);
-        if (claim instanceof Map<?, ?> map) {
-            var roles = map.get("roles");
-            if (roles instanceof List<?> list) {
-                return list.contains(SCRUM_GAME_ADMIN_ROLE);
-            }
-        }
-        return false;
     }
 
     /**

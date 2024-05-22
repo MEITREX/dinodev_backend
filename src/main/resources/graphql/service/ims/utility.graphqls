@@ -1,10 +1,6 @@
-type ImsSpecificData {
-    projectId: UUID!
-
-    currentUser: ImsUser! @OnDemand
-}
-
-type ImsUser {
+type BasicUserInfo {
     id: ID!
     isAdmin: Boolean!
+    username: String!
+    avatar: String
 }

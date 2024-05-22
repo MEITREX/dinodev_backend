@@ -24,10 +24,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -73,32 +70,6 @@ public class AuthServiceTest {
         assertThrows(AccessDeniedException.class, () -> authService.getCurrentUserId());
 
         verify(jwt, atLeastOnce()).getSubject();
-    }
-
-    @Test
-    public void testHasScrumGameAdminKeycloakRole() {
-        Jwt jwt = mock(Jwt.class);
-        when(jwt.getClaim("realm_access")).thenReturn(Map.of("roles", List.of("scrum-game-admin")));
-        injectJwtMock(jwt);
-
-        boolean hasRole = authService.hasScrumGameAdminRole();
-
-        assertThat(hasRole, is(true));
-
-        verify(jwt, atLeastOnce()).getClaim("realm_access");
-    }
-
-    @Test
-    public void testHasNoScrumGameAdminKeycloakRole() {
-        Jwt jwt = mock(Jwt.class);
-        when(jwt.getClaim("realm_access")).thenReturn(Map.of("roles", List.of("not-scrum-game-admin")));
-        injectJwtMock(jwt);
-
-        boolean hasRole = authService.hasScrumGameAdminRole();
-
-        assertThat(hasRole, is(false));
-
-        verify(jwt, atLeastOnce()).getClaim("realm_access");
     }
 
     @Test

@@ -2,23 +2,22 @@ package de.unistuttgart.iste.meitrex.scrumgame.api.user;
 
 import de.unistuttgart.iste.meitrex.common.exception.ResourceAlreadyExistsException;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
+import de.unistuttgart.iste.meitrex.generated.dto.BasicUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
-import de.unistuttgart.iste.meitrex.generated.dto.ImsUser;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsUtilityService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
@@ -37,16 +36,16 @@ public class MutationRegisterUserTest {
     private GlobalUserRepository globalUserRepository;
 
     @MockBean
-    private AuthService authService;
+    private AuthService   authService;
     @MockBean
-    private ImsUtilityService imsUtilityService;
+    private AuthConnector authConnector;
 
     @Test
     void testRegisterUser(GraphQlTester graphQlTester) {
         UUID userId = UUID.randomUUID();
         when(authService.getCurrentUserId()).thenReturn(userId);
-        ImsUser imsUser = ImsUser.builder().setId("test").setIsAdmin(false).build();
-        when(imsUtilityService.getCurrentUser()).thenReturn(imsUser);
+        BasicUserInfo basicUserInfo = BasicUserInfo.builder().setId("test").setIsAdmin(false).build();
+        when(authConnector.getUser()).thenReturn(Optional.of(basicUserInfo));
 
         CreateGlobalUserInput input = getSampleCreateGlobalUserInput();
 
@@ -72,15 +71,15 @@ public class MutationRegisterUserTest {
 
         // verify
         verify(authService, atLeastOnce()).getCurrentUserId();
-        verify(imsUtilityService, atLeastOnce()).getCurrentUser();
+        verify(authConnector, atLeastOnce()).getUser();
     }
 
     @Test
     void testRegisterAdminUser(GraphQlTester graphQlTester) {
         UUID userId = UUID.randomUUID();
         when(authService.getCurrentUserId()).thenReturn(userId);
-        ImsUser imsUser = ImsUser.builder().setId("test").setIsAdmin(true).build();
-        when(imsUtilityService.getCurrentUser()).thenReturn(imsUser);
+        BasicUserInfo basicUserInfo = BasicUserInfo.builder().setId("test").setIsAdmin(true).build();
+        when(authConnector.getUser()).thenReturn(Optional.of(basicUserInfo));
 
         GlobalUserRoleEntity expectedRole = GlobalUserRoleEntity.builder()
                 .name("ADMIN")
@@ -111,7 +110,7 @@ public class MutationRegisterUserTest {
 
         // verify
         verify(authService, atLeastOnce()).getCurrentUserId();
-        verify(imsUtilityService, atLeastOnce()).getCurrentUser();
+        verify(authConnector, atLeastOnce()).getUser();
     }
 
     @Test

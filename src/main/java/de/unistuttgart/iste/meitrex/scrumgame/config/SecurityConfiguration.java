@@ -1,7 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.config;
 
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AudienceValidator;
-import jakarta.annotation.Nullable;
+import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,16 +9,14 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
-import java.util.Base64;
+import java.util.*;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -28,16 +25,22 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
-    // URI to validate the JWT tokens. Defined in the application.properties file.
-    @Value("${meitrex.auth.issuer-uri:#{null}}")
-    @Nullable
-    private String issuerUri;
 
-    // Secret to validate the JWT tokens. Defined in the application.properties file.
-    // Used if the issuer URI is not defined.
-    @Value("${meitrex.auth.secret:#{null}}")
-    @Nullable
-    private String secret;
+    @Value("${meitrex.frontend.url}")
+    private String frontendUrl;
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Collections.singletonList(frontendUrl));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type", "X-Requested-With", "accept",
+                "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 
     /**
      * Configures the security for the development environment.
@@ -46,15 +49,14 @@ public class SecurityConfiguration {
     @Profile("dev")
     DefaultSecurityFilterChain springDevWebFilterChain(HttpSecurity http) throws Exception {
         return http
-                // disable CSRF for the GraphQL endpoint
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/graphql**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
-                // disable CORS
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/graphql**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, "/graphql**").permitAll()
+                        // for now: allow access to the WebSocket endpoint
+                        .requestMatchers("/graphql-ws**").permitAll()
                         // allow access to the GraphiQL interface
                         .requestMatchers("/graphiql**").permitAll()
                         .anyRequest().authenticated())
@@ -73,6 +75,7 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
                         // allow OPTIONS requests to the GraphQL endpoint
                         .requestMatchers(HttpMethod.OPTIONS, "/graphql**").permitAll()
@@ -83,32 +86,8 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile({"prod", "dev"})
-    public JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = initNimbusDecoder();
-        OAuth2TokenValidator<Jwt> withAudience = createAudienceValidator();
-
-        jwtDecoder.setJwtValidator(withAudience);
-
-        return jwtDecoder;
-    }
-
-    private OAuth2TokenValidator<Jwt> createAudienceValidator() {
-        if (issuerUri != null) {
-            OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuerUri);
-            return new DelegatingOAuth2TokenValidator<>(withIssuer, new AudienceValidator());
-        }
-
-        return new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(),
-                new AudienceValidator());
-    }
-
-    private NimbusJwtDecoder initNimbusDecoder() {
-        if (issuerUri != null) {
-            return JwtDecoders.fromOidcIssuerLocation(issuerUri);
-        } else {
-            SecretKey secretKey = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
-            return NimbusJwtDecoder.withSecretKey(secretKey).build();
-        }
+    public JwtDecoder jwtDecoder(AuthConnector authConnector) {
+        return authConnector.getJwtDecoder();
     }
 
 }
