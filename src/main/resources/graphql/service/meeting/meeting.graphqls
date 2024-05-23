@@ -1,0 +1,32 @@
+interface Meeting {
+    meetingType: MeetingType!
+    active: Boolean!
+    attendees: [MeetingAttendee!]!
+
+    projectId: UUID!
+}
+
+enum MeetingType {
+    PLANNING
+    RETROSPECTIVE
+    STANDUP
+}
+
+type MeetingAttendee {
+    userId: UUID!
+    state: UserState!
+    role: MeetingRole!
+    user: GlobalUser! @OnDemand
+}
+
+enum MeetingRole {
+    ATTENDEE
+    MEETING_LEADER
+}
+
+enum UserState {
+    ONLINE
+    OFFLINE
+    AWAY
+}
+
