@@ -20,7 +20,7 @@ public class SprintController {
 
     @SchemaMapping
     public Sprint createSprint(ProjectMutation projectMutation, @Argument CreateSprintInput input) {
-        return sprintService.createSprint(projectMutation.getProject().getId(), input);
+        return sprintService.createNewSprint(projectMutation.getProject().getId(), input);
     }
 
     @SchemaMapping
@@ -31,7 +31,13 @@ public class SprintController {
     @SchemaMapping
     @Nullable
     public Sprint currentSprint(Project project) {
-        return sprintService.findCurrentSprint(project.getId()).orElse(null);
+        return sprintService.findSprint(project.getId(), project.getCurrentSprintNumber()).orElse(null);
+    }
+
+    @SchemaMapping
+    @Nullable
+    public Sprint previousSprint(Project project) {
+        return sprintService.findSprint(project.getId(), project.getCurrentSprintNumber() - 1).orElse(null);
     }
 
     @SchemaMapping

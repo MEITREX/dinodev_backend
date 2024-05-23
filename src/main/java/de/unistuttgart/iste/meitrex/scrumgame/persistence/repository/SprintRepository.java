@@ -9,15 +9,9 @@ import java.util.*;
 @Repository
 public interface SprintRepository extends MeitrexRepository<SprintEntity, UUID> {
 
-
-    List<SprintEntity> findAllByProjectId(UUID projectId);
-
-    Optional<SprintEntity> findFirstByProjectIdOrderByNumberDesc(UUID projectId);
-
-    int countByProjectId(UUID projectId);
+    List<SprintEntity> findAllByProjectIdOrderByNumber(UUID projectId);
 
     Optional<SprintEntity> findByProjectIdAndNumber(UUID projectId, Integer sprintNumber);
-
 
     @Override
     default String getEntityName() {

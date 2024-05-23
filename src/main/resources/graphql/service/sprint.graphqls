@@ -2,32 +2,24 @@ type Sprint {
     project: Project!
 
     id: UUID!
+    name: String
+    animal: Animal
     number: Int!
 
     startDate: DateTime
     endDate: DateTime
 
     storyPointsPlanned: Int
-    sprintMascot: SprintMascot
+    customGoldChallengeReward: String
 
     issues: [Issue!]! @OnDemand
     stats: SprintStats! @OnDemand
 }
 
-type SprintMascot {
-    sprint: Sprint!
-
-    name: String!
-    species: String! # todo enum
-}
-
-enum SprintMascotSpecies {
-    STEGOSAURUS
-}
-
 type SprintStats {
     Sprint: Sprint!
 
+    successState: SprintSuccessState!
     totalStoryPoints: Int!
     averageStoryPoints: Float!
     percentageStoryPointsCompleted: Float!
@@ -39,10 +31,19 @@ type SprintStats {
     percentageTimeElapsed: Float!
 }
 
+enum SprintSuccessState {
+    IN_PROGRESS
+    UNKNOWN
+    FAILED
+    SUCCESS
+    SUCCESS_WITH_GOLD_CHALLENGE
+}
+
 input CreateSprintInput {
     name: String!
     startDate: DateTime!
     endDate: DateTime!
-
-    # todo animal info
+    storyPointsPlanned: Int!
+    animal: Animal!
+    customGoldChallengeReward: String
 }
