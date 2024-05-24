@@ -5,13 +5,12 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.Meeting
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.SprintEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Entity
@@ -38,8 +37,9 @@ public class ProjectEntity implements IWithId<UUID> {
     private String description;
 
     @Column
+    @Nullable
     @Setter
-    private int currentSprintNumber;
+    private Integer currentSprintNumber;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -61,7 +61,7 @@ public class ProjectEntity implements IWithId<UUID> {
     @Builder.Default
     private List<MeetingEntity> meetings = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "project_settings_id")
     @Setter
     private ProjectSettingsEntity projectSettings;

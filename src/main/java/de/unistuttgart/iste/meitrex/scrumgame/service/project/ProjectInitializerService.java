@@ -2,9 +2,9 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.project;
 
 import de.unistuttgart.iste.meitrex.generated.dto.CreateSprintInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.service.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.role.ProjectRoleService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,14 +28,16 @@ public class ProjectInitializerService {
         userRoleInProjectService.getOrCreateDefaultRole(project.getId());
 
         userInProjectService.createUserInProject(auth.getCurrentUserId(), project.getId());
-
         userInProjectService.grantRoleToUser(
                 auth.getCurrentUserId(),
                 project.getId(),
                 ProjectRoleService.ADMIN_ROLE_NAME);
 
-        for (int i = 1; i < project.getCurrentSprintNumber(); i++) {
-            sprintService.createSprint(project.getId(), CreateSprintInput.builder().build());
+        // create previous sprints
+        if (project.getCurrentSprintNumber() != null) {
+            for (int i = 1; i < project.getCurrentSprintNumber(); i++) {
+                sprintService.createSprintWithNumber(project, i, new CreateSprintInput());
+            }
         }
     }
 }

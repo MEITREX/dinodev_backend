@@ -9,11 +9,23 @@ public class ProjectFragments {
     public static final String PROJECT_SETTINGS_FRAGMENT = gql("""
             fragment ProjectSettingsFragment on ProjectSettings {
                 codeRepositorySettings {
-                    codeRepositoryName
+                    repositories {
+                        name
+                        url
+                        icon {
+                            mdiIcon
+                            path
+                        }
+                    }
                 }
                 imsSettings {
                     imsName
                     imsProjectId
+                    imsIcon {
+                        mdiIcon
+                        path
+                    }
+                    imsProjectUrl
                     imsIssueTemplateId
                     effortEstimationFieldName
                     sprintFieldName
@@ -39,8 +51,7 @@ public class ProjectFragments {
                         }
                     }
                 }
-            }
-            """);
+            }""");
 
     public static final String BASE_PROJECT_FRAGMENT = gql("""
                                                                    fragment ProjectFragment on Project {

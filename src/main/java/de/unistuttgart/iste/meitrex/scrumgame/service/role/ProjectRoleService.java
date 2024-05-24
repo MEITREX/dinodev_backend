@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.role;
 
-import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateProjectRoleInput;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
@@ -10,21 +9,16 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRol
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRoleRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service for managing project roles.
  */
 @Service
-@RequiredArgsConstructor
 public class ProjectRoleService
         extends AbstractCrudService<ProjectRoleId, ProjectRoleEntity, ProjectRole> {
 
@@ -33,7 +27,16 @@ public class ProjectRoleService
 
     private final ProjectRoleRepository projectRoleRepository;
     private final ProjectRepository     projectRepository;
-    private final ModelMapper           modelMapper;
+
+    public ProjectRoleService(
+            ProjectRoleRepository projectRoleRepository,
+            ProjectRepository projectRepository,
+            ModelMapper modelMapper
+    ) {
+        super(projectRoleRepository, modelMapper, ProjectRoleEntity.class, ProjectRole.class);
+        this.projectRoleRepository = projectRoleRepository;
+        this.projectRepository = projectRepository;
+    }
 
     public List<ProjectRole> getRolesOfProject(UUID projectId) {
         List<ProjectRoleEntity> roleEntities
@@ -108,23 +111,4 @@ public class ProjectRoleService
                 .project(projectRepository.findByIdOrThrow(projectId));
     }
 
-    @Override
-    protected Class<ProjectRoleEntity> getEntityClass() {
-        return ProjectRoleEntity.class;
-    }
-
-    @Override
-    protected Class<ProjectRole> getDtoClass() {
-        return ProjectRole.class;
-    }
-
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<ProjectRoleEntity, ProjectRoleId> getRepository() {
-        return projectRoleRepository;
-    }
 }

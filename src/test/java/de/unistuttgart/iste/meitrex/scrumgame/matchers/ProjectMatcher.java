@@ -95,14 +95,47 @@ public class ProjectMatcher {
 
     public static Matcher<CodeRepositorySettings> matchingCodeRepositorySettingsEntity(CodeRepositorySettingsEntity codeRepositorySettings) {
         return allOf(
-                hasProperty("codeRepositoryName",
-                        is(codeRepositorySettings.getCodeRepositoryName()))
+                hasProperty("repositories",
+                        containsInAnyOrder(each(codeRepositorySettings.getRepositories(),
+                                ProjectMatcher::matchingRepositoryDefinitionEntity)))
+        );
+    }
+
+    public static Matcher<RepositoryDefinition> matchingRepositoryDefinitionEntity(RepositoryDefinitionEntity repositoryDefinition) {
+        return allOf(
+                hasProperty("name", is(repositoryDefinition.getName())),
+                hasProperty("url", is(repositoryDefinition.getUrl())),
+                hasProperty("icon", matchingIcon(repositoryDefinition.getIcon()))
+        );
+    }
+
+    public static Matcher<Icon> matchingIcon(IconEmbeddable icon) {
+        return allOf(
+                hasProperty("mdiIcon", is(icon.getMdiIcon())),
+                hasProperty("path", is(icon.getPath()))
         );
     }
 
     public static <T> Matcher<T> matchingCodeRepositorySettingsInput(CodeRepositorySettingsInput codeRepositorySettingsInput) {
         return allOf(
-                hasProperty("codeRepositoryName", is(codeRepositorySettingsInput.getCodeRepositoryName()))
+                hasProperty("repositories",
+                        containsInAnyOrder(each(codeRepositorySettingsInput.getRepositories(),
+                                ProjectMatcher::matchingRepositoryDefinitionInput))
+                ));
+    }
+
+    public static <T> Matcher<T> matchingRepositoryDefinitionInput(RepositoryDefinitionInput repositoryDefinitionInput) {
+        return allOf(
+                hasProperty("name", is(repositoryDefinitionInput.getName())),
+                hasProperty("url", is(repositoryDefinitionInput.getUrl())),
+                hasProperty("icon", matchingIconInput(repositoryDefinitionInput.getIcon()))
+        );
+    }
+
+    public static <T> Matcher<T> matchingIconInput(IconInput iconInput) {
+        return allOf(
+                hasProperty("mdiIcon", is(iconInput.getMdiIcon())),
+                hasProperty("path", is(iconInput.getPath()))
         );
     }
 

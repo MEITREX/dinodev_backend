@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "ims_settings")
@@ -26,6 +24,14 @@ public class ImsSettingsEntity {
     @Column
     @Setter
     private String imsName;
+
+    @Embedded
+    @Setter
+    private IconEmbeddable imsIcon;
+
+    @Column
+    @Setter
+    private String imsProjectUrl;
 
     @Column
     @Setter
@@ -54,7 +60,5 @@ public class ImsSettingsEntity {
     @Setter
     @Builder.Default
     private List<IssuePriorityEmbeddable> issuePriorities = new ArrayList<>();
-
-
 
 }

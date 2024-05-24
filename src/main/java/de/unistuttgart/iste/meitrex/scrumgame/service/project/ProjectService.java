@@ -9,17 +9,12 @@ import de.unistuttgart.iste.meitrex.generated.dto.UpdateProjectInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.ProjectMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Service for managing projects.
@@ -28,16 +23,18 @@ import java.util.UUID;
  */
 @Service
 @Slf4j
-@RequiredArgsConstructor
-@Getter(AccessLevel.PROTECTED)
 public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Project> {
 
-    private final Class<ProjectEntity> entityClass = ProjectEntity.class;
-    private final Class<Project>       dtoClass    = Project.class;
-
-    private final ProjectRepository repository;
     private final ProjectInitializerService projectInitializerService;
-    private final ModelMapper modelMapper;
+
+    public ProjectService(
+            ProjectRepository repository,
+            ModelMapper modelMapper,
+            ProjectInitializerService projectInitializerService
+    ) {
+        super(repository, modelMapper, ProjectEntity.class, Project.class);
+        this.projectInitializerService = projectInitializerService;
+    }
 
     /**
      * Get all projects.
@@ -80,6 +77,10 @@ public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Pro
         projectInitializerService.initializeNewProject(projectEntity);
 
         return convertToDto(projectEntity);
+    }
+
+    public ProjectEntity getProjectEntity(UUID projectId) {
+        return getRepository().findByIdOrThrow(projectId);
     }
 
     /**

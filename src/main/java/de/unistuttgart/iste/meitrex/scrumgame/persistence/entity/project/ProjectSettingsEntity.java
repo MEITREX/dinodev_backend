@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "project_settings")
@@ -33,7 +31,7 @@ public class ProjectSettingsEntity {
     @Setter
     private ImsSettingsEntity imsSettings;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     @Setter
     private List<DefinitionOfDoneItemEntity> definitionOfDone = new ArrayList<>();
