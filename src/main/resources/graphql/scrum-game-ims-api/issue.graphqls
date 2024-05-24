@@ -8,7 +8,7 @@ type Issue {
     id: ID!
 
     """
-    Unique identifier of the scrum game the issue belongs to.
+    Unique identifier of the project the issue belongs to.
     """
     projectId: UUID!
 
@@ -18,7 +18,7 @@ type Issue {
     title: String!
 
     """
-    Detailed description of the issue. GitLab-flavored markdown is supported.
+    Detailed description of the issue. Markdown is supported.
     """
     description: String
 
@@ -57,6 +57,32 @@ type Issue {
     List of user UUIDs representing the assignees of the issue.
     """
     assigneeIds: [UUID!]!
+
+    """
+    List of events / timeline items of the issue.
+    """
+    issueEvents: [Event!]! @OnDemand
+
+    """
+    Labels associated with the issue.
+    """
+    labels: [String!]!
+
+    """
+    Url to the issue in the issue management system.
+    """
+    issueUrl: String!
+
+    """
+    Children issue ids of the issue.
+    """
+    childrenIssueIds: [ID!]!
+
+    """
+    Parent issue id of the issue.
+    """
+    parentIssueId: ID
+
 }
 
 """

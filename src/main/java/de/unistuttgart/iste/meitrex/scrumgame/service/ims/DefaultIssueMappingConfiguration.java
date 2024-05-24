@@ -3,14 +3,13 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 import de.unistuttgart.iste.meitrex.generated.dto.ImsSettings;
 import de.unistuttgart.iste.meitrex.generated.dto.IssuePriorityConfiguration;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.IssuePriorityMapping;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.IssueStateConverter;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.UserIdMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusIssueMappingConfiguration;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssuePriorityMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueStateConverter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
+import java.util.stream.*;
 
 @RequiredArgsConstructor(staticName = "of")
 public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConfiguration {
@@ -36,11 +35,6 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
     }
 
     @Override
-    public UserIdMapping userIdMapping() {
-        return UserIdMapping.identity();
-    }
-
-    @Override
     public String getSprintFieldName() {
         return getImsSettings().getSprintFieldName();
     }
@@ -62,5 +56,10 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
                         .collect(Collectors.toMap(
                                 IssuePriorityConfiguration::getImsPriorityId,
                                 IssuePriorityConfiguration::getIssuePriority)));
+    }
+
+    @Override
+    public String getGropiusBaseUrl() {
+        return System.getProperty("gropius.baseUrl");
     }
 }

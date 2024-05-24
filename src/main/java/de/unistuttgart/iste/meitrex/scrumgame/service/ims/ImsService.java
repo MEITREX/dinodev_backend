@@ -2,30 +2,33 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsConnector;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.IssueMappingConfiguration;
 import de.unistuttgart.iste.meitrex.scrumgame.util.DodConfirmStateFormatter;
+import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class ImsService {
 
-    private final ImsConnector<IssueMappingConfiguration> imsConnector;
-
+    private final ImsConnectorFactory imsConnectorFactory;
+    
     public List<Issue> getIssues(Project project) {
-        IssueMappingConfiguration mappingConfiguration = DefaultIssueMappingConfiguration.of(project);
-        return imsConnector.getIssues(project.getId(), mappingConfiguration);
+        return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
     }
 
     public Optional<Issue> findIssue(Project project, String id) {
-        return imsConnector.findIssue(id, DefaultIssueMappingConfiguration.of(project));
+        return imsConnectorFactory.getImsConnectorForProject(project).findIssue(id);
+    }
+
+    public Optional<Issue> findIssue(UUID projectId, String issueId) {
+        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssue(issueId);
     }
 
     public ProjectBoard getProjectBoard(Project project) {
@@ -42,17 +45,13 @@ public class ImsService {
     }
 
     public Issue changeIssueTitle(IssueMutation issueMutation, String title) {
-        return imsConnector.changeIssueTitle(
-                issueMutation.getIssueId(),
-                title,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .changeIssueTitle(issueMutation.getIssueId(), title);
     }
 
     public Issue changeIssueDescription(IssueMutation issueMutation, String description) {
-        return imsConnector.changeIssueDescription(
-                issueMutation.getIssueId(),
-                description,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .changeIssueDescription(issueMutation.getIssueId(), description);
     }
 
     public Issue changeIssueState(IssueMutation issueMutation, String stateName) {
@@ -61,28 +60,30 @@ public class ImsService {
 
     public Issue changeIssueState(IssueMutation issueMutation, IssueState state) {
         Project project = issueMutation.getProject();
-        Issue issue = imsConnector.changeIssueState(
-                issueMutation.getIssueId(),
-                state,
-                getIssueMappingConfiguration(project));
+        Issue issue = imsConnectorFactory.getImsConnectorForProject(project)
+                .changeIssueState(issueMutation.getIssueId(), state);
 
         // set sprint if necessary
-        if (isMovedOutOfSprint(state)) {
+        if (StateUtils.isMovedOutOfSprint(issue.getState(), state)) {
             changeSprint(issueMutation, null);
-        } else if (isMovedIntoSprint(state, issue, project)) {
+        } else if (StateUtils.isMovedIntoSprint(issue.getState(), state)
+                   && !Objects.equals(issue.getSprintNumber(), project.getCurrentSprintNumber())) {
             changeSprint(issueMutation, project.getCurrentSprintNumber());
         }
 
         return issue;
     }
 
-    private static boolean isMovedIntoSprint(IssueState state, Issue issue, Project project) {
-        return state.getType() != IssueStateType.DONE
-               && !Objects.equals(issue.getSprintNumber(), project.getCurrentSprintNumber());
+    public void changeIssueState(IssueMutation issueMutation, IssueStateType issueStateType) {
+        IssueState issueState = getIssueStateByType(issueStateType, issueMutation.getProject());
+        changeIssueState(issueMutation, issueState);
     }
 
-    private static boolean isMovedOutOfSprint(IssueState state) {
-        return state.getType() == IssueStateType.BACKLOG;
+    private static IssueState getIssueStateByType(IssueStateType issueStateType, Project project) {
+        return project.getProjectSettings().getImsSettings().getIssueStates().stream()
+                .filter(state -> state.getType() == issueStateType)
+                .findFirst()
+                .orElseThrow(() -> new MeitrexNotFoundException("State not found: " + issueStateType));
     }
 
     private static IssueState getIssueStateByName(Project project, String stateName) {
@@ -94,17 +95,13 @@ public class ImsService {
     }
 
     public Issue changeIssueType(IssueMutation issueMutation, String typeName) {
-        return imsConnector.changeIssueType(
-                issueMutation.getIssueId(),
-                typeName,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .changeIssueType(issueMutation.getIssueId(), typeName);
     }
 
     public Issue assignIssue(IssueMutation issueMutation, UUID assigneeId) {
-        return imsConnector.assignIssue(
-                issueMutation.getIssueId(),
-                assigneeId,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .assignIssue(issueMutation.getIssueId(), assigneeId);
     }
 
     public Map<IssueStateInBoard, List<Issue>> getIssuesByStates(List<IssueStateInBoard> states) {
@@ -135,29 +132,34 @@ public class ImsService {
         return resultMap;
     }
 
+    public List<Issue> getIssuesByIds(UUID projectId, List<String> issueIds) {
+        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssuesBatched(issueIds);
+    }
+
     public Issue changeSprint(IssueMutation issueMutation, Integer sprintNumber) {
-        return imsConnector.changeSprintOfIssue(
-                issueMutation.getIssueId(),
-                sprintNumber,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .changeSprintOfIssue(issueMutation.getIssueId(), sprintNumber);
     }
 
     public Issue finishIssue(IssueMutation issueMutation,
             List<DefinitionOfDoneConfirmState> dodConfirmStates,
             String doneStateName) {
-        log.info("Finishing issue {} with DOD confirm states: {}", issueMutation.getIssueId(), dodConfirmStates);
         String comment = DodConfirmStateFormatter.formatDodConfirmStates(dodConfirmStates);
 
-        imsConnector.addCommentToIssue(
-                issueMutation.getIssueId(),
-                comment,
-                getIssueMappingConfiguration(issueMutation.getProject()));
+        imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .addCommentToIssue(issueMutation.getIssueId(), comment);
 
         return changeIssueState(issueMutation, doneStateName);
     }
 
-    protected IssueMappingConfiguration getIssueMappingConfiguration(Project project) {
-        return DefaultIssueMappingConfiguration.of(project);
+    public void changeIssueEstimation(IssueMutation issueMutation, TShirtSizeEstimation estimation) {
+        imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .changeEstimationOfIssue(issueMutation.getIssueId(), estimation);
+    }
+
+    public List<CreateEventInput> getEventsForIssue(Issue issue, OffsetDateTime since) {
+        return imsConnectorFactory.getImsConnectorForProject(issue.getProjectId())
+                .getEventsForIssue(issue.getId(), since);
     }
 
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {

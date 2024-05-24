@@ -9,9 +9,7 @@ import org.springframework.graphql.data.method.annotation.BatchMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -55,6 +53,27 @@ public class ImsController {
         return imsService.getIssuesBySprints(sprints);
     }
 
+    @SchemaMapping(typeName = "IssueEstimation", field = "issue")
+    public Issue issuesOfEstimations(IssueEstimation estimation) {
+        return imsService
+                .findIssue(estimation.getPlanningMeeting().getProjectId(), estimation.getIssueId())
+                .orElse(null);
+    }
+
+    @SchemaMapping
+    public List<Issue> sprintIssues(SprintGoalVoting sprintGoalVoting) {
+        return imsService.getIssuesByIds(
+                sprintGoalVoting.getPlanningMeeting().getProjectId(),
+                sprintGoalVoting.getSprintIssueIds());
+    }
+
+    @SchemaMapping
+    public List<Issue> nonSprintIssues(SprintGoalVoting sprintGoalVoting) {
+        return imsService.getIssuesByIds(
+                sprintGoalVoting.getPlanningMeeting().getProjectId(),
+                sprintGoalVoting.getNonSprintIssueIds());
+    }
+
     /* IssueMutation mappings */
 
     @SchemaMapping
@@ -91,7 +110,6 @@ public class ImsController {
     public Issue finishIssue(IssueMutation issueMutation,
             @Argument List<DefinitionOfDoneConfirmState> dodConfirmStates,
             @Argument String doneStateName) {
-        log.info("Finishing issue {} with DOD confirm states: {}", issueMutation.getIssueId(), dodConfirmStates);
         return imsService.finishIssue(issueMutation, dodConfirmStates, doneStateName);
     }
 
