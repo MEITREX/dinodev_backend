@@ -7,7 +7,7 @@ type Project {
 
     currentSprintNumber: Int
     currentSprint: Sprint @OnDemand
-    # previousSprint: Sprint
+    previousSprint: Sprint @OnDemand
     sprints: [Sprint!]! @OnDemand
 
     users: [UserInProject!]! @OnDemand
@@ -26,10 +26,9 @@ type Project {
     issues: [Issue!]! @OnDemand
     issue(id: UUID!): Issue @OnDemand
     projectBoard: ProjectBoard! @OnDemand
-    imsSpecificData: ImsSpecificData! @OnDemand
 
     # events
-    events(page: Int, size: Int, minVisibility: EventVisibility): [Event!]! @OnDemand
+    events(page: Int, size: Int): [Event!]! @OnDemand
 }
 
 interface ProjectDependent {
@@ -52,12 +51,16 @@ type DefinitionOfDoneItem {
 
 type ImsSettings {
     imsName: String!
-    issueStates: [IssueState!]!
+    imsIcon: Icon!
     imsProjectId: ID!
+    imsProjectUrl: String!
+
+    issueStates: [IssueState!]!
     imsIssueTemplateId: ID!
 
     effortEstimationFieldName: String!
     sprintFieldName: String!
+    partOfRelationId: ID!
 
     issuePriorities: [IssuePriorityConfiguration!]!
 }
@@ -68,7 +71,18 @@ type IssuePriorityConfiguration {
 }
 
 type CodeRepositorySettings {
-    codeRepositoryName: String!
+    repositories: [RepositoryDefinition!]!
+}
+
+type RepositoryDefinition {
+    name: String!
+    url: String!
+    icon: Icon!
+}
+
+type Icon {
+    path: String
+    mdiIcon: String
 }
 
 input CreateProjectInput {
@@ -96,12 +110,16 @@ input ProjectSettingsInput {
 
 input ImsSettingsInput {
     imsName: String!
+    imsIcon: IconInput!
     imsProjectId: ID!
+    imsProjectUrl: String!
+
     issueStates: [IssueStateInput!]!
     imsIssueTemplateId: ID!
 
     effortEstimationFieldName: String!
     sprintFieldName: String!
+    partOfRelationId: ID!
 
     issuePriorities: [IssuePriorityInput!]!
 }
@@ -112,7 +130,18 @@ input IssuePriorityInput {
 }
 
 input CodeRepositorySettingsInput {
-    codeRepositoryName: String!
+    repositories: [RepositoryDefinitionInput!]!
+}
+
+input RepositoryDefinitionInput {
+    name: String! @NotBlank
+    url: String! @NotBlank
+    icon: IconInput!
+}
+
+input IconInput {
+    path: String
+    mdiIcon: String
 }
 
 input DefinitionOfDoneItemInput {
@@ -131,12 +160,16 @@ type ProjectMutation {
     project: Project!
 
     joinMeeting(type: MeetingType!): Meeting! @OnDemand
-    leaveMeeting(type: MeetingType!): Meeting! @OnDemand
+    leaveMeeting(type: MeetingType!): Meeting @OnDemand
     pingMeeting(type: MeetingType!): Meeting! @OnDemand
     promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
 
     createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting! @OnDemand
     mutatePlanningMeeting: PlanningMeetingMutation! @OnDemand
+    createStandupMeeting(input: StandupMeetingInput!): StandupMeeting! @OnDemand
+    mutateStandupMeeting: StandupMeetingMutation! @OnDemand
+    createRetrospectiveMeeting(input: RetrospectiveMeetingInput!): RetrospectiveMeeting! @OnDemand
+    mutateRetrospectiveMeeting: RetrospectiveMeetingMutation! @OnDemand
 
     createRole(input: CreateProjectRoleInput!): ProjectRole! @OnDemand
     updateRole(name: String!, input: UpdateProjectRoleInput!): ProjectRole! @OnDemand
@@ -147,7 +180,4 @@ type ProjectMutation {
     mutateIssue(id: ID!): IssueMutation! @OnDemand
     createIssue(input: CreateIssueInput!): Issue! @OnDemand
 
-    createEventType(input: CreateEventTypeInput!): EventType! @OnDemand
-    updateEventType(id: UUID!, input: UpdateEventTypeInput!): EventType! @OnDemand
-    deleteEventType(id: UUID!): Boolean! @OnDemand
 }

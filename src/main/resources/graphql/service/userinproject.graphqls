@@ -1,29 +1,23 @@
-type UserInProject implements GlobalUserDependent & ProjectDependent {
+type UserInProject implements ProjectDependent {
     roles: [ProjectRole!]!
 
-    privateInfo: PrivateUserInfo! @OnDemand
+    userStats: UserStats! @OnDemand
 
     userId: UUID!
     user: GlobalUser! @OnDemand
 
     projectId: UUID!
     project: Project! @OnDemand
-}
 
-type PrivateUserInfo {
-    # stats: UserStats!
-    xp: Int!
-    level: Int!
+    publicEvents(size: Int, page: Int): [Event!]! @OnDemand
 
+    achievements: [AchievementProgress!]! @OnDemand
 }
 
 type UserStats {
-    user: GlobalUser!
-    project: Project!
+    xp: Int!
+    xpToNextLevel: Int!
+    level: Int!
 
-    commits: Int!
-    issuesCreated: Int!
-    issuesClosed: Int!
-    storyPoints: Int!
-    hoursWorked: Int!
+    virtualCurrency: Int!
 }

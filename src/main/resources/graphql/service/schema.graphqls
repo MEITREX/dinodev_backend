@@ -17,6 +17,11 @@ type Mutation {
     createGlobalUserRole(input: CreateGlobalUserRoleInput!): GlobalUserRole!
     updateGlobalUserRole(name: String!, input: UpdateGlobalUserRoleInput!): GlobalUserRole!
     deleteGlobalUserRole(name: String!): Boolean!
+
+    # event types
+    createEventType(input: CreateEventTypeInput!): EventType!
+    updateEventType(id: String!, input: UpdateEventTypeInput!): EventType!
+    deleteEventType(id: String!): Boolean!
 }
 
 type Query {
@@ -28,11 +33,23 @@ type Query {
     globalUsers: [GlobalUser!]!
     globalUser(id: UUID!): GlobalUser
     currentUser: GlobalUser
+    currentUserInfo: BasicUserInfo
 
     # roles
     globalUserRoles: [GlobalUserRole!]!
     globalUserRole(name: String!): GlobalUserRole
+
+    # event types
+    eventTypes: [EventType!]!
+    eventType(id: UUID!): EventType
+
 }
 
 type Subscription {
+    meeting(projectId: UUID!, meetingType: MeetingType!): Meeting
+    planningMeeting(projectId: UUID!): PlanningMeeting
+    standupMeeting(projectId: UUID!): StandupMeeting!
+    events(projectId: UUID!): [Event!]!
+    #    retrospectiveMeetingUpdated(projectId: UUID!): RetrospectiveMeeting!
+
 }

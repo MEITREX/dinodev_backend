@@ -2,25 +2,23 @@ type GlobalUser {
     id: UUID!
     username: String!
     avatar: String
+    vcsUserId: String!
     roles: [GlobalUserRole!]!
 
     userInProject(projectId: UUID!): UserInProject
     userInProjects: [UserInProject!]! @OnDemand
 }
 
-interface GlobalUserDependent {
-    userId: UUID!
-    user: GlobalUser! @OnDemand
-}
-
 input CreateGlobalUserInput {
-    username: String!
+    username: String! @NotBlank
     avatar: String
+    vcsUserId: String!
 }
 
 input UpdateGlobalUserInput {
-    username: String!
+    username: String! @NotBlank
     avatar: String
+    vcsUserId: String! @NotBlank
 }
 
 
