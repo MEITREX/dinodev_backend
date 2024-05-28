@@ -26,7 +26,7 @@ public class DefinitionOfDoneItemEntity {
     private String  text;
     private boolean required;
 
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.EAGER,
                cascade = CascadeType.ALL,
                orphanRemoval = true)
     @Builder.Default

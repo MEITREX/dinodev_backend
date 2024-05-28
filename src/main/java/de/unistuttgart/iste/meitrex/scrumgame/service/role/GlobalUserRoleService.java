@@ -22,11 +22,17 @@ import java.util.Optional;
  * Service for managing global user roles.
  */
 @Service
-@RequiredArgsConstructor
 public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUserRoleEntity, GlobalUserRole> {
 
     private final GlobalUserRoleRepository globalUserRoleRepository;
-    private final ModelMapper modelMapper;
+
+    public GlobalUserRoleService(
+            ModelMapper modelMapper,
+            GlobalUserRoleRepository globalUserRoleRepository
+    ) {
+        super(globalUserRoleRepository, modelMapper, GlobalUserRoleEntity.class, GlobalUserRole.class);
+        this.globalUserRoleRepository = globalUserRoleRepository;
+    }
 
     public List<GlobalUserRole> getAllGlobalUserRoles() {
         return getAll();
@@ -74,26 +80,6 @@ public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUse
                 // add all global privileges to the admin role
                 .globalPrivileges(Arrays.asList(GlobalPrivilege.values()))
                 .build());
-    }
-
-    @Override
-    protected Class<GlobalUserRoleEntity> getEntityClass() {
-        return GlobalUserRoleEntity.class;
-    }
-
-    @Override
-    protected Class<GlobalUserRole> getDtoClass() {
-        return GlobalUserRole.class;
-    }
-
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<GlobalUserRoleEntity, String> getRepository() {
-        return globalUserRoleRepository;
     }
 
 }

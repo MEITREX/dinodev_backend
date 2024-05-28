@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +16,7 @@ import lombok.NoArgsConstructor;
 public class IconEmbeddable {
 
     private String mdiIcon;
+    @Column(columnDefinition = "TEXT")
     private String path;
 
 }

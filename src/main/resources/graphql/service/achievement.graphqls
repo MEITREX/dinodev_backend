@@ -1,0 +1,13 @@
+type Achievement {
+    identifier: String!
+    name: String!
+    description: String!
+    goal: Int!
+}
+
+type AchievementProgress {
+    achievement: Achievement!
+    progress: Int!
+    completed: Boolean!
+}
+

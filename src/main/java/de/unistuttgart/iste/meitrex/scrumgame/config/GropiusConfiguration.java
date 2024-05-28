@@ -51,11 +51,6 @@ public class GropiusConfiguration {
         return new GraphQlRequestExecutor(gropiusGraphQlClientWithAuthTokenSupplier);
     }
 
-    @Bean
-    public ImsConnector imsConnector(GraphQlRequestExecutor graphQlRequestExecutor) {
-        return new GropiusConnector(graphQlRequestExecutor);
-    }
-
     // Secret to validate the JWT tokens. Defined in the application.properties file.
     @Value("${gropius.auth.secret:#{null}}")
     @Nullable

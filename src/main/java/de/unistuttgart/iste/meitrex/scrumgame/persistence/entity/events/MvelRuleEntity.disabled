@@ -1,0 +1,78 @@
+package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events;
+
+import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.rulesengine.eventtype.PredefinedEventTypeRepository;
+import de.unistuttgart.iste.meitrex.rulesengine.eventtype.PredefinedEventTypes;
+import de.unistuttgart.iste.meitrex.rulesengine.rules.IRule;
+import de.unistuttgart.iste.meitrex.rulesengine.rules.IRuleDelegate;
+import de.unistuttgart.iste.meitrex.rulesengine.rules.MvelRule;
+import jakarta.annotation.Nullable;
+import jakarta.persistence.*;
+import lombok.*;
+import lombok.experimental.Accessors;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+@Entity
+@Table(name = "mvel_rule")
+@Getter
+@ToString(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(of = "id")
+@Accessors(chain = true)
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class MvelRuleEntity implements IRuleDelegate, IWithId<UUID> {
+
+    @Id
+    @GeneratedValue
+    private UUID id;
+
+    private String mvelExpression;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Nullable
+    @Setter
+    private UserDefinedEventTypeEntity dbTriggerEventType;
+
+    private UUID triggerEventTypeId;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @Nullable
+    @Setter
+    private UserDefinedEventTypeEntity dbResponseEventType;
+
+    private UUID responseEventTypeId;
+
+    @ElementCollection
+    @Builder.Default
+    private Map<String, String> fieldScripts = new HashMap<>();
+
+    @Transient
+    private transient MvelRule rule;
+
+    @Override
+    public IRule getRule() {
+        if (rule == null) {
+            rule = new MvelRule(mvelExpression, fieldScripts, getResponseEventType(), getTriggerEventType());
+        }
+        return rule;
+    }
+
+    public IEventType getTriggerEventType() {
+        return PredefinedEventTypeRepository.getInstance()
+                .findById(triggerEventTypeId)
+                .or(() -> Optional.ofNullable(dbTriggerEventType))
+                .orElse(PredefinedEventTypes.UNKNOWN);
+    }
+
+    public IEventType getResponseEventType() {
+        return PredefinedEventTypeRepository.getInstance()
+                .findById(responseEventTypeId)
+                .or(() -> Optional.ofNullable(dbResponseEventType))
+                .orElse(PredefinedEventTypes.UNKNOWN);
+    }
+}

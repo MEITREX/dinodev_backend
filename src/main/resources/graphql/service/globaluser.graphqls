@@ -8,11 +8,6 @@ type GlobalUser {
     userInProjects: [UserInProject!]! @OnDemand
 }
 
-interface GlobalUserDependent {
-    userId: UUID!
-    user: GlobalUser! @OnDemand
-}
-
 input CreateGlobalUserInput {
     username: String!
     avatar: String

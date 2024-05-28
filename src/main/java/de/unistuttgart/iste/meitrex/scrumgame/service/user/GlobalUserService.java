@@ -1,48 +1,57 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
-import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
-import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
-import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserInput;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsUtilityService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.role.GlobalUserRoleService;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntity, GlobalUser> {
 
-    private final AuthService          auth;
-    private final GlobalUserRepository globalUserRepository;
-    private final ModelMapper          modelMapper;
+    private final AuthService           auth;
+    private final GlobalUserRepository  globalUserRepository;
     private final GlobalUserRoleService globalUserRoleService;
-    private final ImsUtilityService    imsUtilityService;
+    private final AuthConnector         authConnector;
+
+    public GlobalUserService(
+            ModelMapper modelMapper,
+            AuthService auth,
+            GlobalUserRepository globalUserRepository,
+            GlobalUserRoleService globalUserRoleService,
+            AuthConnector authConnector
+    ) {
+        super(globalUserRepository, modelMapper, GlobalUserEntity.class, GlobalUser.class);
+        this.auth = auth;
+        this.globalUserRepository = globalUserRepository;
+        this.globalUserRoleService = globalUserRoleService;
+        this.authConnector = authConnector;
+    }
 
     public List<GlobalUser> getAllGlobalUsers() {
         return getAll();
     }
 
     public Optional<GlobalUser> findGlobalUser(UUID userId) {
+        if (userId == null) {
+            return Optional.empty();
+        }
         return find(userId);
     }
 
-    public GlobalUser getGlobalUserOrThrow(UUID userId) {
-        return getOrThrow(userId);
+    public List<GlobalUser> findUsersBatched(List<UUID> userIds) {
+        List<GlobalUserEntity> entities = globalUserRepository.findAllByIdPreservingOrder(userIds);
+        return convertToDtos(entities);
     }
 
     @PreAuthorize("@auth.hasPrivilegesOfGlobalRole(#roleName) and @auth.hasPrivilege(@globalPrivileges.CHANGE_ROLES)")
@@ -86,7 +95,7 @@ public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntit
     private List<GlobalUserRoleEntity> getRolesForNewUser() {
         List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
-        if (auth.hasScrumGameAdminRole() || isAdminInIms()) {
+        if (isAdminInIms()) {
             roles.add(globalUserRoleService.getOrCreateAdminRole());
         }
 
@@ -94,26 +103,7 @@ public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntit
     }
 
     private boolean isAdminInIms() {
-        return imsUtilityService.getCurrentUser().getIsAdmin();
+        return authConnector.getUser().map(BasicUserInfo::getIsAdmin).orElse(false);
     }
 
-    @Override
-    protected Class<GlobalUserEntity> getEntityClass() {
-        return GlobalUserEntity.class;
-    }
-
-    @Override
-    protected Class<GlobalUser> getDtoClass() {
-        return GlobalUser.class;
-    }
-
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<GlobalUserEntity, UUID> getRepository() {
-        return globalUserRepository;
-    }
 }

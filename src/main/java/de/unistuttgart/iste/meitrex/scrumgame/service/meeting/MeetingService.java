@@ -67,15 +67,56 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
     }
 
     public Meeting leaveMeeting(UUID projectId, MeetingType type) {
+        if (findActiveMeeting(projectId, type, Meeting.class).isEmpty()) {
+            return null;
+        }
         return updateMeeting(projectId, type, entity -> {
             UUID currentUserId = authService.getCurrentUserId();
             updateMeetingAttendee(entity, currentUserId, attendee -> attendee.setState(UserState.OFFLINE));
         });
     }
 
-    public Flux<Meeting> getMeetingUpdates(UUID projectId, MeetingType type) {
-        return meetingSubscriptionPublisher.getEventStream()
-                .filter(meeting -> meeting.getProjectId().equals(projectId) && meeting.getMeetingType() == type);
+    /**
+     * Retrieves a flux stream of the currently active  meeting for the given project ID that emits the current
+     * state of the meeting followed by any updates to the planning meeting. If no active meeting is
+     * found for the project ID, the stream will be empty until a new meeting is created.
+     *
+     * @implNote the meeting type parameter could maybe be removed in the future.
+     * @param projectId the ID of the project for which to retrieve meeting updates
+     * @return a Flux stream of updated Meeting objects
+     */
+    public <T extends Meeting> Flux<T> getMeetingUpdates(UUID projectId, MeetingType meetingType, Class<T> meetingClass) {
+        try {
+            Flux<T> meetingUpdatesFlux = meetingSubscriptionPublisher.getEventStream()
+                    .filter(meeting -> meeting.getProjectId().equals(projectId) && meeting.getMeetingType() == meetingType)
+                    .ofType(meetingClass);
+
+            Optional<T> activeMeeting = findActiveMeeting(projectId, meetingType, meetingClass);
+
+            if (activeMeeting.isPresent()) {
+                return meetingUpdatesFlux.startWith(activeMeeting.get());
+            }
+
+            return meetingUpdatesFlux;
+        } catch (Exception e) {
+            log.error("Error while getting standup meeting updates", e);
+            return Flux.empty();
+        }
+    }
+
+    public <T extends Meeting> Optional<T> findActiveMeeting(UUID projectId, MeetingType meetingType, Class<T> meetingClass) {
+        return repository.findTopByProjectIdAndMeetingTypeAndActive(projectId, meetingType, true)
+                .map(meeting -> getModelMapper().map(meeting, meetingClass));
+    }
+
+    public List<MeetingAttendeeEmbeddable> initMeetingAttendees(UUID meetingLeaderId) {
+        List<MeetingAttendeeEmbeddable> attendees = new ArrayList<>();
+        attendees.add(MeetingAttendeeEmbeddable.builder()
+                .setUserId(meetingLeaderId)
+                .setRole(MeetingRole.MEETING_LEADER)
+                .setState(UserState.ONLINE)
+                .build());
+        return attendees;
     }
 
     protected void publishMeetingUpdated(Meeting meeting) {

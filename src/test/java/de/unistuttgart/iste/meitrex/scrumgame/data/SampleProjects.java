@@ -45,6 +45,7 @@ public class SampleProjects {
                                 .setImsIssueTemplateId("Test IMS Issue Template ID")
                                 .setEffortEstimationFieldName("Test Effort Estimation Field Name")
                                 .setSprintFieldName("Test Sprint Field Name")
+                                .setPartOfRelationId("Test Part Of Relation ID")
                                 .setIssuePriorities(List.of(
                                         IssuePriorityInput.builder()
                                                 .setImsPriorityId("Test IMS Priority ID")
@@ -118,6 +119,7 @@ public class SampleProjects {
                                 .setImsProjectUrl("Updated Test IMS Project URL")
                                 .setEffortEstimationFieldName("Updated Test Effort Estimation Field Name")
                                 .setSprintFieldName("Updated Test Sprint Field Name")
+                                .setPartOfRelationId("Updated Test Part Of Relation ID")
                                 .setIssuePriorities(List.of(
                                         IssuePriorityInput.builder()
                                                 .setImsPriorityId("Updated Test IMS Priority ID")
@@ -190,6 +192,7 @@ public class SampleProjects {
                                 .imsIssueTemplateId("Test IMS Issue Template ID")
                                 .effortEstimationFieldName("Test Effort Estimation Field Name")
                                 .sprintFieldName("Test Sprint Field Name")
+                                .partOfRelationId("Test Part Of Relation ID")
                                 .issuePriorities(new ArrayList<>(List.of(
                                         IssuePriorityEmbeddable.builder()
                                                 .imsPriorityId("Test IMS Priority ID")

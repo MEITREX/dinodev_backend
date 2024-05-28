@@ -22,16 +22,26 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Getter(AccessLevel.PROTECTED)
 public class UserInProjectService
         extends AbstractCrudService<UserProjectId, UserInProjectEntity, UserInProject> {
 
     private final UserInProjectRepository repository;
-    private final ModelMapper                     modelMapper;
     private final AuthService                     authService;
     private final UserInProjectInitializerService userInProjectInitializerService;
+
+    public UserInProjectService(
+            UserInProjectRepository repository,
+            AuthService authService,
+            UserInProjectInitializerService userInProjectInitializerService,
+            ModelMapper modelMapper
+    ) {
+        super(repository, modelMapper, UserInProjectEntity.class, UserInProject.class);
+        this.repository = repository;
+        this.authService = authService;
+        this.userInProjectInitializerService = userInProjectInitializerService;
+    }
 
     /**
      * Finds a user in a project.
@@ -92,7 +102,7 @@ public class UserInProjectService
                 .findByIdOrThrow(new UserProjectId(userId, projectId))
                 .getPrivateInfo();
 
-        return modelMapper.map(privateInfo, PrivateUserInfo.class);
+        return getModelMapper().map(privateInfo, PrivateUserInfo.class);
     }
 
     public UserInProject createUserInProject(UUID userId, UUID projectId) {
@@ -118,16 +128,6 @@ public class UserInProjectService
     public List<UserInProject> getUsers(UUID projectId, List<UUID> userIds) {
         List<UserInProject> allUsers = getUsersInProjectByProjectId(projectId);
         return MeitrexCollectionUtils.sortByKeys(allUsers, userIds, UserInProject::getUserId);
-    }
-
-    @Override
-    protected Class<UserInProjectEntity> getEntityClass() {
-        return UserInProjectEntity.class;
-    }
-
-    @Override
-    protected Class<UserInProject> getDtoClass() {
-        return UserInProject.class;
     }
 
 }

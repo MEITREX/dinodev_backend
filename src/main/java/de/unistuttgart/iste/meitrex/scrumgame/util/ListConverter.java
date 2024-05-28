@@ -14,8 +14,8 @@ public class ListConverter<I, O> implements Converter<List<I>, List<O>> {
 
     @Override
     public List<O> convert(MappingContext context) {
-        @SuppressWarnings("unchecked") List<I> source
-                = (List<I>) context.getSource();
+        @SuppressWarnings("unchecked") Collection<I> source
+                = (Collection<I>) context.getSource();
         if (source == null) {
             return null;
         }

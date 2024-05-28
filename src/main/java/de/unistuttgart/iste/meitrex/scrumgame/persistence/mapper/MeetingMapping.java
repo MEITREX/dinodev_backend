@@ -3,7 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.RetrospectiveMeetingEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.StandupMeetingEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.standup.StandupMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.AnimalVotingStateEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.EstimationVoteEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.NameVotingStateEntity;
@@ -79,6 +79,9 @@ public class MeetingMapping implements Module {
                     result.getIssueEstimation().setPlanningMeeting(result);
                     return result;
                 });
+
+        modelMapper.createTypeMap(StandupMeetingEntity.class, StandupMeeting.class)
+                .addMapping(entity -> entity.getProject().getId(), StandupMeeting::setProjectId);
     }
 
     private Converter<List<UUID>, List<Vote>> getVoteConverter() {
@@ -88,7 +91,6 @@ public class MeetingMapping implements Module {
     // provider that maps the MeetingEntity to the correct Meeting subclass
     private static Provider<Meeting> getMeetingProvider(ModelMapper modelMapper) {
         return request -> {
-            log.info("Mapping meeting entity to meeting {}", request.getSource());
             Object source = request.getSource();
             return switch (source) {
                 case PlanningMeetingEntity planningMeetingEntity ->

@@ -3,6 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.repository;
 import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.generated.dto.MeetingType;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningMeetingEntity;
 import org.springframework.stereotype.Repository;
 
 import java.util.*;
@@ -24,10 +25,6 @@ public interface MeetingRepository extends MeitrexRepository<MeetingEntity, UUID
             MeetingType meetingType,
             boolean active
     );
-
-    List<MeetingEntity> findAllByProjectId(UUID projectId);
-
-    Optional<MeetingEntity> findByIdAndProjectId(UUID id, UUID projectId);
 
     @Override
     default String getEntityName() {
