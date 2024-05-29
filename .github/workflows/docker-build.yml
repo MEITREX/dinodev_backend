@@ -6,6 +6,8 @@ on:
       - Testing CI pipeline
     types:
       - completed
+    branches:
+      - main
 
 jobs:
   docker-build:
@@ -30,5 +32,5 @@ jobs:
         with:
           cache-from: type=gha
           cache-to: type=gha,mode=max
-          tags: ghcr.io/it-rex-platform/scrum_game_backend:latest
+          tags: ghcr.io/meitrex/scrum_game_service:latest
           push: true
