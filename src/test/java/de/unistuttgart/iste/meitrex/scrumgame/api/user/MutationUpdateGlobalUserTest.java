@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.*;
@@ -121,7 +121,7 @@ class MutationUpdateGlobalUserTest {
                 .variable("id", userIdToUpdate)
                 .execute()
                 .errors()
-                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AuthorizationDeniedException.class))));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivilege.UPDATE_USER);
