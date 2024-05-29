@@ -6,52 +6,62 @@
 * [Query](#query)
 * [Mutation](#mutation)
 * [Objects](#objects)
+    * [Achievement](#achievement)
+    * [AchievementProgress](#achievementprogress)
     * [AnimalVoting](#animalvoting)
+    * [AnimalVotingState](#animalvotingstate)
+    * [BasicUserInfo](#basicuserinfo)
     * [CodeRepositorySettings](#coderepositorysettings)
-  * [DefinitionOfDoneItem](#definitionofdoneitem)
-  * [Event](#event)
-  * [EventType](#eventtype)
-  * [FieldSchemaDefinition](#fieldschemadefinition)
+    * [DefaultEvent](#defaultevent)
+    * [DefaultEventType](#defaulteventtype)
+    * [DefaultFieldSchemaDefinition](#defaultfieldschemadefinition)
+    * [DefaultSchemaDefinition](#defaultschemadefinition)
+    * [DefaultTemplateField](#defaulttemplatefield)
+    * [DefinitionOfDoneItem](#definitionofdoneitem)
+    * [EstimationStats](#estimationstats)
+    * [EstimationVote](#estimationvote)
     * [GlobalUser](#globaluser)
     * [GlobalUserRole](#globaluserrole)
+    * [Icon](#icon)
     * [ImsSettings](#imssettings)
-    * [ImsSpecificData](#imsspecificdata)
-    * [ImsUser](#imsuser)
     * [Issue](#issue)
     * [IssueEstimation](#issueestimation)
-    * [IssueEstimations](#issueestimations)
     * [IssueMutation](#issuemutation)
+    * [IssuePriorityConfiguration](#issuepriorityconfiguration)
     * [IssueState](#issuestate)
-  * [IssueStateInBoard](#issuestateinboard)
+    * [IssueStateInBoard](#issuestateinboard)
     * [IssueType](#issuetype)
     * [MeetingAttendee](#meetingattendee)
+    * [MvelRule](#mvelrule)
     * [NameVoting](#namevoting)
+    * [NameVotingState](#namevotingstate)
     * [PaginationInfo](#paginationinfo)
     * [PlanningMeeting](#planningmeeting)
     * [PlanningMeetingMutation](#planningmeetingmutation)
     * [PlanningSettings](#planningsettings)
-    * [PrivateUserInfo](#privateuserinfo)
     * [Project](#project)
     * [ProjectBoard](#projectboard)
     * [ProjectMutation](#projectmutation)
     * [ProjectRole](#projectrole)
     * [ProjectSettings](#projectsettings)
+    * [RepositoryDefinition](#repositorydefinition)
     * [RetrospectiveMeeting](#retrospectivemeeting)
-  * [Rule](#rule)
-  * [SchemaDefinition](#schemadefinition)
+    * [RetrospectiveMeetingMutation](#retrospectivemeetingmutation)
     * [ShopItem](#shopitem)
     * [Sprint](#sprint)
     * [SprintGoalVoting](#sprintgoalvoting)
+    * [SprintStats](#sprintstats)
     * [StandupMeeting](#standupmeeting)
-    * [StoryPointVote](#storypointvote)
+    * [StandupMeetingMutation](#standupmeetingmutation)
+    * [StandupMeetingSettings](#standupmeetingsettings)
     * [Subscription](#subscription)
     * [UserInProject](#userinproject)
     * [UserStats](#userstats)
     * [Vote](#vote)
-    * [VotingState](#votingstate)
 * [Inputs](#inputs)
     * [CodeRepositorySettingsInput](#coderepositorysettingsinput)
-  * [CreateEventTypeInput](#createeventtypeinput)
+    * [CreateEventInput](#createeventinput)
+    * [CreateEventTypeInput](#createeventtypeinput)
     * [CreateGlobalUserInput](#createglobaluserinput)
     * [CreateGlobalUserRoleInput](#createglobaluserroleinput)
     * [CreateIssueInput](#createissueinput)
@@ -59,54 +69,67 @@
     * [CreateProjectRoleInput](#createprojectroleinput)
     * [CreateSprintInput](#createsprintinput)
     * [DateTimeFilter](#datetimefilter)
-  * [DefinitionOfDoneConfirmState](#definitionofdoneconfirmstate)
-  * [DefinitionOfDoneItemInput](#definitionofdoneiteminput)
-  * [FieldSchemaDefinitionInput](#fieldschemadefinitioninput)
+    * [DefinitionOfDoneConfirmState](#definitionofdoneconfirmstate)
+    * [DefinitionOfDoneItemInput](#definitionofdoneiteminput)
+    * [EventFilter](#eventfilter)
+    * [FieldSchemaDefinitionInput](#fieldschemadefinitioninput)
+    * [IconInput](#iconinput)
     * [ImsSettingsInput](#imssettingsinput)
     * [IntFilter](#intfilter)
+    * [IssuePriorityInput](#issuepriorityinput)
     * [IssueStateInput](#issuestateinput)
     * [Pagination](#pagination)
     * [PlanningMeetingInput](#planningmeetinginput)
     * [PlanningSettingsInput](#planningsettingsinput)
     * [ProjectSettingsInput](#projectsettingsinput)
-  * [SchemaDefinitionInput](#schemadefinitioninput)
+    * [RepositoryDefinitionInput](#repositorydefinitioninput)
+    * [RetrospectiveMeetingInput](#retrospectivemeetinginput)
+    * [SchemaDefinitionInput](#schemadefinitioninput)
+    * [StandupMeetingInput](#standupmeetinginput)
+    * [StandupMeetingSettingsInput](#standupmeetingsettingsinput)
     * [StringFilter](#stringfilter)
-  * [UpdateEventTypeInput](#updateeventtypeinput)
+    * [TemplateFieldInput](#templatefieldinput)
+    * [UpdateEventTypeInput](#updateeventtypeinput)
     * [UpdateGlobalUserInput](#updateglobaluserinput)
     * [UpdateGlobalUserRoleInput](#updateglobaluserroleinput)
     * [UpdateProjectInput](#updateprojectinput)
     * [UpdateProjectRoleInput](#updateprojectroleinput)
 * [Enums](#enums)
     * [AllowedDataType](#alloweddatatype)
+    * [Animal](#animal)
     * [EventVisibility](#eventvisibility)
     * [GlobalPrivilege](#globalprivilege)
     * [IssuePriority](#issuepriority)
     * [IssueStateType](#issuestatetype)
     * [MeetingRole](#meetingrole)
-    * [MeetingState](#meetingstate)
     * [MeetingType](#meetingtype)
     * [PlanningMeetingPage](#planningmeetingpage)
     * [ProjectPrivilege](#projectprivilege)
     * [SortDirection](#sortdirection)
-    * [StoryPoints](#storypoints)
+    * [SprintSuccessState](#sprintsuccessstate)
     * [TShirtSizeEstimation](#tshirtsizeestimation)
     * [UserState](#userstate)
 * [Scalars](#scalars)
     * [Boolean](#boolean)
     * [Date](#date)
     * [DateTime](#datetime)
+    * [Float](#float)
     * [ID](#id)
     * [Int](#int)
-  * [JSON](#json)
     * [LocalTime](#localtime)
     * [String](#string)
     * [Time](#time)
     * [UUID](#uuid)
     * [Url](#url)
 * [Interfaces](#interfaces)
-    * [GlobalUserDependent](#globaluserdependent)
+    * [Event](#event)
+    * [EventType](#eventtype)
+    * [FieldSchemaDefinition](#fieldschemadefinition)
     * [Meeting](#meeting)
     * [ProjectDependent](#projectdependent)
+    * [Rule](#rule)
+    * [SchemaDefinition](#schemadefinition)
+    * [TemplateField](#templatefield)
 
 </details>
 
@@ -157,6 +180,11 @@
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>currentUserInfo</strong></td>
+<td valign="top"><a href="#basicuserinfo">BasicUserInfo</a></td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>globalUserRoles</strong></td>
 <td valign="top">[<a href="#globaluserrole">GlobalUserRole</a>!]!</td>
 <td></td>
@@ -183,7 +211,7 @@
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -355,10 +383,110 @@
 <td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>createEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#createeventtypeinput">CreateEventTypeInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>updateEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#updateeventtypeinput">UpdateEventTypeInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>deleteEventType</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">id</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
 ## Objects
+
+### Achievement
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>identifier</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>goal</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### AchievementProgress
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>achievement</strong></td>
+<td valign="top"><a href="#achievement">Achievement</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>progress</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>completed</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
 
 ### AnimalVoting
 
@@ -374,12 +502,12 @@
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>votableAnimals</strong></td>
-<td valign="top">[<a href="#string">String</a>!]!</td>
+<td valign="top">[<a href="#animal">Animal</a>!]!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>animalVotingStates</strong></td>
-<td valign="top">[<a href="#votingstate">VotingState</a>!]!</td>
+<td valign="top">[<a href="#animalvotingstate">AnimalVotingState</a>!]!</td>
 <td></td>
 </tr>
 <tr>
@@ -389,6 +517,71 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>votingResult</strong></td>
+<td valign="top"><a href="#animal">Animal</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### AnimalVotingState
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>votedFor</strong></td>
+<td valign="top"><a href="#animal">Animal</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userVotes</strong></td>
+<td valign="top">[<a href="#vote">Vote</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>totalVotes</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### BasicUserInfo
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>isAdmin</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>username</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>avatar</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
@@ -408,44 +601,14 @@
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>codeRepositoryName</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td colspan="2" valign="top"><strong>repositories</strong></td>
+<td valign="top">[<a href="#repositorydefinition">RepositoryDefinition</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
 </table>
 
-### DefinitionOfDoneItem
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>text</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>required</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>implies</strong></td>
-<td valign="top">[<a href="#definitionofdoneitem">DefinitionOfDoneItem</a>!]!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### Event
+### DefaultEvent
 
 <table>
 <thead>
@@ -478,8 +641,13 @@
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>user</strong></td>
-<td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td colspan="2" valign="top"><strong>visibleToUserIds</strong></td>
+<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
 <td></td>
 </tr>
 <tr>
@@ -498,24 +666,29 @@
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>children</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]!</td>
-<td></td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>parent</strong></td>
 <td valign="top"><a href="#event">Event</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>eventData</strong></td>
-<td valign="top"><a href="#json">JSON</a></td>
+<td valign="top">[<a href="#defaulttemplatefield">DefaultTemplateField</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>children</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>user</strong></td>
+<td valign="top"><a href="#globaluser">GlobalUser</a></td>
 <td></td>
 </tr>
 </tbody>
 </table>
 
-### EventType
+### DefaultEventType
 
 <table>
 <thead>
@@ -528,12 +701,7 @@
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
+<td colspan="2" valign="top"><strong>identifier</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
@@ -549,7 +717,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>eventSchema</strong></td>
-<td valign="top"><a href="#schemadefinition">SchemaDefinition</a>!</td>
+<td valign="top"><a href="#defaultschemadefinition">DefaultSchemaDefinition</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -560,7 +728,7 @@
 </tbody>
 </table>
 
-### FieldSchemaDefinition
+### DefaultFieldSchemaDefinition
 
 <table>
 <thead>
@@ -600,6 +768,151 @@
 </tbody>
 </table>
 
+### DefaultSchemaDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>fields</strong></td>
+<td valign="top">[<a href="#defaultfieldschemadefinition">DefaultFieldSchemaDefinition</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### DefaultTemplateField
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>key</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>value</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### DefinitionOfDoneItem
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>text</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>implies</strong></td>
+<td valign="top">[<a href="#definitionofdoneitem">DefinitionOfDoneItem</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### EstimationStats
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>median</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>max</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>min</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mode</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### EstimationVote
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>votedFor</strong></td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userVotes</strong></td>
+<td valign="top">[<a href="#vote">Vote</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>totalVotes</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### GlobalUser
 
 <table>
@@ -625,6 +938,11 @@
 <tr>
 <td colspan="2" valign="top"><strong>avatar</strong></td>
 <td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>vcsUserId</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -675,6 +993,31 @@
 </tbody>
 </table>
 
+### Icon
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>path</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mdiIcon</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### ImsSettings
 
 <table>
@@ -693,8 +1036,8 @@
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>issueStates</strong></td>
-<td valign="top">[<a href="#issuestate">IssueState</a>!]!</td>
+<td colspan="2" valign="top"><strong>imsIcon</strong></td>
+<td valign="top"><a href="#icon">Icon</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -703,58 +1046,38 @@
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>imsProjectUrl</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issueStates</strong></td>
+<td valign="top">[<a href="#issuestate">IssueState</a>!]!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>imsIssueTemplateId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
-</tbody>
-</table>
-
-### ImsSpecificData
-
-<table>
-<thead>
 <tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>effortEstimationFieldName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>currentUser</strong></td>
-<td valign="top"><a href="#imsuser">ImsUser</a>!</td>
+<td colspan="2" valign="top"><strong>sprintFieldName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
-</tbody>
-</table>
-
-### ImsUser
-
-<table>
-<thead>
 <tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
+<td colspan="2" valign="top"><strong>partOfRelationId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>isAdmin</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td colspan="2" valign="top"><strong>issuePriorities</strong></td>
+<td valign="top">[<a href="#issuepriorityconfiguration">IssuePriorityConfiguration</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -788,7 +1111,7 @@ Unique identifier for the issue.
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td>
 
-Unique identifier of the scrum game the issue belongs to.
+Unique identifier of the project the issue belongs to.
 
 </td>
 </tr>
@@ -806,7 +1129,7 @@ Title of the issue, providing a brief summary.
 <td valign="top"><a href="#string">String</a></td>
 <td>
 
-Detailed description of the issue. GitLab-flavored markdown is supported.
+Detailed description of the issue. Markdown is supported.
 
 </td>
 </tr>
@@ -875,6 +1198,51 @@ List of user UUIDs representing the assignees of the issue.
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>issueEvents</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td>
+
+List of events / timeline items of the issue.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>labels</strong></td>
+<td valign="top">[<a href="#string">String</a>!]!</td>
+<td>
+
+Labels associated with the issue.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issueUrl</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td>
+
+Url to the issue in the issue management system.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>childrenIssueIds</strong></td>
+<td valign="top">[<a href="#id">ID</a>!]!</td>
+<td>
+
+Children issue ids of the issue.
+
+</td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>parentIssueId</strong></td>
+<td valign="top"><a href="#id">ID</a></td>
+<td>
+
+Parent issue id of the issue.
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>sprint</strong></td>
 <td valign="top"><a href="#sprint">Sprint</a></td>
 <td></td>
@@ -900,83 +1268,43 @@ List of user UUIDs representing the assignees of the issue.
 </thead>
 <tbody>
 <tr>
+<td colspan="2" valign="top"><strong>planningMeeting</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>votes</strong></td>
-<td valign="top">[<a href="#storypointvote">StoryPointVote</a>!]!</td>
+<td valign="top">[<a href="#estimationvote">EstimationVote</a>!]!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>finished</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>skipped</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>issueId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td valign="top"><a href="#id">ID</a></td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>median</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a></td>
+<td colspan="2" valign="top"><strong>issue</strong></td>
+<td valign="top"><a href="#issue">Issue</a></td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>max</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a></td>
+<td colspan="2" valign="top"><strong>countdownSeconds</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>min</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a></td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>mode</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a></td>
+<td colspan="2" valign="top"><strong>estimationStats</strong></td>
+<td valign="top"><a href="#estimationstats">EstimationStats</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>finalResult</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### IssueEstimations
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>currentIssueEstimation</strong></td>
-<td valign="top"><a href="#issueestimation">IssueEstimation</a></td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>issueEstimations</strong></td>
-<td valign="top">[<a href="#issueestimation">IssueEstimation</a>!]!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>finished</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>countdown</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -1077,6 +1405,31 @@ List of user UUIDs representing the assignees of the issue.
 <tr>
 <td colspan="2" align="right" valign="top">assigneeId</td>
 <td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### IssuePriorityConfiguration
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>imsPriorityId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issuePriority</strong></td>
+<td valign="top"><a href="#issuepriority">IssuePriority</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1227,6 +1580,51 @@ Path to an icon visually representing the issue type.
 <td valign="top"><a href="#meetingrole">MeetingRole</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>user</strong></td>
+<td valign="top"><a href="#globaluser">GlobalUser</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### MvelRule
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>triggerEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mvelExpression</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -1249,7 +1647,7 @@ Path to an icon visually representing the issue type.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>nameVotingStates</strong></td>
-<td valign="top">[<a href="#votingstate">VotingState</a>!]!</td>
+<td valign="top">[<a href="#namevotingstate">NameVotingState</a>!]!</td>
 <td></td>
 </tr>
 <tr>
@@ -1260,6 +1658,36 @@ Path to an icon visually representing the issue type.
 <tr>
 <td colspan="2" valign="top"><strong>votingResult</strong></td>
 <td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### NameVotingState
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>votedFor</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userVotes</strong></td>
+<td valign="top">[<a href="#vote">Vote</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>totalVotes</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1350,11 +1778,6 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>nextPageAllowed</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td></td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>animalVoting</strong></td>
 <td valign="top"><a href="#animalvoting">AnimalVoting</a>!</td>
 <td></td>
@@ -1375,23 +1798,13 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>title</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>type</strong></td>
+<td colspan="2" valign="top"><strong>meetingType</strong></td>
 <td valign="top"><a href="#meetingtype">MeetingType</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>state</strong></td>
-<td valign="top"><a href="#meetingstate">MeetingState</a>!</td>
+<td colspan="2" valign="top"><strong>active</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1420,8 +1833,8 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>projectId</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1435,23 +1848,28 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>nextPage</strong></td>
-<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
-<td></td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>voteAnimal</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">animal</td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#animal">Animal</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">userId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>endAnimalVoting</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>addName</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">name</td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1465,32 +1883,47 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">userId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>voteStoryPoints</strong></td>
+<td colspan="2" valign="top"><strong>endNameVoting</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">storyPoints</td>
-<td valign="top"><a href="#storypoints">StoryPoints</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">userId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>skipIssue</strong></td>
+<td colspan="2" valign="top"><strong>voteEstimation</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">estimation</td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>restartEstimation</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>nextIssue</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">issueId</td>
+<td valign="top"><a href="#id">ID</a></td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>startCountdown</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">seconds</td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>endEstimation</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
 <td></td>
 </tr>
@@ -1500,8 +1933,8 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" align="right" valign="top">storyPoints</td>
-<td valign="top"><a href="#storypoints">StoryPoints</a>!</td>
+<td colspan="2" align="right" valign="top">estimation</td>
+<td valign="top"><a href="#tshirtsizeestimation">TShirtSizeEstimation</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1511,7 +1944,7 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">issueId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1521,17 +1954,12 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">issueId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>setStoryPointLimit</strong></td>
+<td colspan="2" valign="top"><strong>finishSprintGoalVoting</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">limit</td>
-<td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1564,29 +1992,9 @@ Whether there is a next page.
 <td valign="top"><a href="#datetime">DateTime</a>!</td>
 <td></td>
 </tr>
-</tbody>
-</table>
-
-### PrivateUserInfo
-
-<table>
-<thead>
 <tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>xp</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>level</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
+<td colspan="2" valign="top"><strong>customGoldChallengeReward</strong></td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -1631,6 +2039,11 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>currentSprint</strong></td>
+<td valign="top"><a href="#sprint">Sprint</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>previousSprint</strong></td>
 <td valign="top"><a href="#sprint">Sprint</a></td>
 <td></td>
 </tr>
@@ -1700,11 +2113,6 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>imsSpecificData</strong></td>
-<td valign="top"><a href="#imsspecificdata">ImsSpecificData</a>!</td>
-<td></td>
-</tr>
-<tr>
 <td colspan="2" valign="top"><strong>events</strong></td>
 <td valign="top">[<a href="#event">Event</a>!]!</td>
 <td></td>
@@ -1717,11 +2125,6 @@ Whether there is a next page.
 <tr>
 <td colspan="2" align="right" valign="top">size</td>
 <td valign="top"><a href="#int">Int</a></td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">minVisibility</td>
-<td valign="top"><a href="#eventvisibility">EventVisibility</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -1781,7 +2184,7 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>leaveMeeting</strong></td>
-<td valign="top"><a href="#meeting">Meeting</a>!</td>
+<td valign="top"><a href="#meeting">Meeting</a></td>
 <td></td>
 </tr>
 <tr>
@@ -1827,6 +2230,36 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>mutatePlanningMeeting</strong></td>
 <td valign="top"><a href="#planningmeetingmutation">PlanningMeetingMutation</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>createStandupMeeting</strong></td>
+<td valign="top"><a href="#standupmeeting">StandupMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#standupmeetinginput">StandupMeetingInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mutateStandupMeeting</strong></td>
+<td valign="top"><a href="#standupmeetingmutation">StandupMeetingMutation</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>createRetrospectiveMeeting</strong></td>
+<td valign="top"><a href="#retrospectivemeeting">RetrospectiveMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">input</td>
+<td valign="top"><a href="#retrospectivemeetinginput">RetrospectiveMeetingInput</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mutateRetrospectiveMeeting</strong></td>
+<td valign="top"><a href="#retrospectivemeetingmutation">RetrospectiveMeetingMutation</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -1892,41 +2325,6 @@ Whether there is a next page.
 <tr>
 <td colspan="2" align="right" valign="top">input</td>
 <td valign="top"><a href="#createissueinput">CreateIssueInput</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>createEventType</strong></td>
-<td valign="top"><a href="#eventtype">EventType</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">input</td>
-<td valign="top"><a href="#createeventtypeinput">CreateEventTypeInput</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>updateEventType</strong></td>
-<td valign="top"><a href="#eventtype">EventType</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">input</td>
-<td valign="top"><a href="#updateeventtypeinput">UpdateEventTypeInput</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>deleteEventType</strong></td>
-<td valign="top"><a href="#boolean">Boolean</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">id</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2002,6 +2400,36 @@ Whether there is a next page.
 </tbody>
 </table>
 
+### RepositoryDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>url</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>icon</strong></td>
+<td valign="top"><a href="#icon">Icon</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### RetrospectiveMeeting
 
 <table>
@@ -2015,23 +2443,13 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>title</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>type</strong></td>
+<td colspan="2" valign="top"><strong>meetingType</strong></td>
 <td valign="top"><a href="#meetingtype">MeetingType</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>state</strong></td>
-<td valign="top"><a href="#meetingstate">MeetingState</a>!</td>
+<td colspan="2" valign="top"><strong>active</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2047,7 +2465,7 @@ Whether there is a next page.
 </tbody>
 </table>
 
-### Rule
+### RetrospectiveMeetingMutation
 
 <table>
 <thead>
@@ -2060,53 +2478,8 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>description</strong></td>
-<td valign="top"><a href="#string">String</a></td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>forEventTypeIdentifier</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>forEventType</strong></td>
-<td valign="top"><a href="#eventtype">EventType</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>script</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### SchemaDefinition
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>fields</strong></td>
-<td valign="top">[<a href="#fieldschemadefinition">FieldSchemaDefinition</a>!]!</td>
+<td colspan="2" valign="top"><strong>meeting</strong></td>
+<td valign="top"><a href="#retrospectivemeeting">RetrospectiveMeeting</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2175,13 +2548,18 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>number</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>name</strong></td>
-<td valign="top"><a href="#string">String</a></td>
+<td colspan="2" valign="top"><strong>animal</strong></td>
+<td valign="top"><a href="#animal">Animal</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>number</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2195,8 +2573,23 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>storyPointsPlanned</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>customGoldChallengeReward</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>issues</strong></td>
 <td valign="top">[<a href="#issue">Issue</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>stats</strong></td>
+<td valign="top"><a href="#sprintstats">SprintStats</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2215,23 +2608,103 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
+<td colspan="2" valign="top"><strong>planningMeeting</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>sprintIssueIds</strong></td>
-<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
+<td valign="top">[<a href="#id">ID</a>!]!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>storyPointLimit</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
+<td colspan="2" valign="top"><strong>nonSprintIssueIds</strong></td>
+<td valign="top">[<a href="#id">ID</a>!]!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>capacity</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
+<td colspan="2" valign="top"><strong>sprintIssues</strong></td>
+<td valign="top">[<a href="#issue">Issue</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>nonSprintIssues</strong></td>
+<td valign="top">[<a href="#issue">Issue</a>!]!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>finished</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### SprintStats
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>Sprint</strong></td>
+<td valign="top"><a href="#sprint">Sprint</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>successState</strong></td>
+<td valign="top"><a href="#sprintsuccessstate">SprintSuccessState</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>totalStoryPoints</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>averageStoryPoints</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>percentageStoryPointsCompleted</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>percentageStoryPointsInProgress</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>percentageStoryPointsNotStarted</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issueCount</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>daysLeft</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>daysElapsed</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>percentageTimeElapsed</strong></td>
+<td valign="top"><a href="#float">Float</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2250,23 +2723,28 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>id</strong></td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td colspan="2" valign="top"><strong>standupMeetingSettings</strong></td>
+<td valign="top"><a href="#standupmeetingsettings">StandupMeetingSettings</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>title</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td colspan="2" valign="top"><strong>order</strong></td>
+<td valign="top">[<a href="#meetingattendee">MeetingAttendee</a>!]!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>type</strong></td>
+<td colspan="2" valign="top"><strong>currentAttendee</strong></td>
+<td valign="top"><a href="#meetingattendee">MeetingAttendee</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>meetingType</strong></td>
 <td valign="top"><a href="#meetingtype">MeetingType</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>state</strong></td>
-<td valign="top"><a href="#meetingstate">MeetingState</a>!</td>
+<td colspan="2" valign="top"><strong>active</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2282,7 +2760,7 @@ Whether there is a next page.
 </tbody>
 </table>
 
-### StoryPointVote
+### StandupMeetingMutation
 
 <table>
 <thead>
@@ -2295,18 +2773,48 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>userId</strong></td>
+<td colspan="2" valign="top"><strong>project</strong></td>
+<td valign="top"><a href="#project">Project</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>startStandupMeeting</strong></td>
+<td valign="top"><a href="#standupmeeting">StandupMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>changeCurrentAttendee</strong></td>
+<td valign="top"><a href="#standupmeeting">StandupMeeting</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">attendeeId</td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>user</strong></td>
-<td valign="top"><a href="#globaluser">GlobalUser</a>!</td>
+<td colspan="2" valign="top"><strong>finishStandupMeeting</strong></td>
+<td valign="top"><a href="#standupmeeting">StandupMeeting</a>!</td>
 <td></td>
 </tr>
+</tbody>
+</table>
+
+### StandupMeetingSettings
+
+<table>
+<thead>
 <tr>
-<td colspan="2" valign="top"><strong>storyPoints</strong></td>
-<td valign="top"><a href="#storypoints">StoryPoints</a>!</td>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>countdownPerAttendee</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -2325,28 +2833,8 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>meetingStarted</strong></td>
-<td valign="top"><a href="#meeting">Meeting</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">projectId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>meetingFinished</strong></td>
-<td valign="top"><a href="#meeting">Meeting</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" align="right" valign="top">projectId</td>
-<td valign="top"><a href="#uuid">UUID</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>meetingAttendeesChanged</strong></td>
-<td valign="top">[<a href="#meetingattendee">MeetingAttendee</a>!]!</td>
+<td colspan="2" valign="top"><strong>meeting</strong></td>
+<td valign="top"><a href="#meeting">Meeting</a></td>
 <td></td>
 </tr>
 <tr>
@@ -2360,8 +2848,8 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>planningMeetingUpdated</strong></td>
-<td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
+<td colspan="2" valign="top"><strong>planningMeeting</strong></td>
+<td valign="top"><a href="#planningmeeting">PlanningMeeting</a></td>
 <td></td>
 </tr>
 <tr>
@@ -2370,7 +2858,7 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>standupMeetingUpdated</strong></td>
+<td colspan="2" valign="top"><strong>standupMeeting</strong></td>
 <td valign="top"><a href="#standupmeeting">StandupMeeting</a>!</td>
 <td></td>
 </tr>
@@ -2380,8 +2868,8 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>retrospectiveMeetingUpdated</strong></td>
-<td valign="top"><a href="#retrospectivemeeting">RetrospectiveMeeting</a>!</td>
+<td colspan="2" valign="top"><strong>events</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
 <td></td>
 </tr>
 <tr>
@@ -2410,8 +2898,8 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>privateInfo</strong></td>
-<td valign="top"><a href="#privateuserinfo">PrivateUserInfo</a>!</td>
+<td colspan="2" valign="top"><strong>userStats</strong></td>
+<td valign="top"><a href="#userstats">UserStats</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2434,6 +2922,26 @@ Whether there is a next page.
 <td valign="top"><a href="#project">Project</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>publicEvents</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">size</td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">page</td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>achievements</strong></td>
+<td valign="top">[<a href="#achievementprogress">AchievementProgress</a>!]!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -2450,37 +2958,22 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>user</strong></td>
-<td valign="top"><a href="#globaluser">GlobalUser</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>project</strong></td>
-<td valign="top"><a href="#project">Project</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>commits</strong></td>
+<td colspan="2" valign="top"><strong>xp</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>issuesCreated</strong></td>
+<td colspan="2" valign="top"><strong>xpToNextLevel</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>issuesClosed</strong></td>
+<td colspan="2" valign="top"><strong>level</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>storyPoints</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>hoursWorked</strong></td>
+<td colspan="2" valign="top"><strong>virtualCurrency</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
@@ -2512,36 +3005,6 @@ Whether there is a next page.
 </tbody>
 </table>
 
-### VotingState
-
-<table>
-<thead>
-<tr>
-<th align="left">Field</th>
-<th align="right">Argument</th>
-<th align="left">Type</th>
-<th align="left">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td colspan="2" valign="top"><strong>votedFor</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>userVotes</strong></td>
-<td valign="top">[<a href="#vote">Vote</a>!]!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>totalVotes</strong></td>
-<td valign="top"><a href="#int">Int</a>!</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
 ## Inputs
 
 ### CodeRepositorySettingsInput
@@ -2556,8 +3019,67 @@ Whether there is a next page.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>codeRepositoryName</strong></td>
+<td colspan="2" valign="top"><strong>repositories</strong></td>
+<td valign="top">[<a href="#repositorydefinitioninput">RepositoryDefinitionInput</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### CreateEventInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventTypeIdentifier</strong></td>
 <td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>visibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>timestamp</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>message</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventData</strong></td>
+<td valign="top">[<a href="#templatefieldinput">TemplateFieldInput</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>parentId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -2621,6 +3143,11 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>avatar</strong></td>
 <td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>vcsUserId</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -2800,6 +3327,21 @@ Sprint number the issue is associated with, if applicable.
 <td valign="top"><a href="#datetime">DateTime</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>storyPointsPlanned</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>animal</strong></td>
+<td valign="top"><a href="#animal">Animal</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>customGoldChallengeReward</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -2901,6 +3443,45 @@ If specified, filters for dates before the specified value.
 </tbody>
 </table>
 
+### EventFilter
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>eventTypeIdentifier</strong></td>
+<td valign="top"><a href="#stringfilter">StringFilter</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>minVisibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>since</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### FieldSchemaDefinitionInput
 
 <table>
@@ -2940,6 +3521,30 @@ If specified, filters for dates before the specified value.
 </tbody>
 </table>
 
+### IconInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>path</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mdiIcon</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### ImsSettingsInput
 
 <table>
@@ -2957,8 +3562,18 @@ If specified, filters for dates before the specified value.
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>imsIcon</strong></td>
+<td valign="top"><a href="#iconinput">IconInput</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>imsProjectId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsProjectUrl</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -2969,6 +3584,26 @@ If specified, filters for dates before the specified value.
 <tr>
 <td colspan="2" valign="top"><strong>imsIssueTemplateId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>effortEstimationFieldName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>sprintFieldName</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>partOfRelationId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issuePriorities</strong></td>
+<td valign="top">[<a href="#issuepriorityinput">IssuePriorityInput</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -3014,6 +3649,30 @@ If specified, filters for values greater than to the specified value.
 If specified, filters for values less than to the specified value.
 
 </td>
+</tr>
+</tbody>
+</table>
+
+### IssuePriorityInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>imsPriorityId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issuePriority</strong></td>
+<td valign="top"><a href="#issuepriority">IssuePriority</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -3134,6 +3793,11 @@ The number of elements per page.
 <td valign="top"><a href="#datetime">DateTime</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>goldChallengeCustomReward</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -3166,6 +3830,59 @@ The number of elements per page.
 </tbody>
 </table>
 
+### RepositoryDefinitionInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>url</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>icon</strong></td>
+<td valign="top"><a href="#iconinput">IconInput</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### RetrospectiveMeetingInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>title</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### SchemaDefinitionInput
 
 <table>
@@ -3180,6 +3897,49 @@ The number of elements per page.
 <tr>
 <td colspan="2" valign="top"><strong>fields</strong></td>
 <td valign="top">[<a href="#fieldschemadefinitioninput">FieldSchemaDefinitionInput</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### StandupMeetingInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>standupMeetingSettings</strong></td>
+<td valign="top"><a href="#standupmeetingsettingsinput">StandupMeetingSettingsInput</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>meetingLeaderId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### StandupMeetingSettingsInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>countdownPerAttendee</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -3225,6 +3985,35 @@ A string value that must be contained in the field that is being filtered.
 If true, the filter is case-insensitive.
 
 </td>
+</tr>
+</tbody>
+</table>
+
+### TemplateFieldInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>key</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>value</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -3282,6 +4071,11 @@ If true, the filter is case-insensitive.
 <tr>
 <td colspan="2" valign="top"><strong>avatar</strong></td>
 <td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>vcsUserId</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -3388,6 +4182,53 @@ If true, the filter is case-insensitive.
 </tbody>
 </table>
 
+### Animal
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>STEGOSAURUS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>TREX</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>BRONTOSAURUS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>TRICERATOPS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ANKYLOSAURUS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>PARASAUROLOPHUS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>DODO</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>MAMMOTH</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>GIANT_SLOTH</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### EventVisibility
 
 <table>
@@ -3398,15 +4239,35 @@ If true, the filter is case-insensitive.
 <tbody>
 <tr>
 <td valign="top"><strong>INTERNAL</strong></td>
-<td></td>
+<td>
+
+Only for admins. Not visible to users.
+
+</td>
 </tr>
 <tr>
 <td valign="top"><strong>PRIVATE</strong></td>
-<td></td>
+<td>
+
+Only for the user who created the event and users in "visibleToUserIds".
+
+</td>
+</tr>
+<tr>
+<td valign="top"><strong>DETAIL</strong></td>
+<td>
+
+Detail level: visible to all users but only when viewing a specific object, not in the whole list of events.
+
+</td>
 </tr>
 <tr>
 <td valign="top"><strong>PUBLIC</strong></td>
-<td></td>
+<td>
+
+Project detail level: visible to all users
+
+</td>
 </tr>
 </tbody>
 </table>
@@ -3530,29 +4391,6 @@ Enumeration of possible states an issue can be in during its lifecycle.
 </tr>
 <tr>
 <td valign="top"><strong>MEETING_LEADER</strong></td>
-<td></td>
-</tr>
-</tbody>
-</table>
-
-### MeetingState
-
-<table>
-<thead>
-<th align="left">Value</th>
-<th align="left">Description</th>
-</thead>
-<tbody>
-<tr>
-<td valign="top"><strong>PLANNED</strong></td>
-<td></td>
-</tr>
-<tr>
-<td valign="top"><strong>ACTIVE</strong></td>
-<td></td>
-</tr>
-<tr>
-<td valign="top"><strong>FINISHED</strong></td>
 <td></td>
 </tr>
 </tbody>
@@ -3708,7 +4546,7 @@ Specifies the sort direction, either ascending or descending.
 </tbody>
 </table>
 
-### StoryPoints
+### SprintSuccessState
 
 <table>
 <thead>
@@ -3717,35 +4555,23 @@ Specifies the sort direction, either ascending or descending.
 </thead>
 <tbody>
 <tr>
-<td valign="top"><strong>NO_VOTE</strong></td>
+<td valign="top"><strong>IN_PROGRESS</strong></td>
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>ZERO</strong></td>
+<td valign="top"><strong>UNKNOWN</strong></td>
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>ONE</strong></td>
+<td valign="top"><strong>FAILED</strong></td>
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>TWO</strong></td>
+<td valign="top"><strong>SUCCESS</strong></td>
 <td></td>
 </tr>
 <tr>
-<td valign="top"><strong>THREE</strong></td>
-<td></td>
-</tr>
-<tr>
-<td valign="top"><strong>FIVE</strong></td>
-<td></td>
-</tr>
-<tr>
-<td valign="top"><strong>EIGHT</strong></td>
-<td></td>
-</tr>
-<tr>
-<td valign="top"><strong>THIRTEEN</strong></td>
+<td valign="top"><strong>SUCCESS_WITH_GOLD_CHALLENGE</strong></td>
 <td></td>
 </tr>
 </tbody>
@@ -3817,6 +4643,11 @@ The `Boolean` scalar type represents `true` or `false`.
 
 ### DateTime
 
+### Float
+
+The `Float` scalar type represents signed double-precision fractional values as specified
+by [IEEE 754](https://en.wikipedia.org/wiki/IEEE_floating_point).
+
 ### ID
 
 The `ID` scalar type represents a unique identifier, often used to refetch an object or as key for a cache. The ID type
@@ -3827,8 +4658,6 @@ type, any string (such as `"4"`) or integer (such as `4`) input value will be ac
 
 The `Int` scalar type represents non-fractional signed whole numeric values. Int can represent values between -(2^31)
 and 2^31 - 1.
-
-### JSON
 
 ### LocalTime
 
@@ -3843,9 +4672,10 @@ often used by GraphQL to represent free-form human-readable text.
 
 ### Url
 
+
 ## Interfaces
 
-### GlobalUserDependent
+### Event
 
 <table>
 <thead>
@@ -3858,13 +4688,148 @@ often used by GraphQL to represent free-form human-readable text.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>userId</strong></td>
+<td colspan="2" valign="top"><strong>id</strong></td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>eventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>visibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>userId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>visibleToUserIds</strong></td>
+<td valign="top">[<a href="#uuid">UUID</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>projectId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>timestamp</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>message</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>mostRecentChildTimestamp</strong></td>
+<td valign="top"><a href="#datetime">DateTime</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>parent</strong></td>
+<td valign="top"><a href="#event">Event</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventData</strong></td>
+<td valign="top">[<a href="#templatefield">TemplateField</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>children</strong></td>
+<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>user</strong></td>
-<td valign="top"><a href="#globaluser">GlobalUser</a>!</td>
+<td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### EventType
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>identifier</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>defaultVisibility</strong></td>
+<td valign="top"><a href="#eventvisibility">EventVisibility</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>eventSchema</strong></td>
+<td valign="top"><a href="#schemadefinition">SchemaDefinition</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>messageTemplate</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### FieldSchemaDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>required</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>allowedValues</strong></td>
+<td valign="top">[<a href="#string">String</a>!]</td>
 <td></td>
 </tr>
 </tbody>
@@ -3883,18 +4848,13 @@ often used by GraphQL to represent free-form human-readable text.
 </thead>
 <tbody>
 <tr>
-<td colspan="2" valign="top"><strong>title</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
-<td></td>
-</tr>
-<tr>
-<td colspan="2" valign="top"><strong>type</strong></td>
+<td colspan="2" valign="top"><strong>meetingType</strong></td>
 <td valign="top"><a href="#meetingtype">MeetingType</a>!</td>
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>state</strong></td>
-<td valign="top"><a href="#meetingstate">MeetingState</a>!</td>
+<td colspan="2" valign="top"><strong>active</strong></td>
+<td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -3930,6 +4890,91 @@ often used by GraphQL to represent free-form human-readable text.
 <tr>
 <td colspan="2" valign="top"><strong>project</strong></td>
 <td valign="top"><a href="#project">Project</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Rule
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>id</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>description</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>triggerEventType</strong></td>
+<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### SchemaDefinition
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>fields</strong></td>
+<td valign="top">[<a href="#fieldschemadefinition">FieldSchemaDefinition</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### TemplateField
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>key</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>type</strong></td>
+<td valign="top"><a href="#alloweddatatype">AllowedDataType</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>value</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
