@@ -17,10 +17,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.UUID;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
@@ -91,7 +91,7 @@ public class MutationCreateProjectRoleTest {
                 .execute()
                 .errors()
                 .satisfy(errors ->
-                        assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
+                        assertThat(errors, containsError(causedBy(AuthorizationDeniedException.class))));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(ProjectPrivileges.CREATE_ROLE, project.getId());

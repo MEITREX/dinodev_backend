@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.api.role;
 
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
+import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
@@ -12,7 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.GlobalUserRoleMatcher.matchingGlobalUserRoleInput;
@@ -74,7 +76,7 @@ public class MutationCreateGlobalUserRoleTest {
                 .errors()
                 .satisfy(errors ->
                         assertThat(errors.getFirst().getExtensions().get("exception"),
-                                is("AccessDeniedException")));
+                                is("AuthorizationDeniedException")));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CREATE_ROLE);

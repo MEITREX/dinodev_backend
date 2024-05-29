@@ -78,6 +78,7 @@ public class ProjectMatcher {
                 hasProperty("imsIssueTemplateId", is(imsSettings.getImsIssueTemplateId())),
                 hasProperty("effortEstimationFieldName", is(imsSettings.getEffortEstimationFieldName())),
                 hasProperty("sprintFieldName", is(imsSettings.getSprintFieldName())),
+                hasProperty("partOfRelationId", is(imsSettings.getPartOfRelationId())),
                 hasProperty("issuePriorities",
                         containsInAnyOrder(each(imsSettings.getIssuePriorities(),
                                 ProjectMatcher::matchingIssuePriorityEntity)))
@@ -149,6 +150,7 @@ public class ProjectMatcher {
                 hasProperty("imsIssueTemplateId", is(imsSettingsInput.getImsIssueTemplateId())),
                 hasProperty("effortEstimationFieldName", is(imsSettingsInput.getEffortEstimationFieldName())),
                 hasProperty("sprintFieldName", is(imsSettingsInput.getSprintFieldName())),
+                hasProperty("partOfRelationId", is(imsSettingsInput.getPartOfRelationId())),
                 hasProperty("issuePriorities",
                         containsInAnyOrder(each(imsSettingsInput.getIssuePriorities(),
                                 ProjectMatcher::matchingIssuePriorityInput)))

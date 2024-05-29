@@ -19,6 +19,7 @@ public class GlobalUserMatcher {
                 hasProperty("id", equalTo(entity.getId())),
                 hasProperty("username", equalTo(entity.getUsername())),
                 hasProperty("avatar", equalTo(entity.getAvatar())),
+                hasProperty("vcsUserId", equalTo(entity.getVcsUserId())),
                 hasProperty("roles", containsInAnyOrder(
                         each(entity.getRoles(), GlobalUserRoleMatcher::matchingGlobalUserRoleEntity)))
         );
@@ -27,14 +28,16 @@ public class GlobalUserMatcher {
     public static <T> Matcher<T> matchingGlobalUserInput(CreateGlobalUserInput input) {
         return allOf(
                 hasProperty("username", equalTo(input.getUsername())),
-                hasProperty("avatar", equalTo(input.getAvatar()))
+                hasProperty("avatar", equalTo(input.getAvatar())),
+                hasProperty("vcsUserId", equalTo(input.getVcsUserId()))
         );
     }
 
     public static <T> Matcher<T> matchingGlobalUserInput(UpdateGlobalUserInput input) {
         return allOf(
                 hasProperty("username", equalTo(input.getUsername())),
-                hasProperty("avatar", equalTo(input.getAvatar()))
+                hasProperty("avatar", equalTo(input.getAvatar())),
+                hasProperty("vcsUserId", equalTo(input.getVcsUserId()))
         );
     }
 }

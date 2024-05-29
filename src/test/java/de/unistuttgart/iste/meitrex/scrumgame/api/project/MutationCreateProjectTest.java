@@ -20,15 +20,19 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.test.annotation.Commit;
 import org.springframework.test.context.ActiveProfiles;
 
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
+import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
 import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleProjects.getSampleCreateProjectInput;
 import static de.unistuttgart.iste.meitrex.scrumgame.fragments.ProjectFragments.BASE_PROJECT_FRAGMENT;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.ProjectMatcher.matchingProjectInput;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
@@ -93,9 +97,7 @@ class MutationCreateProjectTest {
                 .execute()
                 .errors()
                 .satisfy(errors ->
-                        assertThat(
-                                errors.getFirst().getExtensions().get("exception"),
-                                is("AccessDeniedException")));
+                        assertThat(errors, containsError(causedBy(AuthorizationDeniedException.class))));
     }
 
     @Test
@@ -125,7 +127,7 @@ class MutationCreateProjectTest {
                 containsInAnyOrder(ProjectPrivilege.values()));
 
         // assert that sprints were created
-        assertThat(sprintRepository.findAllByProjectId(projectEntity.getId()), hasSize(3));
+        assertThat(sprintRepository.findAllByProjectIdOrderByNumber(projectEntity.getId()), hasSize(3));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivilege.CREATE_PROJECT);

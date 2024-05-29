@@ -2,8 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.data;
 
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 
-import java.util.ArrayList;
-import java.util.UUID;
+import java.util.*;
 
 public class SampleGlobalUsers {
 
@@ -15,6 +14,7 @@ public class SampleGlobalUsers {
                 .id(UUID.randomUUID())
                 .username("user")
                 .roles(new ArrayList<>())
+                .vcsUserId("vcsUserId")
                 .avatar("avatar");
     }
 

@@ -12,8 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.util.GraphQlUtil.gql;
 import static de.unistuttgart.iste.meitrex.scrumgame.data.SampleGlobalUserRoles.sampleGlobalUserRoleBuilder;
@@ -112,6 +111,7 @@ public class QueryGlobalUserTest {
                         id
                         username
                         avatar
+                        vcsUserId
                         roles {
                             name
                             globalPrivileges
@@ -128,6 +128,7 @@ public class QueryGlobalUserTest {
                         id
                         username
                         avatar
+                        vcsUserId
                         roles {
                             name
                             globalPrivileges
@@ -144,6 +145,7 @@ public class QueryGlobalUserTest {
                         id
                         username
                         avatar
+                        vcsUserId
                         roles {
                             name
                             globalPrivileges

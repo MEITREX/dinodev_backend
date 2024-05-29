@@ -12,10 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.graphql.test.tester.GraphQlTester;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.nio.file.AccessDeniedException;
-import java.util.List;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
@@ -79,7 +79,7 @@ class MutationUpdateGlobalUserRuleTest {
                 .variable("input", input)
                 .execute()
                 .errors()
-                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AuthorizationDeniedException.class))));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);
@@ -100,7 +100,7 @@ class MutationUpdateGlobalUserRuleTest {
                 .variable("input", input)
                 .execute()
                 .errors()
-                .satisfy(errors -> assertThat(errors, containsError(causedBy(AccessDeniedException.class))));
+                .satisfy(errors -> assertThat(errors, containsError(causedBy(AuthorizationDeniedException.class))));
 
         // verify
         verify(authService, atLeastOnce()).hasPrivilege(GlobalPrivileges.CHANGE_ROLES);

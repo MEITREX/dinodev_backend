@@ -138,6 +138,7 @@ public class MutationRegisterUserTest {
         return CreateGlobalUserInput.builder()
                 .setUsername("Test User")
                 .setAvatar("Test Avatar")
+                .setVcsUserId("Test VCS User")
                 .build();
     }
 
@@ -148,6 +149,7 @@ public class MutationRegisterUserTest {
                         id
                         username
                         avatar
+                        vcsUserId
                         roles {
                             name
                             globalPrivileges

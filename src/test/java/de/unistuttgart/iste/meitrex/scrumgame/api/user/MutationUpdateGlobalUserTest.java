@@ -14,7 +14,7 @@ import org.springframework.graphql.test.tester.GraphQlTester;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.UUID;
+import java.util.*;
 
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.causedBy;
 import static de.unistuttgart.iste.meitrex.common.testutil.MeitrexMatchers.containsError;
@@ -132,6 +132,7 @@ class MutationUpdateGlobalUserTest {
         return UpdateGlobalUserInput.builder()
                 .setUsername("Updated User")
                 .setAvatar("Updated Avatar")
+                .setVcsUserId("Updated VCS User Id")
                 .build();
     }
 
@@ -142,6 +143,7 @@ class MutationUpdateGlobalUserTest {
                         id
                         username
                         avatar
+                        vcsUserId
                     }
                 }
                 """);
