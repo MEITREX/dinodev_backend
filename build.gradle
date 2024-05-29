@@ -43,6 +43,7 @@ def fetchFilesFromRepo(String repository, List<String> files) {
 
 fetchFilesFromRepo("common", ["directives.graphqls", "scalars.graphqls", "sortFilterPagination.graphqls"])
 fetchFilesFromRepo("scrum-game-ims-api", ["issue.graphqls"])
+fetchFilesFromRepo("gamification_engine", ["event.graphqls"])
 
 // run this task to fetch the latest schema files from the external github repositories
 tasks.register("fetchAllExternalSchemas", Task) {
@@ -92,7 +93,9 @@ tasks.register('gropiusCodegen', GraphQLCodegenGradleTask) {
             "UUID"           : "java.util.UUID",
             "Url"            : "java.net.URL",
             "JSON"           : "java.lang.Object",
-            "Assignment.user": "GropiusGropiusUser" // concrete sub type to allow serialization of the user object
+            "DateTimeFilterInput.gt"      : "String",
+            "Assignment.user"             : "GropiusGropiusUser", // concrete sub type to allow serialization of the user object
+            "TimelineItemConnection.nodes": "de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusProjections.TimelineItemResponse"
     ]
     modelNamePrefix = "Gropius"
     generateEqualsAndHashCode = true
@@ -140,12 +143,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.3'
-    implementation('de.unistuttgart.iste.meitrex:scrum-game-ims-api') {
-        version {
-            branch = 'main'
-        }
-    }
+    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.4'
+    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.4'
+    implementation 'de.unistuttgart.iste.meitrex:gamification_engine:1.0.4'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -167,7 +167,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.3'
+    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.4'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'
     testImplementation 'org.springframework.graphql:spring-graphql-test'
