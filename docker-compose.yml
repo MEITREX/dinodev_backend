@@ -14,17 +14,16 @@ services:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
       - POSTGRES_DB=scrumgamedatabase
+    networks:
+      - "scrum-game-network"
   app-scrum-game:
     build:
-      context: ./../scrum-game # necessary because otherwise docker-compose overrides the context path when merging multiple docker-compose.yml files
       dockerfile: Dockerfile
     restart: always
     container_name: scrum_game
     expose:
-      - 12000
       - 12001
     ports:
-      - "12000:12000"
       - "12001:12001"
     depends_on:
       - database-scrum-game
@@ -32,29 +31,17 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://database-scrum-game:5432/scrumgamedatabase
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: root
-  dapr-scrum-game:
-    image: "daprio/daprd"
-    command: [
-      "./daprd",
-      "--app-id", "scrum_game_service",
-      "--app-port", "12001",
-      "--dapr-http-port", "12000",
-      "--resources-path", "./components"
-    ]
-    volumes:
-      - "./../scrum-game/components/:/components" # Mount our components folder for the runtime to use. The mounted location must match the --resources-path argument.
-    depends_on:
-      - app-scrum-game
-      - redis
-    network_mode: "service:app-scrum-game"
-  redis:
-    image: "redis:alpine"
-    expose:
-      - "6379"
+      # replace accordingly:
+      GROPIUS_URL: http://gropius-testing-api-public-1:8080
+      GROPIUS_FRONTEND_URL: http://localhost:4200
+      GROPIUS_AUTH_SECRET: xvnoqU54G4GDUx7B9EHiyPhjjnpLDSmTq7XhAcVhszDYzGKPCwPq2nQjszzfg5DVEevQonNaeyQZFdMMNFcXH96Jgu9zw3JUjnj7
+    networks:
+      - "scrum-game-network"
 volumes:
   scrumgamedata:
   testdata:
+
 networks:
-  default:
-    name: dapr-network
+  scrum-game-network:
     external: true
+    driver: bridge
