@@ -1,0 +1,49 @@
+type Sprint {
+    project: Project!
+
+    id: UUID!
+    name: String
+    animal: Animal
+    number: Int!
+
+    startDate: DateTime
+    endDate: DateTime
+
+    storyPointsPlanned: Int
+    customGoldChallengeReward: String
+
+    issues: [Issue!]! @OnDemand
+    stats: SprintStats! @OnDemand
+}
+
+type SprintStats {
+    Sprint: Sprint!
+
+    successState: SprintSuccessState!
+    totalStoryPoints: Int!
+    averageStoryPoints: Float!
+    percentageStoryPointsCompleted: Float!
+    percentageStoryPointsInProgress: Float!
+    percentageStoryPointsNotStarted: Float!
+    issueCount: Int!
+    daysLeft: Int!
+    daysElapsed: Int!
+    percentageTimeElapsed: Float!
+}
+
+enum SprintSuccessState {
+    IN_PROGRESS
+    UNKNOWN
+    FAILED
+    SUCCESS
+    SUCCESS_WITH_GOLD_CHALLENGE
+}
+
+input CreateSprintInput {
+    name: String!
+    startDate: DateTime!
+    endDate: DateTime!
+    storyPointsPlanned: Int!
+    animal: Animal!
+    customGoldChallengeReward: String
+}

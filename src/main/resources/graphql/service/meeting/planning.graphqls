@@ -1,0 +1,141 @@
+type PlanningMeeting implements Meeting {
+    planningSettings: PlanningSettings!
+    currentPage: PlanningMeetingPage!
+    animalVoting: AnimalVoting!
+    nameVoting: NameVoting!
+    issueEstimation: IssueEstimation!
+    sprintGoalVoting: SprintGoalVoting!
+
+    # inherited from Meeting:
+    meetingType: MeetingType!
+    active: Boolean!
+    attendees: [MeetingAttendee!]!
+
+    projectId: UUID!
+}
+
+enum PlanningMeetingPage {
+    INFORMATION
+    CHOOSE_ANIMAL
+    NAME_ANIMAL
+    ESTIMATE_ISSUES
+    SPRINT_GOAL
+}
+
+type PlanningSettings {
+    sprintDurationDays: Int!
+    sprintStartDate: DateTime!
+    customGoldChallengeReward: String
+}
+
+type AnimalVoting {
+    votableAnimals: [Animal!]!
+    animalVotingStates: [AnimalVotingState!]!
+
+    finished: Boolean!
+    votingResult: Animal
+}
+
+type AnimalVotingState {
+    votedFor: Animal!
+    userVotes: [Vote!]!
+    totalVotes: Int!
+}
+
+type NameVotingState {
+    votedFor: String!
+    userVotes: [Vote!]!
+    totalVotes: Int!
+}
+
+type Vote {
+    userId: UUID!
+    user: GlobalUser!
+}
+
+type NameVoting {
+    votableNames: [String!]!
+    nameVotingStates: [NameVotingState!]!
+
+    finished: Boolean!
+    votingResult: String
+}
+
+type IssueEstimation {
+    planningMeeting: PlanningMeeting!
+
+    votes: [EstimationVote!]!
+    finished: Boolean!
+    issueId: ID
+    issue: Issue @OnDemand
+
+    countdownSeconds: Int
+
+    estimationStats: EstimationStats @OnDemand
+
+    finalResult: TShirtSizeEstimation
+}
+
+type EstimationStats {
+    median: TShirtSizeEstimation
+    max: TShirtSizeEstimation
+    min: TShirtSizeEstimation
+    mode: TShirtSizeEstimation
+}
+
+type EstimationVote {
+    votedFor: TShirtSizeEstimation!
+    userVotes: [Vote!]!
+    totalVotes: Int!
+}
+
+type SprintGoalVoting {
+    planningMeeting: PlanningMeeting!
+
+    sprintIssueIds: [ID!]!
+    nonSprintIssueIds: [ID!]!
+
+    sprintIssues: [Issue!]! @OnDemand
+    nonSprintIssues: [Issue!]! @OnDemand
+
+    finished: Boolean!
+}
+
+type PlanningMeetingMutation {
+    project: Project!
+    changePage(page: PlanningMeetingPage!): PlanningMeeting!
+
+    # animal voting
+    voteAnimal(animal: Animal!): PlanningMeeting!
+    endAnimalVoting: PlanningMeeting! @OnDemand
+
+    # name voting
+    addName(name: String!): PlanningMeeting!
+    voteName(name: String!): PlanningMeeting!
+    endNameVoting: PlanningMeeting! @OnDemand
+
+    voteEstimation(estimation: TShirtSizeEstimation!): PlanningMeeting!
+    restartEstimation: PlanningMeeting! @OnDemand
+    nextIssue(issueId: ID): PlanningMeeting! # todo rename setIssueId or something
+    startCountdown(seconds: Int! @Positive): PlanningMeeting! @OnDemand
+    endEstimation: PlanningMeeting! @OnDemand
+    setFinalResult(estimation: TShirtSizeEstimation!): PlanningMeeting!
+
+    addSprintIssue(issueId: ID!): PlanningMeeting!
+    removeSprintIssue(issueId: ID!): PlanningMeeting!
+    finishSprintGoalVoting: PlanningMeeting! @OnDemand
+
+    finishMeeting: Sprint!
+}
+
+input PlanningMeetingInput {
+    title: String!
+    meetingLeaderId: UUID!
+    planningSettings: PlanningSettingsInput!
+}
+
+input PlanningSettingsInput {
+    sprintDurationDays: Int!
+    sprintStartDate: DateTime!
+    goldChallengeCustomReward: String
+}

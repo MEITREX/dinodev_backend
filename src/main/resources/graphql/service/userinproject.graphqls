@@ -1,0 +1,23 @@
+type UserInProject implements ProjectDependent {
+    roles: [ProjectRole!]!
+
+    userStats: UserStats! @OnDemand
+
+    userId: UUID!
+    user: GlobalUser! @OnDemand
+
+    projectId: UUID!
+    project: Project! @OnDemand
+
+    publicEvents(size: Int, page: Int): [Event!]! @OnDemand
+
+    achievements: [AchievementProgress!]! @OnDemand
+}
+
+type UserStats {
+    xp: Int!
+    xpToNextLevel: Int!
+    level: Int!
+
+    virtualCurrency: Int!
+}

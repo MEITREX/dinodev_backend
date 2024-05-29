@@ -1,0 +1,6 @@
+type BasicUserInfo {
+    id: ID!
+    isAdmin: Boolean!
+    username: String!
+    avatar: String
+}

@@ -1,0 +1,65 @@
+type ProjectRole {
+    name: String!
+    gamifiedName: String!
+    projectId: UUID!
+    project: Project! @OnDemand
+    projectPrivileges: [ProjectPrivilege!]!
+}
+
+type GlobalUserRole {
+    name: String!
+    globalPrivileges: [GlobalPrivilege!]!
+}
+
+enum ProjectPrivilege {
+    READ_PROJECT
+    UPDATE_PROJECT
+    DELETE_PROJECT
+    CREATE_SPRINT
+    UPDATE_SPRINT
+    DELETE_SPRINT
+    CREATE_SHOP_ITEM
+    UPDATE_SHOP_ITEM
+    DELETE_SHOP_ITEM
+    CREATE_USER
+    UPDATE_USER
+    DELETE_USER
+    CREATE_ROLE
+    UPDATE_ROLE
+    DELETE_ROLE
+    READ_USER_PRIVATE_INFO
+    # todo add more permissions
+}
+
+enum GlobalPrivilege {
+    CREATE_PROJECT
+    CREATE_ROLE
+    UPDATE_ROLE
+    DELETE_ROLE
+    READ_USER_PRIVATE_INFO
+    CHANGE_ROLES
+    UPDATE_USER
+    DELETE_USER
+    LIST_USERS
+    # todo add more permissions
+}
+
+input CreateGlobalUserRoleInput {
+    name: String!
+    globalPrivileges: [GlobalPrivilege!]!
+}
+
+input UpdateGlobalUserRoleInput {
+    globalPrivileges: [GlobalPrivilege!]!
+}
+
+input CreateProjectRoleInput {
+    name: String!
+    gamifiedName: String!
+    projectPrivileges: [ProjectPrivilege!]!
+}
+
+input UpdateProjectRoleInput {
+    gamifiedName: String!
+    projectPrivileges: [ProjectPrivilege!]!
+}

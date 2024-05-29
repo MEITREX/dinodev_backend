@@ -1,0 +1,33 @@
+type StandupMeeting implements Meeting {
+    standupMeetingSettings: StandupMeetingSettings!
+    order: [MeetingAttendee!]!
+    currentAttendee: MeetingAttendee
+
+    # inherited from Meeting:
+    meetingType: MeetingType!
+    active: Boolean!
+    attendees: [MeetingAttendee!]!
+
+    projectId: UUID!
+}
+
+type StandupMeetingSettings {
+    countdownPerAttendee: Int
+}
+
+input StandupMeetingInput {
+    standupMeetingSettings: StandupMeetingSettingsInput
+    meetingLeaderId: UUID!
+}
+
+input StandupMeetingSettingsInput {
+    countdownPerAttendee: Int
+}
+
+type StandupMeetingMutation {
+    project: Project!
+
+    startStandupMeeting: StandupMeeting! @OnDemand
+    changeCurrentAttendee(attendeeId: UUID!): StandupMeeting!
+    finishStandupMeeting: StandupMeeting! @OnDemand
+}

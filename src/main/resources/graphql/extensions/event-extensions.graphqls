@@ -1,0 +1,7 @@
+extend interface Event {
+    user: GlobalUser @OnDemand
+}
+
+extend type DefaultEvent {
+    user: GlobalUser @OnDemand
+}

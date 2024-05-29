@@ -1,0 +1,19 @@
+type ShopItem {
+    id: ID!
+    name: String!
+    price: Int!
+    description: String!
+    image: String!
+}
+
+enum Animal {
+    STEGOSAURUS
+    TREX
+    BRONTOSAURUS
+    TRICERATOPS
+    ANKYLOSAURUS
+    PARASAUROLOPHUS
+    DODO
+    MAMMOTH
+    GIANT_SLOTH
+}

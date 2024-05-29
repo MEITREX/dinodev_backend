@@ -1,0 +1,183 @@
+type Project {
+    id: UUID!
+    name: String!
+    description: String
+
+    projectSettings: ProjectSettings!
+
+    currentSprintNumber: Int
+    currentSprint: Sprint @OnDemand
+    previousSprint: Sprint @OnDemand
+    sprints: [Sprint!]! @OnDemand
+
+    users: [UserInProject!]! @OnDemand
+    currentUser: UserInProject @OnDemand
+
+    # meetings
+    activePlanningMeeting: PlanningMeeting @OnDemand
+    activeStandupMeeting: StandupMeeting @OnDemand
+    activeRetrospectiveMeeting: RetrospectiveMeeting @OnDemand
+
+    # roles
+    roles: [ProjectRole!]! @OnDemand
+    role(name: String!): ProjectRole @OnDemand
+
+    # issues
+    issues: [Issue!]! @OnDemand
+    issue(id: UUID!): Issue @OnDemand
+    projectBoard: ProjectBoard! @OnDemand
+
+    # events
+    events(page: Int, size: Int): [Event!]! @OnDemand
+}
+
+interface ProjectDependent {
+    projectId: UUID!
+    project: Project! @OnDemand
+}
+
+type ProjectSettings {
+    codeRepositorySettings: CodeRepositorySettings!
+    imsSettings: ImsSettings!
+
+    definitionOfDone: [DefinitionOfDoneItem!]!
+}
+
+type DefinitionOfDoneItem {
+    text: String!
+    required: Boolean!
+    implies: [DefinitionOfDoneItem!]!
+}
+
+type ImsSettings {
+    imsName: String!
+    imsIcon: Icon!
+    imsProjectId: ID!
+    imsProjectUrl: String!
+
+    issueStates: [IssueState!]!
+    imsIssueTemplateId: ID!
+
+    effortEstimationFieldName: String!
+    sprintFieldName: String!
+    partOfRelationId: ID!
+
+    issuePriorities: [IssuePriorityConfiguration!]!
+}
+
+type IssuePriorityConfiguration {
+    imsPriorityId: ID!
+    issuePriority: IssuePriority!
+}
+
+type CodeRepositorySettings {
+    repositories: [RepositoryDefinition!]!
+}
+
+type RepositoryDefinition {
+    name: String!
+    url: String!
+    icon: Icon!
+}
+
+type Icon {
+    path: String
+    mdiIcon: String
+}
+
+input CreateProjectInput {
+    name: String! @NotBlank
+    description: String @NotBlank
+
+    startingSprintNumber: Int! = 1
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input UpdateProjectInput {
+    name: String! @NotBlank
+    description: String @NotBlank
+
+    projectSettings: ProjectSettingsInput!
+}
+
+input ProjectSettingsInput {
+    codeRepositorySettings: CodeRepositorySettingsInput!
+    imsSettings: ImsSettingsInput!
+
+    definitionOfDone: [DefinitionOfDoneItemInput!]! = []
+}
+
+input ImsSettingsInput {
+    imsName: String!
+    imsIcon: IconInput!
+    imsProjectId: ID!
+    imsProjectUrl: String!
+
+    issueStates: [IssueStateInput!]!
+    imsIssueTemplateId: ID!
+
+    effortEstimationFieldName: String!
+    sprintFieldName: String!
+    partOfRelationId: ID!
+
+    issuePriorities: [IssuePriorityInput!]!
+}
+
+input IssuePriorityInput {
+    imsPriorityId: ID!
+    issuePriority: IssuePriority!
+}
+
+input CodeRepositorySettingsInput {
+    repositories: [RepositoryDefinitionInput!]!
+}
+
+input RepositoryDefinitionInput {
+    name: String! @NotBlank
+    url: String! @NotBlank
+    icon: IconInput!
+}
+
+input IconInput {
+    path: String
+    mdiIcon: String
+}
+
+input DefinitionOfDoneItemInput {
+    text: String! @NotBlank
+    required: Boolean! @NotBlank
+    implies: [DefinitionOfDoneItemInput!]! = []
+}
+
+input IssueStateInput {
+    name: String! @NotBlank
+    type: IssueStateType! @NotBlank
+    imsStateId: ID! @NotBlank
+}
+
+type ProjectMutation {
+    project: Project!
+
+    joinMeeting(type: MeetingType!): Meeting! @OnDemand
+    leaveMeeting(type: MeetingType!): Meeting @OnDemand
+    pingMeeting(type: MeetingType!): Meeting! @OnDemand
+    promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
+
+    createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting! @OnDemand
+    mutatePlanningMeeting: PlanningMeetingMutation! @OnDemand
+    createStandupMeeting(input: StandupMeetingInput!): StandupMeeting! @OnDemand
+    mutateStandupMeeting: StandupMeetingMutation! @OnDemand
+    createRetrospectiveMeeting(input: RetrospectiveMeetingInput!): RetrospectiveMeeting! @OnDemand
+    mutateRetrospectiveMeeting: RetrospectiveMeetingMutation! @OnDemand
+
+    createRole(input: CreateProjectRoleInput!): ProjectRole! @OnDemand
+    updateRole(name: String!, input: UpdateProjectRoleInput!): ProjectRole! @OnDemand
+    deleteRole(name: String!): Boolean! @OnDemand
+
+    createSprint(input: CreateSprintInput): Sprint! @OnDemand
+
+    mutateIssue(id: ID!): IssueMutation! @OnDemand
+    createIssue(input: CreateIssueInput!): Issue! @OnDemand
+
+}

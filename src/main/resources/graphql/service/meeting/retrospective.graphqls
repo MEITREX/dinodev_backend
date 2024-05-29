@@ -1,0 +1,18 @@
+type RetrospectiveMeeting implements Meeting {
+
+    # inherited from Meeting:
+    meetingType: MeetingType!
+    active: Boolean!
+    attendees: [MeetingAttendee!]!
+
+    projectId: UUID!
+}
+
+input RetrospectiveMeetingInput {
+    title: String! @NotBlank
+    projectId: UUID! @NotBlank
+}
+
+type RetrospectiveMeetingMutation {
+    meeting: RetrospectiveMeeting!
+}

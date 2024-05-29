@@ -1,0 +1,187 @@
+"""
+Represents an issue in a project management system.
+"""
+type Issue {
+    """
+    Unique identifier for the issue.
+    """
+    id: ID!
+
+    """
+    Unique identifier of the project the issue belongs to.
+    """
+    projectId: UUID!
+
+    """
+    Title of the issue, providing a brief summary.
+    """
+    title: String!
+
+    """
+    Detailed description of the issue. Markdown is supported.
+    """
+    description: String
+
+    """
+    Current state of the issue.
+    """
+    state: IssueState!
+
+    """
+    Categorization of the issue by type.
+    """
+    type: IssueType!
+
+    """
+    Priority of the issue.
+    """
+    priority: IssuePriority!
+
+    """
+    Sprint number associated with the issue, if applicable.
+    """
+    sprintNumber: Int
+
+    """
+    Story points associated with the issue. If not set, the issue is considered to not have an estimation yet.
+    Might also be calculated based on the effort estimation.
+    """
+    storyPoints: Int
+
+    """
+    Effort estimation associated with the issue. If not set, the issue is considered to not have an estimation yet.
+    """
+    effortEstimation: TShirtSizeEstimation
+
+    """
+    List of user UUIDs representing the assignees of the issue.
+    """
+    assigneeIds: [UUID!]!
+
+    """
+    List of events / timeline items of the issue.
+    """
+    issueEvents: [Event!]! @OnDemand
+
+    """
+    Labels associated with the issue.
+    """
+    labels: [String!]!
+
+    """
+    Url to the issue in the issue management system.
+    """
+    issueUrl: String!
+
+    """
+    Children issue ids of the issue.
+    """
+    childrenIssueIds: [ID!]!
+
+    """
+    Parent issue id of the issue.
+    """
+    parentIssueId: ID
+
+}
+
+"""
+Enumeration of priorities for issues.
+"""
+enum IssuePriority {
+    LOW
+    MEDIUM
+    HIGH
+}
+
+"""
+Enumeration of possible sizes for a T-shirt estimation.
+"""
+enum TShirtSizeEstimation {
+    XS
+    S
+    M
+    L
+    XL
+}
+
+"""
+Defines the type of an issue, such as bug, feature, etc.
+"""
+type IssueType {
+    """
+    Name of the issue type.
+    """
+    name: String!
+
+    """
+    Description of what the issue type entails.
+    """
+    description: String
+
+    """
+    Path to an icon visually representing the issue type.
+    """
+    iconPath: String
+}
+
+"""
+Input type for creating a new issue.
+"""
+input CreateIssueInput {
+    """
+    Title of the new issue.
+    """
+    title: String! @NotBlank
+
+    """
+    Detailed description of the new issue. Can be GitLab-flavored markdown.
+    """
+    description: String
+
+    """
+    Name of the state the issue should be initially set to.
+    """
+    stateName: String! @NotBlank
+
+    """
+    Name of the type the issue should be categorized under.
+    """
+    typeName: String! @NotBlank
+
+    """
+    Sprint number the issue is associated with, if applicable.
+    """
+    sprintNumber: Int
+}
+
+"""
+Represents the state of an issue within its lifecycle.
+"""
+type IssueState {
+    """
+    Name of the state.
+    """
+    name: String!
+
+    """
+    Type of the state, categorizing its position in the workflow.
+    """
+    type: IssueStateType!
+
+    """
+    Identifier for the state in an issue management system.
+    """
+    imsStateId: ID!
+}
+
+"""
+Enumeration of possible states an issue can be in during its lifecycle.
+"""
+enum IssueStateType {
+    BACKLOG
+    SPRINT_BACKLOG
+    IN_PROGRESS
+    DONE_SPRINT
+    DONE
+}
