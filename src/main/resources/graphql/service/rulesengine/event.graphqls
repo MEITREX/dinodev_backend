@@ -1,0 +1,23 @@
+input EventFilter {
+    eventTypeIdentifier: StringFilter
+    minVisibility: EventVisibility
+    userId: UUID
+    projectId: UUID
+    since: DateTime
+}
+
+interface Rule {
+    id: UUID!
+    name: String!
+    description: String
+
+    triggerEventType: EventType!
+}
+
+type MvelRule implements Rule {
+    id: UUID!
+    name: String!
+    description: String
+    triggerEventType: EventType!
+    mvelExpression: String!
+}
