@@ -15,6 +15,7 @@ import java.util.stream.*;
 public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConfiguration {
 
     private final Project project;
+    private final String gropiusUrl;
 
     @Override
     public UUID getScrumGameProjectId() {
@@ -60,6 +61,6 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
 
     @Override
     public String getGropiusBaseUrl() {
-        return System.getProperty("gropius.baseUrl");
+        return Objects.requireNonNull(gropiusUrl, "Gropius URL must be set in application.properties");
     }
 }

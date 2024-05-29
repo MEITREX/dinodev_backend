@@ -9,8 +9,7 @@ import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -44,8 +43,8 @@ public class UserInProjectController {
     }
 
     @SchemaMapping
-    public PrivateUserInfo privateInfo(UserInProject userInProject) {
-        return userInProjectService.getPrivateInfo(userInProject.getUserId(), userInProject.getProjectId());
+    public UserStats userStats(UserInProject userInProject) {
+        return userInProjectService.getUserStats(userInProject.getUserId(), userInProject.getProjectId());
     }
 
     @SchemaMapping

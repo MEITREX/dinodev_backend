@@ -5,9 +5,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUser
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Entity
@@ -30,6 +28,10 @@ public class GlobalUserEntity implements IWithId<UUID> {
     @Setter
     @Lob
     private String avatar;
+
+    @Column
+    @Setter
+    private String vcsUserId;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Builder.Default

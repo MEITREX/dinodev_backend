@@ -4,9 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "dod_item")
@@ -26,7 +24,7 @@ public class DefinitionOfDoneItemEntity {
     private String  text;
     private boolean required;
 
-    @OneToMany(fetch = FetchType.LAZY,
+    @OneToMany(fetch = FetchType.EAGER,
                cascade = CascadeType.ALL,
                orphanRemoval = true)
     @Builder.Default

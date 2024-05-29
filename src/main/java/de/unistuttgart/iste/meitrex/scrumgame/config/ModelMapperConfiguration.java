@@ -29,7 +29,7 @@ public class ModelMapperConfiguration {
                 .registerModule(new ProjectRoleMapping())
                 .registerModule(new ProjectMapping())
                 .registerModule(new MeetingMapping())
-                .registerModule(new EventTypeMapping());
+                .registerModule(new EventMapping());
 
         return modelMapper;
     }

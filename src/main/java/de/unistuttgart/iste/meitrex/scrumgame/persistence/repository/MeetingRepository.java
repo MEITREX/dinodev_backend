@@ -25,10 +25,6 @@ public interface MeetingRepository extends MeitrexRepository<MeetingEntity, UUID
             boolean active
     );
 
-    List<MeetingEntity> findAllByProjectId(UUID projectId);
-
-    Optional<MeetingEntity> findByIdAndProjectId(UUID id, UUID projectId);
-
     @Override
     default String getEntityName() {
         return "Meeting";

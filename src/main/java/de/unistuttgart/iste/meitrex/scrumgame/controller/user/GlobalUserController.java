@@ -1,21 +1,16 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.user;
 
-import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
-import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
-import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserInput;
-import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.GlobalUserService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
-import org.springframework.graphql.data.method.annotation.Argument;
-import org.springframework.graphql.data.method.annotation.MutationMapping;
-import org.springframework.graphql.data.method.annotation.QueryMapping;
-import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.graphql.data.method.annotation.*;
 import org.springframework.stereotype.Controller;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class GlobalUserController {
@@ -39,9 +34,25 @@ public class GlobalUserController {
         return userService.findCurrentUser().orElse(null);
     }
 
-    @SchemaMapping
-    public GlobalUser user(UserInProject userInProject) {
-        return userService.getGlobalUserOrThrow(userInProject.getUserId());
+    @BatchMapping
+    public List<GlobalUser> user(List<UserInProject> users) {
+        return userService.findUsersBatched(users.stream().map(UserInProject::getUserId).toList());
+    }
+
+    @SchemaMapping(typeName = "DefaultEvent", field = "user")
+    public GlobalUser userOfDefaultEvent(DefaultEvent event) {
+        return userService.findGlobalUser(event.getUserId()).orElse(null);
+    }
+
+    // remark: BatchMapping doesn't work with subscriptions for some reason (Only costed a few hours of debugging)
+    @SchemaMapping(typeName = "MeetingAttendee", field = "user")
+    public GlobalUser userOfMeetingAttendee(MeetingAttendee meetingAttendee) {
+        return userService.findGlobalUser(meetingAttendee.getUserId()).orElse(null);
+    }
+
+    @SchemaMapping(typeName = "Vote", field = "user")
+    public GlobalUser userOfVote(Vote vote) {
+        return userService.findGlobalUser(vote.getUserId()).orElse(null);
     }
 
     @MutationMapping

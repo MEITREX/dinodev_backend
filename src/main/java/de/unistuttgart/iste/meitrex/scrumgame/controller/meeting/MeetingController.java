@@ -43,7 +43,7 @@ public class MeetingController {
 
     @SubscriptionMapping
     public Flux<Meeting> meeting(@Argument UUID projectId, @Argument MeetingType meetingType) {
-        return meetingService.getMeetingUpdates(projectId, meetingType);
+        return meetingService.getMeetingUpdates(projectId, meetingType, Meeting.class);
     }
 
 //    @SubscriptionMapping

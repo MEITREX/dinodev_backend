@@ -2,8 +2,8 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
-import de.unistuttgart.iste.meitrex.generated.dto.PrivateUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
+import de.unistuttgart.iste.meitrex.generated.dto.UserStats;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.PrivateUserInfoEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
@@ -12,26 +12,33 @@ import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
 @Getter(AccessLevel.PROTECTED)
 public class UserInProjectService
         extends AbstractCrudService<UserProjectId, UserInProjectEntity, UserInProject> {
 
     private final UserInProjectRepository repository;
-    private final ModelMapper                     modelMapper;
     private final AuthService                     authService;
     private final UserInProjectInitializerService userInProjectInitializerService;
+
+    public UserInProjectService(
+            UserInProjectRepository repository,
+            AuthService authService,
+            UserInProjectInitializerService userInProjectInitializerService,
+            ModelMapper modelMapper
+    ) {
+        super(repository, modelMapper, UserInProjectEntity.class, UserInProject.class);
+        this.repository = repository;
+        this.authService = authService;
+        this.userInProjectInitializerService = userInProjectInitializerService;
+    }
 
     /**
      * Finds a user in a project.
@@ -79,7 +86,7 @@ public class UserInProjectService
     }
 
     /**
-     * Resolves the private information of a user in a project. The private information is only accessible by the user
+     * Resolves the user stats of a user in a project. This is only accessible by the user
      * itself.
      *
      * @param userId the user ID
@@ -87,12 +94,12 @@ public class UserInProjectService
      */
     @PreAuthorize("@auth.currentUserId.equals(#userId) " +
                   "or @auth.hasPrivilege(@projectPrivileges.READ_USER_PRIVATE_INFO, #projectId)")
-    public PrivateUserInfo getPrivateInfo(UUID userId, UUID projectId) {
+    public UserStats getUserStats(UUID userId, UUID projectId) {
         PrivateUserInfoEmbeddable privateInfo = repository
                 .findByIdOrThrow(new UserProjectId(userId, projectId))
                 .getPrivateInfo();
 
-        return modelMapper.map(privateInfo, PrivateUserInfo.class);
+        return getModelMapper().map(privateInfo, UserStats.class);
     }
 
     public UserInProject createUserInProject(UUID userId, UUID projectId) {
@@ -118,16 +125,6 @@ public class UserInProjectService
     public List<UserInProject> getUsers(UUID projectId, List<UUID> userIds) {
         List<UserInProject> allUsers = getUsersInProjectByProjectId(projectId);
         return MeitrexCollectionUtils.sortByKeys(allUsers, userIds, UserInProject::getUserId);
-    }
-
-    @Override
-    protected Class<UserInProjectEntity> getEntityClass() {
-        return UserInProjectEntity.class;
-    }
-
-    @Override
-    protected Class<UserInProject> getDtoClass() {
-        return UserInProject.class;
     }
 
 }

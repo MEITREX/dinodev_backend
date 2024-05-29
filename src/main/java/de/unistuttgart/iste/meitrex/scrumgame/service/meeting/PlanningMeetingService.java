@@ -3,7 +3,6 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.meeting;
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingAttendeeEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningSettingsEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.PlanningMeetingRepository;
@@ -61,7 +60,7 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
                 getModelMapper().map(input.getPlanningSettings(), PlanningSettingsEmbeddable.class));
         planningMeeting.setMeetingType(MeetingType.PLANNING);
         planningMeeting.setProject(projectService.getProjectEntity(project.getId()));
-        planningMeeting.setAttendees(initMeetingAttendees(input));
+        planningMeeting.setAttendees(meetingService.initMeetingAttendees(input.getMeetingLeaderId()));
         planningMeeting.setCurrentPage(PlanningMeetingPage.INFORMATION);
         planningMeeting.setActive(true);
         planningMeeting.getAnimalVoting()
@@ -76,16 +75,6 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
         meetingService.publishMeetingUpdated(result);
 
         return result;
-    }
-
-    private List<MeetingAttendeeEmbeddable> initMeetingAttendees(PlanningMeetingInput input) {
-        List<MeetingAttendeeEmbeddable> attendees = new ArrayList<>();
-        attendees.add(MeetingAttendeeEmbeddable.builder()
-                .setUserId(input.getMeetingLeaderId())
-                .setRole(MeetingRole.MEETING_LEADER)
-                .setState(UserState.ONLINE)
-                .build());
-        return attendees;
     }
 
     private void initSprintGoalVoting(PlanningMeetingEntity planningMeeting, Project project) {
@@ -302,30 +291,8 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
                 .build());
     }
 
-    /**
-     * Retrieves a flux stream of the currently active planning meeting for the given project ID that emits the current
-     * state of the planning meeting followed by any updates to the planning meeting. If no active planning meeting is
-     * found for the project ID, the stream will be empty until a new planning meeting is created.
-     *
-     * @param projectId the ID of the project for which to retrieve planning meeting updates
-     * @return a Flux stream of updated PlanningMeeting objects
-     */
     public Flux<PlanningMeeting> getPlanningMeetingUpdatedSubscription(UUID projectId) {
-        try {
-            Flux<PlanningMeeting> meetingUpdatesFlux = meetingService.getMeetingUpdates(projectId, MeetingType.PLANNING)
-                    .ofType(PlanningMeeting.class);
-
-            Optional<PlanningMeeting> activePlanningMeeting = findActivePlanningMeeting(projectId);
-
-            if (activePlanningMeeting.isPresent()) {
-                return meetingUpdatesFlux.startWith(activePlanningMeeting.get());
-            }
-
-            return meetingUpdatesFlux;
-        } catch (Exception e) {
-            log.error("Error while getting planning meeting updates", e);
-            return Flux.empty();
-        }
+        return meetingService.getMeetingUpdates(projectId, MeetingType.PLANNING, PlanningMeeting.class);
     }
 
 }

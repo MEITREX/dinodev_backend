@@ -41,7 +41,7 @@ type Query {
 
     # event types
     eventTypes: [EventType!]!
-    eventType(id: UUID!): EventType
+    eventType(id: String!): EventType
 
 }
 

@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.role;
 
-import de.unistuttgart.iste.meitrex.common.persistence.MeitrexRepository;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
@@ -8,25 +7,27 @@ import de.unistuttgart.iste.meitrex.generated.dto.GlobalUserRole;
 import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserRoleInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRoleRepository;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Service for managing global user roles.
  */
 @Service
-@RequiredArgsConstructor
 public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUserRoleEntity, GlobalUserRole> {
 
     private final GlobalUserRoleRepository globalUserRoleRepository;
-    private final ModelMapper modelMapper;
+
+    public GlobalUserRoleService(
+            ModelMapper modelMapper,
+            GlobalUserRoleRepository globalUserRoleRepository
+    ) {
+        super(globalUserRoleRepository, modelMapper, GlobalUserRoleEntity.class, GlobalUserRole.class);
+        this.globalUserRoleRepository = globalUserRoleRepository;
+    }
 
     public List<GlobalUserRole> getAllGlobalUserRoles() {
         return getAll();
@@ -74,26 +75,6 @@ public class GlobalUserRoleService extends AbstractCrudService<String, GlobalUse
                 // add all global privileges to the admin role
                 .globalPrivileges(Arrays.asList(GlobalPrivilege.values()))
                 .build());
-    }
-
-    @Override
-    protected Class<GlobalUserRoleEntity> getEntityClass() {
-        return GlobalUserRoleEntity.class;
-    }
-
-    @Override
-    protected Class<GlobalUserRole> getDtoClass() {
-        return GlobalUserRole.class;
-    }
-
-    @Override
-    protected ModelMapper getModelMapper() {
-        return modelMapper;
-    }
-
-    @Override
-    protected MeitrexRepository<GlobalUserRoleEntity, String> getRepository() {
-        return globalUserRoleRepository;
     }
 
 }

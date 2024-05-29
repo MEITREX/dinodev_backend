@@ -56,6 +56,10 @@ public class ImsSettingsEntity {
     @Setter
     private String sprintFieldName;
 
+    @Column
+    @Setter
+    private String partOfRelationId;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Setter
     @Builder.Default
