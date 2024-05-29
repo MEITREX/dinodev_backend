@@ -35,6 +35,7 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile("dev")
+    @SuppressWarnings({"java:S5122"}) // only dev profile, no security issue
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(List.of("*"));
@@ -52,6 +53,8 @@ public class SecurityConfiguration {
      */
     @Bean
     @Profile("dev")
+    @SuppressWarnings({"java:S4502", "java:S3330"})
+    // only dev profile, no security issue
     DefaultSecurityFilterChain springDevWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
@@ -81,12 +84,14 @@ public class SecurityConfiguration {
      */
     @Bean
     @Profile("prod")
+    @SuppressWarnings({"java:S3330"})
+    // currently CSRF uses cookie with httpOnly=false, which could be improved
     DefaultSecurityFilterChain prodSpringWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
-                .cors(cors -> cors.disable()) // todo enable
+                .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         // allow OPTIONS requests to the GraphQL endpoint
                         .requestMatchers(HttpMethod.OPTIONS, "/graphql**").permitAll()
