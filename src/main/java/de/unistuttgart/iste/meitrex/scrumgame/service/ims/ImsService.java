@@ -162,6 +162,11 @@ public class ImsService {
                 .getEventsForIssue(issue.getId(), since);
     }
 
+    public Issue createIssue(ProjectMutation projectMutation, CreateIssueInput input) {
+        return imsConnectorFactory.getImsConnectorForProject(projectMutation.getProject())
+                .createIssue(input);
+    }
+
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {
         return new IssueStateInBoard(issueState, board);
     }

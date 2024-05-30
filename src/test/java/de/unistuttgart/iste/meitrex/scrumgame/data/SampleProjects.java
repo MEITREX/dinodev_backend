@@ -66,6 +66,15 @@ public class SampleProjects {
                                                 .setImsStateId("Test IMS State ID 2")
                                                 .setType(IssueStateType.IN_PROGRESS)
                                                 .build()))
+                                .setIssueTypes(List.of(
+                                        IssueTypeInput.builder()
+                                                .setName("Test Type")
+                                                .setImsTypeId("Test IMS Type ID")
+                                                .build(),
+                                        IssueTypeInput.builder()
+                                                .setName("Test Type 2")
+                                                .setImsTypeId("Test IMS Type ID 2")
+                                                .build()))
                                 .build())
                         .setDefinitionOfDone(List.of(
                                 DefinitionOfDoneItemInput.builder()
@@ -140,6 +149,15 @@ public class SampleProjects {
                                                 .setImsStateId("Updated Test IMS State ID 2")
                                                 .setType(IssueStateType.DONE_SPRINT)
                                                 .build()))
+                                .setIssueTypes(List.of(
+                                        IssueTypeInput.builder()
+                                                .setName("Updated Test Type")
+                                                .setImsTypeId("Updated Test IMS Type ID")
+                                                .build(),
+                                        IssueTypeInput.builder()
+                                                .setName("Updated Test Type 2")
+                                                .setImsTypeId("Updated Test IMS Type ID 2")
+                                                .build()))
                                 .build())
                         .setDefinitionOfDone(List.of(
                                 DefinitionOfDoneItemInput.builder()
@@ -212,6 +230,15 @@ public class SampleProjects {
                                                 .name("Test State 2")
                                                 .imsStateId("Test IMS State ID 2")
                                                 .type(IssueStateType.IN_PROGRESS)
+                                                .build())))
+                                .issueTypes(new ArrayList<>(List.of(
+                                        IssueTypeEmbeddable.builder()
+                                                .name("Test Type")
+                                                .imsTypeId("Test IMS Type ID")
+                                                .build(),
+                                        IssueTypeEmbeddable.builder()
+                                                .name("Test Type 2")
+                                                .imsTypeId("Test IMS Type ID 2")
                                                 .build())))
                                 .build())
                         .definitionOfDone(List.of(

@@ -82,6 +82,11 @@ public class ImsController {
     }
 
     @SchemaMapping
+    public Issue createIssue(ProjectMutation projectMutation, @Argument CreateIssueInput input) {
+        return imsService.createIssue(projectMutation, input);
+    }
+
+    @SchemaMapping
     public Issue changeIssueTitle(IssueMutation issueMutation, @Argument String title) {
         return imsService.changeIssueTitle(issueMutation, title);
     }

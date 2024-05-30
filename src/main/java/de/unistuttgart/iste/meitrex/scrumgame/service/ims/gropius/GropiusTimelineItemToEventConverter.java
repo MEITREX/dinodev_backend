@@ -52,8 +52,8 @@ public class GropiusTimelineItemToEventConverter {
 
     private static EventType getStateChangedEventType(TimelineItemResponse timelineItem,
             GropiusIssueMappingConfiguration configuration) {
-        IssueState oldState = configuration.issueStateConverter().getIssueState(timelineItem.oldState().getId());
-        IssueState newState = configuration.issueStateConverter().getIssueState(timelineItem.newState().getId());
+        IssueState oldState = configuration.getIssueStateConverter().getIssueState(timelineItem.oldState().getId());
+        IssueState newState = configuration.getIssueStateConverter().getIssueState(timelineItem.newState().getId());
 
         if (StateUtils.isMovedOutOfSprint(oldState, newState)) {
             return ImsEventTypes.REMOVE_ISSUE_FROM_SPRINT;
@@ -95,9 +95,9 @@ public class GropiusTimelineItemToEventConverter {
 
     private static String getStateChangedMessage(TimelineItemResponse timelineItemResponse,
             GropiusIssueMappingConfiguration configuration) {
-        IssueState oldState = configuration.issueStateConverter()
+        IssueState oldState = configuration.getIssueStateConverter()
                 .getIssueState(timelineItemResponse.oldState().getId());
-        IssueState newState = configuration.issueStateConverter()
+        IssueState newState = configuration.getIssueStateConverter()
                 .getIssueState(timelineItemResponse.newState().getId());
 
         return "changed the state from " + oldState.getName() + " to " + newState.getName() + ".";

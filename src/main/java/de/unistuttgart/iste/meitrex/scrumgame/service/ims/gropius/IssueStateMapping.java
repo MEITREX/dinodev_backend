@@ -9,17 +9,25 @@ import java.util.stream.*;
 /**
  * Converts IMS issue states to IssueState objects.
  */
-public class IssueStateConverter {
+public class IssueStateMapping {
 
     private final Map<String, IssueState> issueStateMap;
 
-    public IssueStateConverter(List<IssueState> issueStates) {
+    public IssueStateMapping(List<IssueState> issueStates) {
         this.issueStateMap = issueStates.stream()
                 .collect(Collectors.toMap(IssueState::getImsStateId, Function.identity()));
     }
 
     public IssueState getIssueState(String imsStateId) {
         return issueStateMap.get(imsStateId);
+    }
+
+    public String getIssueStateId(String issueName) {
+        return issueStateMap.entrySet().stream()
+                .filter(entry -> entry.getValue().getName().equals(issueName))
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
 }

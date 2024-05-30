@@ -65,4 +65,9 @@ public class ImsSettingsEntity {
     @Builder.Default
     private List<IssuePriorityEmbeddable> issuePriorities = new ArrayList<>();
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Setter
+    @Builder.Default
+    private List<IssueTypeEmbeddable> issueTypes = new ArrayList<>();
+
 }

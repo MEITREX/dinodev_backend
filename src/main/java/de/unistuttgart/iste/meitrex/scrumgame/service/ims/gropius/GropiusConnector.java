@@ -118,7 +118,7 @@ public class GropiusConnector implements ImsConnector {
     public Issue changeIssuePriority(String issueId, IssuePriority priority) {
         var request = new ChangeIssuePriorityMutationRequest();
         request.setInput(new GropiusChangeIssuePriorityInput(issueId,
-                mappingConfiguration.issuePriorityMapping().getIssuePriorityId(priority)));
+                mappingConfiguration.getIssuePriorityMapping().getIssuePriorityId(priority)));
 
         var projection = new ChangeIssuePriorityPayloadResponseProjection()
                 .priorityChangedEvent(new PriorityChangedEventResponseProjection()
@@ -234,9 +234,33 @@ public class GropiusConnector implements ImsConnector {
     }
 
     @Override
-    public Issue createIssue(UUID projectId,
-            CreateIssueInput createIssueInput) {
-        return null;
+    public Issue createIssue(CreateIssueInput createIssueInput) {
+        var request = new CreateIssueMutationRequest();
+        request.setInput(GropiusCreateIssueInput.builder()
+                .setTrackables(List.of(mappingConfiguration.getImsProjectId()))
+                .setTitle(createIssueInput.getTitle())
+                .setBody(createIssueInput.getDescription())
+                .setState(mappingConfiguration.getIssueStateConverter()
+                        .getIssueStateId(createIssueInput.getStateName()))
+                .setType(mappingConfiguration.getIssueTypeMapping().getIssueTypeId(createIssueInput.getTypeName()))
+                .setTemplate(mappingConfiguration.getIssueTemplateId())
+                .setType(mappingConfiguration.getIssueTypeMapping().getIssueTypeId(createIssueInput.getTypeName()))
+                .setTemplatedFields(List.of(
+                        GropiusJSONFieldInput.builder()
+                                .setName(mappingConfiguration.getSprintFieldName())
+                                .setValue(createIssueInput.getSprintNumber())
+                                .build()))
+                .build());
+
+        var projection = new CreateIssuePayloadResponseProjection()
+                .issue(GropiusProjections.getDefaultIssueProjection());
+
+        return graphQlRequestExecutor
+                .request(request)
+                .projectTo(GropiusCreateIssuePayload.class, projection)
+                .retrieve()
+                .map(response -> gropiusIssueToScrumGameIssue(response.getIssue(), mappingConfiguration))
+                .block();
     }
 
     @Override

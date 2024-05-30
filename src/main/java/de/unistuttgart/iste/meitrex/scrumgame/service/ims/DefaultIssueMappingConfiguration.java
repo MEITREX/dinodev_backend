@@ -5,7 +5,8 @@ import de.unistuttgart.iste.meitrex.generated.dto.IssuePriorityConfiguration;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusIssueMappingConfiguration;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssuePriorityMapping;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueStateConverter;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueStateMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueTypeMapping;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -31,8 +32,8 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
         return project.getProjectSettings().getImsSettings();
     }
 
-    public IssueStateConverter issueStateConverter() {
-        return new IssueStateConverter(getImsSettings().getIssueStates());
+    public IssueStateMapping getIssueStateConverter() {
+        return new IssueStateMapping(getImsSettings().getIssueStates());
     }
 
     @Override
@@ -51,12 +52,17 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
     }
 
     @Override
-    public IssuePriorityMapping issuePriorityMapping() {
+    public IssuePriorityMapping getIssuePriorityMapping() {
         return new IssuePriorityMapping(
                 getImsSettings().getIssuePriorities().stream()
                         .collect(Collectors.toMap(
                                 IssuePriorityConfiguration::getImsPriorityId,
                                 IssuePriorityConfiguration::getIssuePriority)));
+    }
+
+    @Override
+    public IssueTypeMapping getIssueTypeMapping() {
+        return new IssueTypeMapping(getImsSettings().getIssueTypes());
     }
 
     @Override
