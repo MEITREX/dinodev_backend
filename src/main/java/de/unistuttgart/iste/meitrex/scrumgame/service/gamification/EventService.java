@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -65,6 +66,19 @@ public class EventService {
                 .map(eventPersistenceService.getEventFactory()::createDefaultEvent)
                 .map(Event.class::cast)
                 .toList();
+    }
+
+    /**
+     * Returns a Flux of events for a given project.
+     * The Flux will emit events as they are published. It will not emit events that were published before the
+     * subscription.
+     *
+     * @param projectId The project id to subscribe to
+     * @return A Flux of events for the given project
+     */
+    public Flux<Event> getEventFlux(UUID projectId) {
+        return eventPublisher.getEventStream()
+                .filter(event -> event.getProjectId().equals(projectId));
     }
 
     private void syncEvents(Issue issue) {
