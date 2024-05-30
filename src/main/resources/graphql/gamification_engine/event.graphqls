@@ -71,7 +71,7 @@ type DefaultEventType implements EventType {
     identifier: String!
     description: String
     defaultVisibility: EventVisibility!
-    eventSchema: DefaultSchemaDefinition!
+    eventSchema: SchemaDefinition!
     messageTemplate: String!
 }
 
@@ -98,7 +98,7 @@ interface SchemaDefinition {
 }
 
 type DefaultSchemaDefinition implements SchemaDefinition {
-    fields: [DefaultFieldSchemaDefinition!]!
+    fields: [FieldSchemaDefinition!]!
 }
 
 interface FieldSchemaDefinition {

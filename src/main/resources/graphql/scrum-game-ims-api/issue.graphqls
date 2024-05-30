@@ -115,6 +115,11 @@ type IssueType {
     name: String!
 
     """
+    Identifier for the issue type in an issue management system.
+    """
+    imsTypeId: ID!
+
+    """
     Description of what the issue type entails.
     """
     description: String

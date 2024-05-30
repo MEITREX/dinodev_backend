@@ -24,7 +24,7 @@ public interface GropiusIssueMappingConfiguration {
      *
      * @return The issue state converter.
      */
-    IssueStateConverter issueStateConverter();
+    IssueStateMapping getIssueStateConverter();
 
     /**
      * Get the issue priority mapping for this configuration, used to map issue priorities between the Scrum Game and
@@ -32,7 +32,9 @@ public interface GropiusIssueMappingConfiguration {
      *
      * @return The issue priority mapping.
      */
-    IssuePriorityMapping issuePriorityMapping();
+    IssuePriorityMapping getIssuePriorityMapping();
+
+    IssueTypeMapping getIssueTypeMapping();
 
     String getSprintFieldName();
 

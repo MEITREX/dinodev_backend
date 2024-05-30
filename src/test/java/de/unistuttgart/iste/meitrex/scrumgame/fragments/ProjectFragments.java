@@ -39,6 +39,10 @@ public class ProjectFragments {
                         imsStateId
                         type
                     }
+                    issueTypes {
+                        name
+                        imsTypeId
+                    }
                 }
                 definitionOfDone {
                     text

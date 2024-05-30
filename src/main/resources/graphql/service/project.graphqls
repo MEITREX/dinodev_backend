@@ -63,11 +63,17 @@ type ImsSettings {
     partOfRelationId: ID!
 
     issuePriorities: [IssuePriorityConfiguration!]!
+    issueTypes: [IssueTypeConfiguration!]!
 }
 
 type IssuePriorityConfiguration {
     imsPriorityId: ID!
     issuePriority: IssuePriority!
+}
+
+type IssueTypeConfiguration {
+    name: String!
+    imsTypeId: ID!
 }
 
 type CodeRepositorySettings {
@@ -122,6 +128,7 @@ input ImsSettingsInput {
     partOfRelationId: ID!
 
     issuePriorities: [IssuePriorityInput!]!
+    issueTypes: [IssueTypeInput!]!
 }
 
 input IssuePriorityInput {
@@ -154,6 +161,11 @@ input IssueStateInput {
     name: String! @NotBlank
     type: IssueStateType! @NotBlank
     imsStateId: ID! @NotBlank
+}
+
+input IssueTypeInput {
+    name: String! @NotBlank
+    imsTypeId: ID! @NotBlank
 }
 
 type ProjectMutation {

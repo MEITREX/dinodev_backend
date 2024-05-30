@@ -13,6 +13,7 @@ public class IssuePriorityMapping {
 
     private final Map<String, IssuePriority> issuePriorityMap;
 
+
     public IssuePriority getIssuePriority(String imsPriorityId) {
         return issuePriorityMap.get(imsPriorityId);
     }

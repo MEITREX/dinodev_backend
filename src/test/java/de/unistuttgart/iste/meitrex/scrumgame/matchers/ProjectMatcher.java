@@ -81,7 +81,11 @@ public class ProjectMatcher {
                 hasProperty("partOfRelationId", is(imsSettings.getPartOfRelationId())),
                 hasProperty("issuePriorities",
                         containsInAnyOrder(each(imsSettings.getIssuePriorities(),
-                                ProjectMatcher::matchingIssuePriorityEntity)))
+                                ProjectMatcher::matchingIssuePriorityEntity))),
+                hasProperty("issueTypes",
+                        containsInAnyOrder(each(imsSettings.getIssueTypes(),
+                                ProjectMatcher::matchingIssueTypeConfigurationEntity))
+                )
 
         );
     }
@@ -153,7 +157,11 @@ public class ProjectMatcher {
                 hasProperty("partOfRelationId", is(imsSettingsInput.getPartOfRelationId())),
                 hasProperty("issuePriorities",
                         containsInAnyOrder(each(imsSettingsInput.getIssuePriorities(),
-                                ProjectMatcher::matchingIssuePriorityInput)))
+                                ProjectMatcher::matchingIssuePriorityInput))),
+                hasProperty("issueTypes",
+                        containsInAnyOrder(each(imsSettingsInput.getIssueTypes(),
+                                ProjectMatcher::matchingIssueTypeInput))
+                )
         );
     }
 
@@ -187,6 +195,20 @@ public class ProjectMatcher {
         return allOf(
                 hasProperty("issuePriority", is(issuePriority.getIssuePriority())),
                 hasProperty("imsPriorityId", is(issuePriority.getImsPriorityId()))
+        );
+    }
+
+    public static Matcher<IssueTypeConfiguration> matchingIssueTypeConfigurationEntity(IssueTypeEmbeddable issueTypeConfiguration) {
+        return allOf(
+                hasProperty("imsTypeId", is(issueTypeConfiguration.getImsTypeId())),
+                hasProperty("name", is(issueTypeConfiguration.getName()))
+        );
+    }
+
+    public static Matcher<IssueTypeInput> matchingIssueTypeInput(IssueTypeInput issueTypeInput) {
+        return allOf(
+                hasProperty("name", is(issueTypeInput.getName())),
+                hasProperty("imsTypeId", is(issueTypeInput.getImsTypeId()))
         );
     }
 

@@ -34,7 +34,7 @@ public class GropiusMapping {
                 .setProjectId(mappingConfiguration.getScrumGameProjectId())
                 .setTitle(issueResponse.getTitle())
                 .setDescription(issueResponse.getBody().getBody())
-                .setState(mappingConfiguration.issueStateConverter()
+                .setState(mappingConfiguration.getIssueStateConverter()
                         .getIssueState(issueResponse.getState().getId()))
                 .setType(IssueType.builder()
                         .setName(issueResponse.getType().getName())
@@ -66,7 +66,7 @@ public class GropiusMapping {
             GropiusIssueMappingConfiguration mappingConfiguration) {
         IssuePriority issuePriority = null;
         if (priority != null) {
-            issuePriority = mappingConfiguration.issuePriorityMapping().getIssuePriority(priority.getId());
+            issuePriority = mappingConfiguration.getIssuePriorityMapping().getIssuePriority(priority.getId());
         }
         return issuePriority != null ? issuePriority : IssuePriority.MEDIUM;
     }
