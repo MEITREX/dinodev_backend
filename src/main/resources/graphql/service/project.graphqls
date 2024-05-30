@@ -176,6 +176,9 @@ type ProjectMutation {
     pingMeeting(type: MeetingType!): Meeting! @OnDemand
     promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
 
+    reactToEvent(eventId: ID!, reaction: String! = "♥️"): Event! @OnDemand
+    postComment(optionalParentEventId: ID, comment: String!): Event! @OnDemand
+
     createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting! @OnDemand
     mutatePlanningMeeting: PlanningMeetingMutation! @OnDemand
     createStandupMeeting(input: StandupMeetingInput!): StandupMeeting! @OnDemand

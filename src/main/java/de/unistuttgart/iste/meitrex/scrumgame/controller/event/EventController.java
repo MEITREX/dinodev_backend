@@ -1,9 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.event;
 
-import de.unistuttgart.iste.meitrex.generated.dto.Event;
-import de.unistuttgart.iste.meitrex.generated.dto.Issue;
-import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -46,6 +43,20 @@ public class EventController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return eventService.getPublicUserEvents(user.getProjectId(), user.getUserId(), pageable);
+    }
+
+    @SchemaMapping
+    public Event reactToEvent(ProjectMutation projectMutation, @Argument UUID eventId, @Argument String reaction) {
+        return eventService.reactToEvent(projectMutation, eventId, reaction);
+    }
+
+    @SchemaMapping
+    public Event postComment(
+            ProjectMutation projectMutation,
+            @Argument UUID optionalParentEventId,
+            @Argument String comment
+    ) {
+        return eventService.addUserMessage(projectMutation, optionalParentEventId, comment);
     }
 
     @SubscriptionMapping

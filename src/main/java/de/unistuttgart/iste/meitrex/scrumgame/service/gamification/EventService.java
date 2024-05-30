@@ -1,13 +1,12 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
-import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
-import de.unistuttgart.iste.meitrex.generated.dto.Event;
-import de.unistuttgart.iste.meitrex.generated.dto.Issue;
-import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.EventEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +78,42 @@ public class EventService {
     public Flux<Event> getEventFlux(UUID projectId) {
         return eventPublisher.getEventStream()
                 .filter(event -> event.getProjectId().equals(projectId));
+    }
+
+    public Event reactToEvent(ProjectMutation projectMutation, UUID eventId, String reaction) {
+        CreateEventInput input = CreateEventInput.builder()
+                .setProjectId(projectMutation.getProject().getId())
+                .setUserId(authService.getCurrentUserId())
+                .setParentId(eventId)
+                .setEventData(List.of(
+                        TemplateFieldInput.builder()
+                                .setType(AllowedDataType.STRING)
+                                .setKey("reaction")
+                                .setValue(reaction)
+                                .build()
+                ))
+                .setEventTypeIdentifier(ScrumGameEventTypes.EVENT_REACTION.getIdentifier())
+                .build();
+
+        return eventPublisher.publishEvent(input);
+    }
+
+    public Event addUserMessage(ProjectMutation projectMutation, @Nullable UUID optionalParentId, String message) {
+        CreateEventInput input = CreateEventInput.builder()
+                .setProjectId(projectMutation.getProject().getId())
+                .setUserId(authService.getCurrentUserId())
+                .setParentId(optionalParentId)
+                .setEventData(List.of(
+                        TemplateFieldInput.builder()
+                                .setType(AllowedDataType.STRING)
+                                .setKey("message")
+                                .setValue(message)
+                                .build()
+                ))
+                .setEventTypeIdentifier(DefaultEventTypes.USER_MESSAGE.getIdentifier())
+                .build();
+
+        return eventPublisher.publishEvent(input);
     }
 
     private void syncEvents(Issue issue) {
