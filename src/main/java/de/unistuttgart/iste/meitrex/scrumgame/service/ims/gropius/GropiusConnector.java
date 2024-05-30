@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius;
 
-import com.kobylynskyi.graphql.codegen.model.graphql.GraphQLRequest;
 import de.unistuttgart.iste.gropius.generated.dto.*;
 import de.unistuttgart.iste.meitrex.common.graphqlclient.GraphQlRequestExecutor;
 import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
@@ -255,9 +254,6 @@ public class GropiusConnector implements ImsConnector {
 
         var projection = new CreateIssuePayloadResponseProjection()
                 .issue(GropiusProjections.getDefaultIssueProjection());
-
-        var gqlRequest = new GraphQLRequest(request, projection);
-        log.info("Graphql request: {}", gqlRequest.toQueryString());
 
         return graphQlRequestExecutor
                 .request(request)
