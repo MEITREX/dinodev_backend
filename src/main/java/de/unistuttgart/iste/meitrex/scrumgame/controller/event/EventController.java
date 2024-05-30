@@ -11,7 +11,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
+import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
 import org.springframework.stereotype.Controller;
+import reactor.core.publisher.Flux;
 
 import java.util.*;
 
@@ -44,5 +46,10 @@ public class EventController {
     ) {
         Pageable pageable = PageRequest.of(page, size);
         return eventService.getPublicUserEvents(user.getProjectId(), user.getUserId(), pageable);
+    }
+
+    @SubscriptionMapping
+    public Flux<Event> events(@Argument UUID projectId) {
+        return eventService.getEventFlux(projectId);
     }
 }
