@@ -61,6 +61,7 @@ public interface EventRepository extends MeitrexRepository<EventEntity, UUID> {
     Optional<EventEntity> findLastSyncForIssue(String issueId);
 
     @Query("SELECT e FROM EventEntity e JOIN e.eventData d WHERE d.key = 'issueId' AND d.value = :issueId " +
+           "AND e.parent IS NULL " +
            "ORDER BY e.timestamp DESC")
     List<EventEntity> findForIssue(String issueId);
 
