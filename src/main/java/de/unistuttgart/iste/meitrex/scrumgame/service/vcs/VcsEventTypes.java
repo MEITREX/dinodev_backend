@@ -8,7 +8,7 @@ import java.util.*;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class VcsEventTypes {
 
-    private static final List<FieldSchemaDefinition> DEFAULT_FIELDS = List.of(
+    private static final List<DefaultFieldSchemaDefinition> DEFAULT_FIELDS = List.of(
             DefaultFieldSchemaDefinition.builder()
                     .setName("repositoryName")
                     .setType(AllowedDataType.STRING)
@@ -40,13 +40,13 @@ public class VcsEventTypes {
                     .setRequired(false)
                     .build());
 
-    private static List<FieldSchemaDefinition> defaultFieldsAnd(FieldSchemaDefinition... additionalFields) {
-        List<FieldSchemaDefinition> fields = new ArrayList<>(DEFAULT_FIELDS);
+    private static List<DefaultFieldSchemaDefinition> defaultFieldsAnd(DefaultFieldSchemaDefinition... additionalFields) {
+        List<DefaultFieldSchemaDefinition> fields = new ArrayList<>(DEFAULT_FIELDS);
         fields.addAll(List.of(additionalFields));
         return fields;
     }
 
-    private static final List<FieldSchemaDefinition> PULL_REQUEST_FIELDS = defaultFieldsAnd(
+    private static final List<DefaultFieldSchemaDefinition> PULL_REQUEST_FIELDS = defaultFieldsAnd(
             DefaultFieldSchemaDefinition.builder()
                     .setName("pullRequestTitle")
                     .setType(AllowedDataType.STRING)

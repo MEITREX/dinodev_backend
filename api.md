@@ -31,6 +31,7 @@
     * [IssueState](#issuestate)
     * [IssueStateInBoard](#issuestateinboard)
     * [IssueType](#issuetype)
+    * [IssueTypeConfiguration](#issuetypeconfiguration)
     * [MeetingAttendee](#meetingattendee)
     * [MvelRule](#mvelrule)
     * [NameVoting](#namevoting)
@@ -44,6 +45,7 @@
     * [ProjectMutation](#projectmutation)
     * [ProjectRole](#projectrole)
     * [ProjectSettings](#projectsettings)
+    * [Reaction](#reaction)
     * [RepositoryDefinition](#repositorydefinition)
     * [RetrospectiveMeeting](#retrospectivemeeting)
     * [RetrospectiveMeetingMutation](#retrospectivemeetingmutation)
@@ -78,6 +80,7 @@
     * [IntFilter](#intfilter)
     * [IssuePriorityInput](#issuepriorityinput)
     * [IssueStateInput](#issuestateinput)
+    * [IssueTypeInput](#issuetypeinput)
     * [Pagination](#pagination)
     * [PlanningMeetingInput](#planningmeetinginput)
     * [PlanningSettingsInput](#planningsettingsinput)
@@ -667,7 +670,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>parent</strong></td>
-<td valign="top"><a href="#event">Event</a></td>
+<td valign="top"><a href="#defaultevent">DefaultEvent</a></td>
 <td></td>
 </tr>
 <tr>
@@ -677,12 +680,27 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>children</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td valign="top">[<a href="#defaultevent">DefaultEvent</a>!]!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>user</strong></td>
 <td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>reactions</strong></td>
+<td valign="top">[<a href="#reaction">Reaction</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>field</strong></td>
+<td valign="top"><a href="#templatefield">TemplateField</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">name</td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -717,7 +735,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>eventSchema</strong></td>
-<td valign="top"><a href="#defaultschemadefinition">DefaultSchemaDefinition</a>!</td>
+<td valign="top"><a href="#schemadefinition">SchemaDefinition</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -782,7 +800,7 @@
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>fields</strong></td>
-<td valign="top">[<a href="#defaultfieldschemadefinition">DefaultFieldSchemaDefinition</a>!]!</td>
+<td valign="top">[<a href="#fieldschemadefinition">FieldSchemaDefinition</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1078,6 +1096,11 @@
 <tr>
 <td colspan="2" valign="top"><strong>issuePriorities</strong></td>
 <td valign="top">[<a href="#issuepriorityconfiguration">IssuePriorityConfiguration</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issueTypes</strong></td>
+<td valign="top">[<a href="#issuetypeconfiguration">IssueTypeConfiguration</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1533,6 +1556,15 @@ Name of the issue type.
 </td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>imsTypeId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td>
+
+Identifier for the issue type in an issue management system.
+
+</td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>description</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td>
@@ -1549,6 +1581,31 @@ Description of what the issue type entails.
 Path to an icon visually representing the issue type.
 
 </td>
+</tr>
+</tbody>
+</table>
+
+### IssueTypeConfiguration
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsTypeId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -2218,6 +2275,36 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>reactToEvent</strong></td>
+<td valign="top"><a href="#event">Event</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">eventId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">reaction</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>postComment</strong></td>
+<td valign="top"><a href="#event">Event</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">optionalParentEventId</td>
+<td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">comment</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>createPlanningMeeting</strong></td>
 <td valign="top"><a href="#planningmeeting">PlanningMeeting</a>!</td>
 <td></td>
@@ -2395,6 +2482,36 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>definitionOfDone</strong></td>
 <td valign="top">[<a href="#definitionofdoneitem">DefinitionOfDoneItem</a>!]!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### Reaction
+
+<table>
+<thead>
+<tr>
+<th align="left">Field</th>
+<th align="right">Argument</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>userId</strong></td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>user</strong></td>
+<td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>reaction</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>
@@ -3606,6 +3723,11 @@ If specified, filters for dates before the specified value.
 <td valign="top">[<a href="#issuepriorityinput">IssuePriorityInput</a>!]!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>issueTypes</strong></td>
+<td valign="top">[<a href="#issuetypeinput">IssueTypeInput</a>!]!</td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -3700,6 +3822,30 @@ If specified, filters for values less than to the specified value.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>imsStateId</strong></td>
+<td valign="top"><a href="#id">ID</a>!</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+### IssueTypeInput
+
+<table>
+<thead>
+<tr>
+<th colspan="2" align="left">Field</th>
+<th align="left">Type</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td colspan="2" valign="top"><strong>name</strong></td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>imsTypeId</strong></td>
 <td valign="top"><a href="#id">ID</a>!</td>
 <td></td>
 </tr>
@@ -4675,6 +4821,7 @@ often used by GraphQL to represent free-form human-readable text.
 
 ## Interfaces
 
+
 ### Event
 
 <table>
@@ -4750,6 +4897,21 @@ often used by GraphQL to represent free-form human-readable text.
 <tr>
 <td colspan="2" valign="top"><strong>user</strong></td>
 <td valign="top"><a href="#globaluser">GlobalUser</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>reactions</strong></td>
+<td valign="top">[<a href="#reaction">Reaction</a>!]!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>field</strong></td>
+<td valign="top"><a href="#templatefield">TemplateField</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">name</td>
+<td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
 </tbody>

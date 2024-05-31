@@ -4,6 +4,7 @@ import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.util.DodConfirmStateFormatter;
 import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
+import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +19,7 @@ import java.util.stream.*;
 public class ImsService {
 
     private final ImsConnectorFactory imsConnectorFactory;
-    
+
     public List<Issue> getIssues(Project project) {
         return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
     }
@@ -147,7 +148,7 @@ public class ImsService {
         String comment = DodConfirmStateFormatter.formatDodConfirmStates(dodConfirmStates);
 
         imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
-                .addCommentToIssue(issueMutation.getIssueId(), comment);
+                .addCommentToIssue(issueMutation.getIssueId(), comment, null);
 
         return changeIssueState(issueMutation, doneStateName);
     }
@@ -165,6 +166,13 @@ public class ImsService {
     public Issue createIssue(ProjectMutation projectMutation, CreateIssueInput input) {
         return imsConnectorFactory.getImsConnectorForProject(projectMutation.getProject())
                 .createIssue(input);
+    }
+
+    public Issue commentOnIssue(IssueMutation issueMutation, String comment, @Nullable String parentId) {
+        Issue issue = imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+                .addCommentToIssue(issueMutation.getIssueId(), comment, parentId);
+
+        return issue;
     }
 
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {

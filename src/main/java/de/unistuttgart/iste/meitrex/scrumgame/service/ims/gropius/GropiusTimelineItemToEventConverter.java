@@ -32,6 +32,9 @@ public class GropiusTimelineItemToEventConverter {
         if (baseEvent.getEventTypeIdentifier().equals(ImsEventTypes.COMMENT_ON_ISSUE.getIdentifier())) {
             baseEvent.setMessage(timelineItem.body());
         }
+        if (timelineItem.answers() != null && timelineItem.answers().getId() != null) {
+            baseEvent.setParentId(UUID.fromString(timelineItem.answers().getId()));
+        }
 
         baseEvent.setEventData(getEventData(issue, timelineItem, eventType, configuration));
 

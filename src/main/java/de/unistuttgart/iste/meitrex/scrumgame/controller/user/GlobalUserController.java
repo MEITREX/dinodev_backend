@@ -55,6 +55,11 @@ public class GlobalUserController {
         return userService.findGlobalUser(vote.getUserId()).orElse(null);
     }
 
+    @SchemaMapping(typeName = "Reaction", field = "user")
+    public GlobalUser userOfReaction(Reaction reaction) {
+        return userService.findGlobalUser(reaction.getUserId()).orElse(null);
+    }
+
     @MutationMapping
     public GlobalUser grantRole(@Argument UUID userId, @Argument String roleName) {
         return userService.grantRole(userId, roleName);
