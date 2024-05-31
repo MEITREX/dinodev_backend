@@ -37,13 +37,19 @@ public interface EventRepository extends MeitrexRepository<EventEntity, UUID> {
      */
     @Query("SELECT e FROM EventEntity e WHERE (e.projectId = :projectId OR e.projectId IS NULL) " +
            "AND e.parent IS NULL " +
-           "AND (e.visibility = 'PRIVATE' OR e.visibility = 'PUBLIC')" +
-           "AND (e.visibility >= 'PUBLIC' OR e.userId = :userId OR :userId MEMBER OF e.visibleToUserIds) " +
+           "AND (e.visibility = 'PUBLIC'" +
+           "OR (e.visibility = 'PRIVATE' AND (e.userId = :userId OR :userId MEMBER OF e.visibleToUserIds))) " +
            "ORDER BY e.timestamp DESC")
     Page<EventEntity> findAllForUser(
             UUID projectId,
             UUID userId,
             Pageable pageable);
+
+    @Query("SELECT e FROM EventEntity e WHERE e.parent.id = :parentId " +
+           "AND (e.visibility = 'PUBLIC'" +
+           "OR (e.visibility = 'PRIVATE' AND (e.userId = :userId OR :userId MEMBER OF e.visibleToUserIds))) " +
+           "ORDER BY e.timestamp ASC")
+    List<EventEntity> findChildren(UUID parentId, UUID userId);
 
     @Query("SELECT e FROM EventEntity e WHERE (e.projectId = :projectId OR e.projectId IS NULL) " +
            "AND e.parent IS NULL " +

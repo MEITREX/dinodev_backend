@@ -11,12 +11,29 @@ import java.util.*;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ScrumGameEventTypes {
 
+    public static final EventType EVENT_REACTION = DefaultEventType.builder()
+            .setIdentifier("EVENT_REACTION")
+            .setDescription("A user reacted to an event.")
+            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setEventSchema(DefaultSchemaDefinition.builder()
+                    .setFields(
+                            List.of(
+                                    DefaultFieldSchemaDefinition.builder()
+                                            .setName("reaction")
+                                            .setType(AllowedDataType.STRING)
+                                            .setDescription("The reaction of the user.")
+                                            .setRequired(false)
+                                            .build()))
+                    .build())
+            .setMessageTemplate("reacted to the event with '${reaction}'.")
+            .build();
+
     public static final EventType USER_JOINED = DefaultEventType.builder()
             .setIdentifier("USER_JOINED")
             .setDescription("A user joined the project.")
             .setDefaultVisibility(EventVisibility.PUBLIC)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("This is a user joined project.")
+            .setMessageTemplate("joined the project! Welcome!")
             .build();
 
     public static final EventType ACHIEVEMENT_UNLOCKED = DefaultEventType.builder()
@@ -33,7 +50,7 @@ public class ScrumGameEventTypes {
                                             .setRequired(true)
                                             .build()))
                     .build())
-            .setMessageTemplate("${userName} unlocked the achievement '${achievementName}'.")
+            .setMessageTemplate("unlocked the achievement '${achievementName}'.")
             .build();
 
     public static final EventType SPRINT_STARTED = DefaultEventType.builder()
@@ -100,4 +117,18 @@ public class ScrumGameEventTypes {
             .setMessageTemplate("The retrospective was ended.")
             .build();
 
+    public static Iterable<EventType> allEventTypes() {
+        return List.of(
+                EVENT_REACTION,
+                USER_JOINED,
+                ACHIEVEMENT_UNLOCKED,
+                SPRINT_STARTED,
+                SPRINT_ENDED,
+                SPRINT_PLANNING_STARTED,
+                SPRINT_PLANNING_ENDED,
+                DAILY_SCRUM_STARTED,
+                DAILY_SCRUM_ENDED,
+                RETROSPECTIVE_STARTED,
+                RETROSPECTIVE_ENDED);
+    }
 }

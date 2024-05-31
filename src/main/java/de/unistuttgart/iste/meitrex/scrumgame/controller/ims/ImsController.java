@@ -123,4 +123,11 @@ public class ImsController {
         return imsService.changeSprint(issueMutation, sprintNumber);
     }
 
+    @SchemaMapping
+    public Issue commentOnIssue(IssueMutation issueMutation,
+            @Argument String comment,
+            @Argument String optionalParentId) {
+        return imsService.commentOnIssue(issueMutation, comment, optionalParentId);
+    }
+
 }

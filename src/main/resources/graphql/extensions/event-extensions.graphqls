@@ -1,7 +1,11 @@
 extend interface Event {
     user: GlobalUser @OnDemand
+    reactions: [Reaction!]! @OnDemand
+    field(name: String!): TemplateField
 }
 
 extend type DefaultEvent {
     user: GlobalUser @OnDemand
+    reactions: [Reaction!]! @OnDemand
+    field(name: String!): TemplateField
 }

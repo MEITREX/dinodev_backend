@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.logging.*;
 
 import static de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusMapping.gropiusIssueToScrumGameIssue;
 
@@ -212,25 +213,43 @@ public class GropiusConnector implements ImsConnector {
     }
 
     @Override
-    public Issue addCommentToIssue(String issueId,
-            String comment) {
+    public Issue addCommentToIssue(String issueId, String comment, @Nullable String optionalParentIssueId) {
         var request = new CreateIssueCommentMutationRequest();
         request.setInput(GropiusCreateIssueCommentInput.builder()
                 .setIssue(issueId)
                 .setBody(comment)
+                .setAnswers(optionalParentIssueId)
                 .build());
 
         var projection = new CreateIssueCommentPayloadResponseProjection()
                 .issueComment(new IssueCommentResponseProjection()
                         .issue(GropiusProjections.getDefaultIssueProjection()));
 
-        return graphQlRequestExecutor
-                .request(request)
-                .projectTo(GropiusCreateIssueCommentPayload.class, projection)
-                .retrieve()
-                .map(response -> gropiusIssueToScrumGameIssue(response.getIssueComment().getIssue(),
-                        mappingConfiguration))
-                .block();
+        try {
+            return graphQlRequestExecutor
+                    .request(request)
+                    .projectTo(GropiusCreateIssueCommentPayload.class, projection)
+                    .retrieve()
+                    .map(response -> gropiusIssueToScrumGameIssue(response.getIssueComment().getIssue(),
+                            mappingConfiguration))
+                    .log("Commented on issue", Level.INFO)
+                    .block();
+        } catch (Exception e) {
+            // try without parent id
+            request.setInput(GropiusCreateIssueCommentInput.builder()
+                    .setIssue(issueId)
+                    .setBody(comment)
+                    .build());
+
+            return graphQlRequestExecutor
+                    .request(request)
+                    .projectTo(GropiusCreateIssueCommentPayload.class, projection)
+                    .retrieve()
+                    .map(response -> gropiusIssueToScrumGameIssue(response.getIssueComment().getIssue(),
+                            mappingConfiguration))
+                    .log("Commented on issue", Level.INFO)
+                    .block();
+        }
     }
 
     @Override

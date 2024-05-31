@@ -42,9 +42,9 @@ type DefaultEvent implements Event {
     timestamp: DateTime!
     message: String!
     mostRecentChildTimestamp: DateTime!
-    parent: Event
+    parent: DefaultEvent
     eventData: [DefaultTemplateField!]!
-    children: [Event!]! @OnDemand
+    children: [DefaultEvent!]! @OnDemand
 }
 
 input CreateEventInput {
@@ -78,19 +78,19 @@ type DefaultEventType implements EventType {
 interface TemplateField {
     key: String!
     type: AllowedDataType!
-    value: String!
+    value: String
 }
 
 type DefaultTemplateField implements TemplateField {
     key: String!
     type: AllowedDataType!
-    value: String!
+    value: String
 }
 
 input TemplateFieldInput {
     key: String!
     type: AllowedDataType!
-    value: String!
+    value: String
 }
 
 interface SchemaDefinition {

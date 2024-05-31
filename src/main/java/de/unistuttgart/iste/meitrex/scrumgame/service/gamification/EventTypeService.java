@@ -58,9 +58,15 @@ public class EventTypeService extends AbstractCrudService<String, UserDefinedEve
      * @param identifier the identifier of the game event type
      * @return the game event type
      */
-    public Optional<EventType> findEventType(String identifier) {
+    public Optional<DefaultEventType> findEventType(String identifier) {
         return eventTypeRegistry.findById(identifier)
-                .or(() -> find(identifier)); // find user defined event type
+                .or(() -> find(identifier)) // find user defined event type
+                .map(event -> {
+                    if (event instanceof DefaultEventType defaultEventType) {
+                        return defaultEventType;
+                    }
+                    return getModelMapper().map(event, DefaultEventType.class);
+                });
     }
 
     /**

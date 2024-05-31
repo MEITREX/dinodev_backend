@@ -1,13 +1,12 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
-import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
-import de.unistuttgart.iste.meitrex.generated.dto.Event;
-import de.unistuttgart.iste.meitrex.generated.dto.Issue;
-import de.unistuttgart.iste.meitrex.generated.dto.Project;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.EventEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
+import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -32,12 +33,16 @@ public class EventService {
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
     private final EventPersistenceService                 eventPersistenceService;
 
+    private static final Duration SYNC_INTERVAL = Duration.ofMinutes(2);
+
+    private OffsetDateTime lastGlobalEventSync = LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC);
+
     public Page<Event> getAndSyncEvents(Project project, Pageable pageable) {
+        log.info("Getting and syncing events for project {}", project.getId());
         syncEventsFromGropius(project);
 
         Page<EventEntity> events = eventPersistenceService.getRepository()
                 .findAllForUser(project.getId(), authService.getCurrentUserId(), pageable);
-
         return events.map(eventPersistenceService::convertToDto);
     }
 
@@ -49,6 +54,10 @@ public class EventService {
     }
 
     public void syncEventsFromGropius(Project project) {
+        if (Duration.between(lastGlobalEventSync, OffsetDateTime.now()).abs().compareTo(SYNC_INTERVAL) < 0) {
+            return;
+        }
+
         // Note that this method could be implemented in a more efficient way
         // by fetching all issues with timeline items in a single request,
         // however, with this approach we can consider the last sync date
@@ -56,6 +65,8 @@ public class EventService {
         // which is difficult to do with a single request.
         List<Issue> issues = imsService.getIssues(project);
         issues.forEach(this::syncEvents);
+
+        lastGlobalEventSync = OffsetDateTime.now();
     }
 
     public List<Event> getAndSyncEvents(Issue issue) {
@@ -81,9 +92,78 @@ public class EventService {
                 .filter(event -> event.getProjectId().equals(projectId));
     }
 
+    public Event reactToEvent(ProjectMutation projectMutation, UUID eventId, String reaction) {
+        CreateEventInput input = CreateEventInput.builder()
+                .setProjectId(projectMutation.getProject().getId())
+                .setUserId(authService.getCurrentUserId())
+                .setParentId(eventId)
+                .setEventData(List.of(
+                        TemplateFieldInput.builder()
+                                .setType(AllowedDataType.STRING)
+                                .setKey("reaction")
+                                .setValue(reaction)
+                                .build()
+                ))
+                .setEventTypeIdentifier(ScrumGameEventTypes.EVENT_REACTION.getIdentifier())
+                .build();
+
+        return eventPublisher.publishEvent(input);
+    }
+
+    public Event addUserMessage(ProjectMutation projectMutation, @Nullable UUID optionalParentId, String message) {
+        CreateEventInput input = CreateEventInput.builder()
+                .setProjectId(projectMutation.getProject().getId())
+                .setUserId(authService.getCurrentUserId())
+                .setParentId(optionalParentId)
+                .setEventData(List.of(
+                        TemplateFieldInput.builder()
+                                .setType(AllowedDataType.STRING)
+                                .setKey("message")
+                                .setValue(message)
+                                .build()
+                ))
+                .setEventTypeIdentifier(DefaultEventTypes.USER_MESSAGE.getIdentifier())
+                .build();
+
+        return eventPublisher.publishEvent(input);
+    }
+
+    public Optional<? extends TemplateField> findField(Event event, String name) {
+        return event.getEventData().stream()
+                .filter(field -> field.getKey().equals(name))
+                .findFirst();
+    }
+
+    public List<DefaultEvent> getChildren(DefaultEvent event) {
+        return eventPersistenceService.getRepository().findChildren(event.getId(), authService.getCurrentUserId())
+                .stream()
+                .map(eventPersistenceService::convertToDto)
+                .toList();
+    }
+
+    public List<Reaction> getReactions(DefaultEvent event) {
+        return getChildren(event).stream()
+                .filter(child ->
+                        child.getEventType().getIdentifier()
+                                .equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier()))
+                .map(childEvent -> Reaction.builder()
+                        .setReaction(findField(childEvent, "reaction").map(TemplateField::getValue).orElse(""))
+                        .setUserId(childEvent.getUserId())
+                        .build())
+                .distinct()
+                .toList();
+    }
+
     private void syncEvents(Issue issue) {
         Optional<EventEntity> lastSynchronizedEvent
                 = eventPersistenceService.getRepository().findLastSyncForIssue(issue.getId());
+
+        if (lastSynchronizedEvent.isPresent()) {
+            if (Duration.between(lastSynchronizedEvent.get().getTimestamp(), OffsetDateTime.now())
+                        .abs().compareTo(SYNC_INTERVAL) < 0) {
+                return;
+            }
+        }
 
         imsService.getEventsForIssue(issue,
                         lastSynchronizedEvent.map(Event::getTimestamp)

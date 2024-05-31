@@ -8,6 +8,7 @@ import de.unistuttgart.iste.meitrex.rulesengine.RuleRegistry;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventPersistenceService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.ScrumGameEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.rules.SimpleTestRule;
 import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VcsEventTypes;
 import lombok.extern.slf4j.Slf4j;
@@ -56,6 +57,7 @@ public class GamificationConfiguration {
 
         ImsEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
         VcsEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
+        ScrumGameEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
 
         // TODO add other event types
     }
