@@ -16,7 +16,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
@@ -31,12 +33,16 @@ public class EventService {
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
     private final EventPersistenceService                 eventPersistenceService;
 
+    private static final Duration SYNC_INTERVAL = Duration.ofMinutes(2);
+
+    private OffsetDateTime lastGlobalEventSync = LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC);
+
     public Page<Event> getAndSyncEvents(Project project, Pageable pageable) {
+        log.info("Getting and syncing events for project {}", project.getId());
         syncEventsFromGropius(project);
 
         Page<EventEntity> events = eventPersistenceService.getRepository()
                 .findAllForUser(project.getId(), authService.getCurrentUserId(), pageable);
-
         return events.map(eventPersistenceService::convertToDto);
     }
 
@@ -48,6 +54,10 @@ public class EventService {
     }
 
     public void syncEventsFromGropius(Project project) {
+        if (Duration.between(lastGlobalEventSync, OffsetDateTime.now()).abs().compareTo(SYNC_INTERVAL) < 0) {
+            return;
+        }
+
         // Note that this method could be implemented in a more efficient way
         // by fetching all issues with timeline items in a single request,
         // however, with this approach we can consider the last sync date
@@ -55,6 +65,8 @@ public class EventService {
         // which is difficult to do with a single request.
         List<Issue> issues = imsService.getIssues(project);
         issues.forEach(this::syncEvents);
+
+        lastGlobalEventSync = OffsetDateTime.now();
     }
 
     public List<Event> getAndSyncEvents(Issue issue) {
@@ -116,9 +128,42 @@ public class EventService {
         return eventPublisher.publishEvent(input);
     }
 
+    public Optional<? extends TemplateField> findField(Event event, String name) {
+        return event.getEventData().stream()
+                .filter(field -> field.getKey().equals(name))
+                .findFirst();
+    }
+
+    public List<DefaultEvent> getChildren(DefaultEvent event) {
+        return eventPersistenceService.getRepository().findChildren(event.getId(), authService.getCurrentUserId())
+                .stream()
+                .map(eventPersistenceService::convertToDto)
+                .toList();
+    }
+
+    public List<Reaction> getReactions(DefaultEvent event) {
+        return getChildren(event).stream()
+                .filter(child ->
+                        child.getEventType().getIdentifier()
+                                .equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier()))
+                .map(childEvent -> Reaction.builder()
+                        .setReaction(findField(childEvent, "reaction").map(TemplateField::getValue).orElse(""))
+                        .setUserId(childEvent.getUserId())
+                        .build())
+                .distinct()
+                .toList();
+    }
+
     private void syncEvents(Issue issue) {
         Optional<EventEntity> lastSynchronizedEvent
                 = eventPersistenceService.getRepository().findLastSyncForIssue(issue.getId());
+
+        if (lastSynchronizedEvent.isPresent()) {
+            if (Duration.between(lastSynchronizedEvent.get().getTimestamp(), OffsetDateTime.now())
+                        .abs().compareTo(SYNC_INTERVAL) < 0) {
+                return;
+            }
+        }
 
         imsService.getEventsForIssue(issue,
                         lastSynchronizedEvent.map(Event::getTimestamp)

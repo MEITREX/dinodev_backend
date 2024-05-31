@@ -3,6 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.controller.event;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class EventController {
@@ -57,6 +59,21 @@ public class EventController {
             @Argument String comment
     ) {
         return eventService.addUserMessage(projectMutation, optionalParentEventId, comment);
+    }
+
+    @SchemaMapping
+    public TemplateField field(DefaultEvent event, @Argument String name) {
+        return eventService.findField(event, name).orElse(null);
+    }
+
+    @SchemaMapping
+    public List<Reaction> reactions(DefaultEvent event) {
+        return eventService.getReactions(event);
+    }
+
+    @SchemaMapping
+    public List<DefaultEvent> children(DefaultEvent event) {
+        return eventService.getChildren(event);
     }
 
     @SubscriptionMapping

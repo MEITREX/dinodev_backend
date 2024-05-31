@@ -117,4 +117,18 @@ public class ScrumGameEventTypes {
             .setMessageTemplate("The retrospective was ended.")
             .build();
 
+    public static Iterable<EventType> allEventTypes() {
+        return List.of(
+                EVENT_REACTION,
+                USER_JOINED,
+                ACHIEVEMENT_UNLOCKED,
+                SPRINT_STARTED,
+                SPRINT_ENDED,
+                SPRINT_PLANNING_STARTED,
+                SPRINT_PLANNING_ENDED,
+                DAILY_SCRUM_STARTED,
+                DAILY_SCRUM_ENDED,
+                RETROSPECTIVE_STARTED,
+                RETROSPECTIVE_ENDED);
+    }
 }
