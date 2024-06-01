@@ -24,6 +24,7 @@ public class MeetingMapping implements Module {
     public void setupModule(ModelMapper modelMapper) {
 
         setupPlanningMeetingMapping(modelMapper);
+        setupStandupMeetingMapping(modelMapper);
 
         modelMapper.emptyTypeMap(MeetingEntity.class, Meeting.class)
                 .setProvider(getMeetingProvider(modelMapper));
@@ -80,8 +81,26 @@ public class MeetingMapping implements Module {
                     return result;
                 });
 
+    }
+
+    private void setupStandupMeetingMapping(ModelMapper modelMapper) {
         modelMapper.createTypeMap(StandupMeetingEntity.class, StandupMeeting.class)
-                .addMapping(entity -> entity.getProject().getId(), StandupMeeting::setProjectId);
+                .addMapping(entity -> entity.getProject().getId(), StandupMeeting::setProjectId)
+                .setPostConverter(context -> {
+                    StandupMeeting result = context.getDestination();
+                    StandupMeetingEntity source = context.getSource();
+                    result.setCurrentAttendee(
+                            result.getAttendees().stream()
+                                    .filter(attendee -> attendee.getUserId().equals(source.getCurrentAttendee()))
+                                    .findFirst()
+                                    .orElse(null));
+
+                    result.setOrder(new ArrayList<>(result.getAttendees()));
+                    result.getOrder().sort(Comparator.comparingInt(attendee
+                            -> source.getUserIdsOrdered().indexOf(attendee.getUserId())));
+
+                    return result;
+                });
     }
 
     private Converter<List<UUID>, List<Vote>> getVoteConverter() {

@@ -62,10 +62,10 @@ public class StandupMeetingService extends AbstractCrudService<UUID, StandupMeet
 
     public StandupMeeting changeCurrentAttendee(Project project, UUID attendeeId) {
         return updateStandupMeeting(project.getId(), standupMeeting -> {
-            standupMeeting.setCurrentAttendee(standupMeeting.getAttendees().stream()
-                    .filter(attendee -> attendee.getUserId().equals(attendeeId))
-                    .findFirst()
-                    .orElseThrow(() -> new MeitrexNotFoundException("Attendee not found")));
+            if (standupMeeting.getAttendees().stream().noneMatch(attendee -> attendee.getUserId().equals(attendeeId))) {
+                throw new MeitrexNotFoundException("Attendee not found in standup meeting");
+            }
+            standupMeeting.setCurrentAttendee(attendeeId);
         });
     }
 
@@ -79,7 +79,10 @@ public class StandupMeetingService extends AbstractCrudService<UUID, StandupMeet
 
     public StandupMeeting startStandupMeeting(Project project) {
         return updateStandupMeeting(project.getId(), standupMeeting -> {
-            standupMeeting.setOrder(standupMeeting.getAttendees());
+            ArrayList<UUID> attendeeIds = new ArrayList<>(standupMeeting.getAttendees().size());
+            standupMeeting.getAttendees().forEach(attendee -> attendeeIds.add(attendee.getUserId()));
+
+            standupMeeting.setOrder(attendeeIds);
             Collections.shuffle(standupMeeting.getOrder());
 
             if (!standupMeeting.getOrder().isEmpty()) {
