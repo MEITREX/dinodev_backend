@@ -12,7 +12,10 @@ public class GropiusProjections {
 
     private static final IssueResponseProjection DEFAULT_ISSUE_RESPONSE_PROJECTION = new IssueResponseProjection()
             .id()
+            .trackables(new TrackableConnectionResponseProjection()
+                    .nodes(new TrackableResponseProjection().id().typename()))
             .title()
+            .template(new IssueTemplateResponseProjection().id())
             .body(new BodyResponseProjection().body())
             .state(new IssueStateResponseProjection().id())
             .priority(new IssuePriorityResponseProjection().id().value())
@@ -95,6 +98,14 @@ public class GropiusProjections {
             GropiusIssueType newType,
             GropiusIssueType oldType
     ) {
+
+        public String typename() {
+            return __typename;
+        }
+    }
+
+    public record TrackableResponse(UUID id, String __typename) {
+
         public String typename() {
             return __typename;
         }
@@ -102,7 +113,12 @@ public class GropiusProjections {
 
     public static ProjectConnectionResponseProjection getProjectConnectionProjection() {
         return new ProjectConnectionResponseProjection()
-                .nodes(new ProjectResponseProjection().issues(getDefaultIssueConnectionProjection()));
+                .nodes(new ProjectResponseProjection()
+                        .issues(getDefaultIssueConnectionProjection())
+                        .components(new ComponentVersionConnectionResponseProjection()
+                                .nodes(new ComponentVersionResponseProjection()
+                                        .component(new ComponentResponseProjection()
+                                                .issues(getDefaultIssueConnectionProjection())))));
     }
 
     public static IssueConnectionResponseProjection getDefaultIssueConnectionProjection() {

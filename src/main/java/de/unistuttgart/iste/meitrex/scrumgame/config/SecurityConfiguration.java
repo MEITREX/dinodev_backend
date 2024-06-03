@@ -62,8 +62,7 @@ public class SecurityConfiguration {
                         .ignoringRequestMatchers("/webhook**")
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
-                // disable CORS
-                .cors(AbstractHttpConfigurer::disable)
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
                         // allow access to the GraphQL endpoint (required for schema introspection)
                         .requestMatchers("/graphql**").permitAll()

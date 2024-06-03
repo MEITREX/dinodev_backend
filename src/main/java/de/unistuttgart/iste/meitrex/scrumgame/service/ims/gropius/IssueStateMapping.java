@@ -19,6 +19,9 @@ public class IssueStateMapping {
     }
 
     public IssueState getIssueState(String imsStateId) {
+        if (!issueStateMap.containsKey(imsStateId)) {
+            throw new IllegalArgumentException("Unknown IMS state ID: " + imsStateId);
+        }
         return issueStateMap.get(imsStateId);
     }
 

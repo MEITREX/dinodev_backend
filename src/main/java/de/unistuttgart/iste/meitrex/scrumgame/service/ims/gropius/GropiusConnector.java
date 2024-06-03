@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.logging.*;
+import java.util.stream.*;
 
 import static de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusMapping.gropiusIssueToScrumGameIssue;
+import static de.unistuttgart.iste.meitrex.scrumgame.util.ScrumGameCollectionUtils.distinctByKey;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -34,9 +36,16 @@ public class GropiusConnector implements ImsConnector {
     }
 
     private List<Issue> getAllIssuesFromProjectConnection(GropiusProjectConnection response) {
-        return response.getNodes().stream()
-                .flatMap(project -> project.getIssues().getNodes().stream())
+        Stream<GropiusIssue> issuesFromProject = response.getNodes().stream()
+                .flatMap(project -> project.getIssues().getNodes().stream());
+        Stream<GropiusIssue> issuesFromComponents = response.getNodes().stream()
+                .flatMap(project -> project.getComponents().getNodes().stream())
+                .flatMap(component -> component.getComponent().getIssues().getNodes().stream());
+
+        return Stream.concat(issuesFromProject, issuesFromComponents)
+                .filter(distinctByKey(GropiusIssue::getId)) // remove duplicates
                 .map(gropiusIssue -> gropiusIssueToScrumGameIssue(gropiusIssue, mappingConfiguration))
+                .filter(Objects::nonNull)
                 .toList();
     }
 

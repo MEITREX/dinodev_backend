@@ -8,6 +8,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.Issue;
 import de.unistuttgart.iste.meitrex.generated.dto.IssuePriority;
 import de.unistuttgart.iste.meitrex.generated.dto.IssueType;
 import de.unistuttgart.iste.meitrex.generated.dto.TShirtSizeEstimation;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusProjections.TrackableResponse;
 import de.unistuttgart.iste.meitrex.scrumgame.util.TShirtSizeEstimationStoryPointsConverter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,11 @@ public class GropiusMapping {
     public static Issue gropiusIssueToScrumGameIssue(
             GropiusIssue issueResponse,
             GropiusIssueMappingConfiguration mappingConfiguration) {
+
+        if (issueResponse == null || issueResponse.getTemplate() == null
+            || !issueResponse.getTemplate().getId().equals(mappingConfiguration.getIssueTemplateId())) {
+            return null; // TODO make this method return optional
+        }
 
         Optional<Object> estimationField = findTemplateField(
                 issueResponse.getTemplatedFields(),
@@ -56,10 +62,27 @@ public class GropiusMapping {
                 .setLabels(issueResponse.getLabels().getNodes().stream()
                         .map(GropiusLabel::getName)
                         .toList())
-                .setIssueUrl(mappingConfiguration.getGropiusBaseUrl()
-                             + "/projects/" + mappingConfiguration.getImsProjectId()
-                             + "/issues/" + issueResponse.getId()) // TODO doesn't work for component issues
+                .setIssueUrl(getIssueUrl(issueResponse, mappingConfiguration))
                 .build();
+    }
+
+    private static String getIssueUrl(GropiusIssue issueResponse,
+            GropiusIssueMappingConfiguration mappingConfiguration) {
+        List<TrackableResponse> trackables = issueResponse.getTrackables().getNodes();
+        Optional<TrackableResponse> firstTrackable = trackables.stream().findFirst();
+
+        String issueUrl = mappingConfiguration.getGropiusBaseUrl();
+        if (firstTrackable.isPresent()) {
+            if ("Project".equals(firstTrackable.get().typename())) {
+                issueUrl += "/projects/" + firstTrackable.get().id();
+            } else if ("Component".equals(firstTrackable.get().typename())) {
+                issueUrl += "/components/" + firstTrackable.get().id();
+            }
+        } else {
+            issueUrl += "/projects/" + mappingConfiguration.getImsProjectId();
+        }
+        issueUrl += "/issues/" + issueResponse.getId();
+        return issueUrl;
     }
 
     private static IssuePriority getIssuePriority(GropiusIssuePriority priority,
