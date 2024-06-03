@@ -3,7 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.controller.event;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventTypeInput;
 import de.unistuttgart.iste.meitrex.generated.dto.EventType;
 import de.unistuttgart.iste.meitrex.generated.dto.UpdateEventTypeInput;
-import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventTypeService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventTypeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;

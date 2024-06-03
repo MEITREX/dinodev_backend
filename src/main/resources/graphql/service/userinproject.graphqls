@@ -12,12 +12,28 @@ type UserInProject implements ProjectDependent {
     publicEvents(size: Int, page: Int): [Event!]! @OnDemand
 
     achievements: [AchievementProgress!]! @OnDemand
+
+    currentBadge: Icon
 }
 
 type UserStats {
+
     xp: Int!
+    totalXp: Int!
     xpToNextLevel: Int!
     level: Int!
+
+    issuesCompleted: Int!
+    issuesCreated: Int!
+    commentsWritten: Int!
+    reactionsGiven: Int!
+    pullRequestsCreated: Int!
+    pullRequestsClosed: Int!
+    pullRequestsReviewed: Int!
+
+    goldMedals: Int!
+    silverMedals: Int!
+    bronzeMedals: Int!
 
     virtualCurrency: Int!
 }

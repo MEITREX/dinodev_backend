@@ -51,7 +51,7 @@ type DefinitionOfDoneItem {
 
 type ImsSettings {
     imsName: String!
-    imsIcon: Icon!
+    imsIcon: Icon
     imsProjectId: ID!
     imsProjectUrl: String!
 
@@ -83,12 +83,19 @@ type CodeRepositorySettings {
 type RepositoryDefinition {
     name: String!
     url: String!
-    icon: Icon!
+    icon: Icon
 }
 
 type Icon {
     path: String
     mdiIcon: String
+    url: String
+    knownIcon: KnownIcon
+    emoji: String
+}
+
+enum KnownIcon {
+    GROPIUS
 }
 
 input CreateProjectInput {
@@ -149,6 +156,9 @@ input RepositoryDefinitionInput {
 input IconInput {
     path: String
     mdiIcon: String
+    url: String
+    knownIcon: KnownIcon
+    emoji: String
 }
 
 input DefinitionOfDoneItemInput {

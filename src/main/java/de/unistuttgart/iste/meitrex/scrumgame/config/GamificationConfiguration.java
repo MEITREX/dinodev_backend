@@ -4,17 +4,20 @@ import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.rulesengine.EventTypeRegistry;
 import de.unistuttgart.iste.meitrex.rulesengine.GamificationEngine;
+import de.unistuttgart.iste.meitrex.rulesengine.Rule;
 import de.unistuttgart.iste.meitrex.rulesengine.RuleRegistry;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
-import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventPersistenceService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.ScrumGameEventTypes;
-import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.rules.SimpleTestRule;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventPersistenceService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VcsEventTypes;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+
+import java.util.*;
 
 @Slf4j
 @Configuration
@@ -28,14 +31,23 @@ public class GamificationConfiguration {
 
     @Bean
     public EventTypeRegistry eventTypeRegistry() {
-        return new EventTypeRegistry();
+        EventTypeRegistry eventTypeRegistry = new EventTypeRegistry();
+
+        registerEventTypes(eventTypeRegistry);
+
+        return eventTypeRegistry;
     }
 
     @Bean
-    RuleRegistry ruleRegistry(SimpleTestRule simpleTestRule) {
+    RuleRegistry ruleRegistry(ApplicationContext applicationContext) {
         RuleRegistry ruleRegistry = new RuleRegistry();
 
-        ruleRegistry.register(simpleTestRule);
+        Map<String, Rule> ruleBeans = applicationContext.getBeansOfType(Rule.class);
+
+        // Register each Rule bean
+        for (Rule rule : ruleBeans.values()) {
+            ruleRegistry.register(rule);
+        }
 
         return ruleRegistry;
     }
@@ -46,11 +58,8 @@ public class GamificationConfiguration {
             EventTypeRegistry eventTypeRegistry,
             RuleRegistry ruleRegistry
     ) {
-        GamificationEngine engine = new GamificationEngine(eventPublisher, ruleRegistry, eventTypeRegistry);
 
-        registerEventTypes(engine.getEventTypeRegistry());
-
-        return engine;
+        return new GamificationEngine(eventPublisher, ruleRegistry, eventTypeRegistry);
     }
 
     private void registerEventTypes(EventTypeRegistry eventTypeRegistry) {

@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.config;
 
+import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.GlobalUserService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.GitHubEventMapper;
 import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VscEventMapper;
@@ -13,9 +14,9 @@ import java.util.function.*;
 public class VcsConfig {
 
     @Bean
-    public VscEventMapper vscEventMapper(GlobalUserService globalUserService) {
+    public VscEventMapper vscEventMapper(GlobalUserService globalUserService, ProjectService projectService) {
         Function<String, Optional<UUID>> userIdFinder = globalUserService::findUserByGithubId;
-        return new GitHubEventMapper(userIdFinder);
+        return new GitHubEventMapper(userIdFinder, projectService);
     }
 }
 

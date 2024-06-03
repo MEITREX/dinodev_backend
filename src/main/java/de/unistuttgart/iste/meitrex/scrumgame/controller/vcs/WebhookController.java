@@ -23,7 +23,6 @@ public class WebhookController {
             @RequestBody JsonNode body,
             @RequestHeader Map<String, String> headers
     ) {
-        log.info("Received webhook with headers: {}", headers);
         vcsService.handleWebhook(body, headers);
     }
 

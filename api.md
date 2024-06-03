@@ -830,7 +830,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>value</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -1055,7 +1055,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>imsIcon</strong></td>
-<td valign="top"><a href="#icon">Icon</a>!</td>
+<td valign="top"><a href="#icon">Icon</a></td>
 <td></td>
 </tr>
 <tr>
@@ -1403,6 +1403,21 @@ Parent issue id of the issue.
 <tr>
 <td colspan="2" align="right" valign="top">sprintNumber</td>
 <td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>commentOnIssue</strong></td>
+<td valign="top"><a href="#issue">Issue</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">comment</td>
+<td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">optionalParentId</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 <tr>
@@ -4158,7 +4173,7 @@ If true, the filter is case-insensitive.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>value</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -5136,7 +5151,7 @@ often used by GraphQL to represent free-form human-readable text.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>value</strong></td>
-<td valign="top"><a href="#string">String</a>!</td>
+<td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
 </tbody>

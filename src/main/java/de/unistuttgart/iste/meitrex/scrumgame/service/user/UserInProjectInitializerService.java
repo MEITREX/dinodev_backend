@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.PrivateUserInfoEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
@@ -10,7 +9,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.service.role.ProjectRoleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +26,6 @@ public class UserInProjectInitializerService {
                 .id(new UserProjectId(userId, projectId))
                 .user(globalUserRepository.findByIdOrThrow(userId))
                 .project(projectRepository.findByIdOrThrow(projectId))
-                .privateInfo(initPrivateInfo())
                 .build();
 
         userInProjectRepository.save(userInProjectEntity);
@@ -47,8 +45,4 @@ public class UserInProjectInitializerService {
         return userInProjectRepository.save(userInProjectEntity);
     }
 
-
-    private PrivateUserInfoEmbeddable initPrivateInfo() {
-        return PrivateUserInfoEmbeddable.builder().level(0).xp(0).build();
-    }
 }

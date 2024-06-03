@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
+package de.unistuttgart.iste.meitrex.scrumgame.service.event;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import lombok.NoArgsConstructor;
@@ -72,7 +72,7 @@ public class ScrumGameEventTypes {
     public static final EventType SPRINT_PLANNING_STARTED = DefaultEventType.builder()
             .setIdentifier("SPRINT_PLANNING_STARTED")
             .setDescription("A sprint planning was started.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The sprint planning was started.")
             .build();
@@ -80,7 +80,7 @@ public class ScrumGameEventTypes {
     public static final EventType SPRINT_PLANNING_ENDED = DefaultEventType.builder()
             .setIdentifier("SPRINT_PLANNING_ENDED")
             .setDescription("A sprint planning was ended.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The sprint planning was ended.")
             .build();
@@ -88,7 +88,7 @@ public class ScrumGameEventTypes {
     public static final EventType DAILY_SCRUM_STARTED = DefaultEventType.builder()
             .setIdentifier("DAILY_SCRUM_STARTED")
             .setDescription("A daily scrum was started.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The daily scrum was started.")
             .build();
@@ -96,7 +96,7 @@ public class ScrumGameEventTypes {
     public static final EventType DAILY_SCRUM_ENDED = DefaultEventType.builder()
             .setIdentifier("DAILY_SCRUM_ENDED")
             .setDescription("A daily scrum was ended.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The daily scrum was ended.")
             .build();
@@ -104,7 +104,7 @@ public class ScrumGameEventTypes {
     public static final EventType RETROSPECTIVE_STARTED = DefaultEventType.builder()
             .setIdentifier("RETROSPECTIVE_STARTED")
             .setDescription("A retrospective was started.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The retrospective was started.")
             .build();
@@ -112,13 +112,47 @@ public class ScrumGameEventTypes {
     public static final EventType RETROSPECTIVE_ENDED = DefaultEventType.builder()
             .setIdentifier("RETROSPECTIVE_ENDED")
             .setDescription("A retrospective was ended.")
-            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder().build())
             .setMessageTemplate("The retrospective was ended.")
             .build();
 
+    public static final EventType XP_GAIN = DefaultEventType.builder()
+            .setIdentifier("XP_GAIN")
+            .setDescription("A user gained XP.")
+            .setDefaultVisibility(EventVisibility.PRIVATE)
+            .setEventSchema(DefaultSchemaDefinition.builder().setFields(
+                            List.of(
+                                    DefaultFieldSchemaDefinition.builder()
+                                            .setName("xp")
+                                            .setType(AllowedDataType.INTEGER)
+                                            .setDescription("The amount of XP gained.")
+                                            .setRequired(true)
+                                            .build()))
+                    .build())
+            .setMessageTemplate("gained ${xp} XP!")
+            .build();
+
+    public static final EventType LEVEL_UP = DefaultEventType.builder()
+            .setIdentifier("LEVEL_UP")
+            .setDescription("A user leveled up.")
+            .setDefaultVisibility(EventVisibility.PRIVATE)
+            .setEventSchema(DefaultSchemaDefinition.builder().setFields(
+                            List.of(
+                                    DefaultFieldSchemaDefinition.builder()
+                                            .setName("newLevel")
+                                            .setType(AllowedDataType.INTEGER)
+                                            .setDescription("The new level of the user.")
+                                            .setRequired(true)
+                                            .build()))
+                    .build())
+            .setMessageTemplate("leveled up to level ${newLevel}!")
+            .build();
+
     public static Iterable<EventType> allEventTypes() {
         return List.of(
+                XP_GAIN,
+                LEVEL_UP,
                 EVENT_REACTION,
                 USER_JOINED,
                 ACHIEVEMENT_UNLOCKED,

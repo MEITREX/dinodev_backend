@@ -58,6 +58,24 @@ public class VcsEventTypes {
                     .setType(AllowedDataType.STRING)
                     .setDescription("The URL of the pull request.")
                     .setRequired(false)
+                    .build(),
+            DefaultFieldSchemaDefinition.builder()
+                    .setName("commitCount")
+                    .setType(AllowedDataType.INTEGER)
+                    .setDescription("The number of commits.")
+                    .setRequired(false)
+                    .build(),
+            DefaultFieldSchemaDefinition.builder()
+                    .setName("additions")
+                    .setType(AllowedDataType.INTEGER)
+                    .setDescription("The number of additions.")
+                    .setRequired(false)
+                    .build(),
+            DefaultFieldSchemaDefinition.builder()
+                    .setName("deletions")
+                    .setType(AllowedDataType.INTEGER)
+                    .setDescription("The number of deletions.")
+                    .setRequired(false)
                     .build()
     );
 
@@ -101,6 +119,17 @@ public class VcsEventTypes {
                     .build())
             .build();
 
+    public static final EventType CLOSE_PULL_REQUEST = DefaultEventType.builder()
+            .setIdentifier("CLOSE_PULL_REQUEST")
+            .setDescription("A close pull request event.")
+            .setMessageTemplate(
+                    "closed the pull request ${pullRequestTitle} with ${commitCount} commits in the repository ${repositoryName}.")
+            .setDefaultVisibility(EventVisibility.PUBLIC)
+            .setEventSchema(DefaultSchemaDefinition.builder()
+                    .setFields(PULL_REQUEST_FIELDS)
+                    .build())
+            .build();
+
     public static final EventType REVIEW_ACCEPT = DefaultEventType.builder()
             .setIdentifier("REVIEW_ACCEPT")
             .setDescription("A review submitted event.")
@@ -122,7 +151,7 @@ public class VcsEventTypes {
             .build();
 
     public static List<EventType> allEventTypes() {
-        return List.of(PUSH, OPEN_PULL_REQUEST, REVIEW_ACCEPT, REVIEW_CHANGE_REQUEST);
+        return List.of(PUSH, OPEN_PULL_REQUEST, CLOSE_PULL_REQUEST, REVIEW_ACCEPT, REVIEW_CHANGE_REQUEST);
     }
 
 }

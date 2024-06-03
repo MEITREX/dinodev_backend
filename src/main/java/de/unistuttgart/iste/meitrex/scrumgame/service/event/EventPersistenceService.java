@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
+package de.unistuttgart.iste.meitrex.scrumgame.service.event;
 
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;

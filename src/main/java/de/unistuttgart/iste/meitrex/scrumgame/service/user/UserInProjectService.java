@@ -4,16 +4,15 @@ import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
 import de.unistuttgart.iste.meitrex.generated.dto.UserStats;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.PrivateUserInfoEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.modelmapper.ModelMapper;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,17 +26,20 @@ public class UserInProjectService
     private final UserInProjectRepository repository;
     private final AuthService                     authService;
     private final UserInProjectInitializerService userInProjectInitializerService;
+    private final UserStatsRepository     userStatsRepository;
 
     public UserInProjectService(
             UserInProjectRepository repository,
             AuthService authService,
             UserInProjectInitializerService userInProjectInitializerService,
+            UserStatsRepository userStatsRepository,
             ModelMapper modelMapper
     ) {
         super(repository, modelMapper, UserInProjectEntity.class, UserInProject.class);
         this.repository = repository;
         this.authService = authService;
         this.userInProjectInitializerService = userInProjectInitializerService;
+        this.userStatsRepository = userStatsRepository;
     }
 
     /**
@@ -86,20 +88,15 @@ public class UserInProjectService
     }
 
     /**
-     * Resolves the user stats of a user in a project. This is only accessible by the user
-     * itself.
+     * Resolves the user stats of a user in a project.
      *
      * @param userId the user ID
      * @return the private information of the user in the project
      */
-    @PreAuthorize("@auth.currentUserId.equals(#userId) " +
-                  "or @auth.hasPrivilege(@projectPrivileges.READ_USER_PRIVATE_INFO, #projectId)")
     public UserStats getUserStats(UUID userId, UUID projectId) {
-        PrivateUserInfoEmbeddable privateInfo = repository
-                .findByIdOrThrow(new UserProjectId(userId, projectId))
-                .getPrivateInfo();
-
-        return getModelMapper().map(privateInfo, UserStats.class);
+        return userStatsRepository.findById(new UserProjectId(userId, projectId))
+                .map(userStatsEntity -> getModelMapper().map(userStatsEntity, UserStats.class))
+                .orElseGet(UserStats::new);
     }
 
     public UserInProject createUserInProject(UUID userId, UUID projectId) {

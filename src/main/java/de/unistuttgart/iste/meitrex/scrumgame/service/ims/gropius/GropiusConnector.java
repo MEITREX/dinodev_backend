@@ -288,6 +288,10 @@ public class GropiusConnector implements ImsConnector {
         var projection = new IssueResponseProjection()
                 .id()
                 .title()
+                .assignments(new AssignmentConnectionResponseProjection()
+                        .nodes(new AssignmentResponseProjection()
+                                .id()
+                                .user(new UserResponseProjection().id().username())))
                 .timelineItems(new IssueTimelineItemsParametrizedInput()
                                 .filter(GropiusTimelineItemFilterInput.builder()
                                         .setLastModifiedAt(GropiusDateTimeFilterInput.builder()
@@ -317,8 +321,8 @@ public class GropiusConnector implements ImsConnector {
 
         var issue = issues.getFirst();
         return issue.getTimelineItems().getNodes().stream()
-                .map(timelineItem -> GropiusTimelineItemToEventConverter
-                        .convertTimelineItemToEvent(issue, timelineItem, mappingConfiguration))
+                .flatMap(timelineItem -> GropiusTimelineItemToEventConverter
+                        .convertTimelineItemToEvents(issue, timelineItem, mappingConfiguration).stream())
                 .toList();
     }
 }

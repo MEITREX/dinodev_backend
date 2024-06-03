@@ -99,6 +99,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/graphql-ws**").permitAll()
                         // allow access to the GraphiQL interface
                         .requestMatchers("/graphiql**").permitAll()
+                        // allow access to webhooks
+                        .requestMatchers(HttpMethod.POST, "/webhook**").permitAll()
                         .anyRequest().authenticated()) // All requests require authentication
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .build();

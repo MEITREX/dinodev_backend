@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.user;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.AchievementService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.*;
 public class UserInProjectController {
 
     private final UserInProjectService userInProjectService;
+    private final AchievementService achievementService;
 
     @SchemaMapping
     @Nullable
@@ -33,6 +35,11 @@ public class UserInProjectController {
     @SchemaMapping
     public List<UserInProject> users(Project project) {
         return userInProjectService.getUsersInProjectByProjectId(project.getId());
+    }
+
+    @SchemaMapping
+    public List<AchievementProgress> achievements(UserInProject userInProject) {
+        return achievementService.getForUserInProject(userInProject.getUserId(), userInProject.getProjectId());
     }
 
     @SchemaMapping

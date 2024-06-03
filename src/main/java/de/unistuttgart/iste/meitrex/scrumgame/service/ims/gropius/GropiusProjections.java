@@ -23,7 +23,8 @@ public class GropiusProjections {
                     .iconPath())
             .assignments(new AssignmentConnectionResponseProjection()
                     .nodes(new AssignmentResponseProjection()
-                            .user(new UserResponseProjection().id())))
+                            .id()
+                            .user(new UserResponseProjection().id().username())))
             .labels(new LabelConnectionResponseProjection()
                     .nodes(new LabelResponseProjection().id().name()))
             .templatedFields(new JSONFieldResponseProjection().all$());
@@ -39,7 +40,7 @@ public class GropiusProjections {
                     .onAddedLabelEvent(new AddedLabelEventResponseProjection()
                             .addedLabel(new LabelResponseProjection().id().name()))
                     .onAssignment(new AssignmentResponseProjection()
-                            .user(new UserResponseProjection().id()))
+                            .user(new UserResponseProjection().username().id()))
                     .onIssueComment(new IssueCommentResponseProjection()
                             .body()
                             .answers(new CommentResponseProjection().id()))
@@ -47,7 +48,8 @@ public class GropiusProjections {
                             .newPriority(new IssuePriorityResponseProjection().id().value())
                             .oldPriority(new IssuePriorityResponseProjection().id().value()))
                     .onRemovedAssignmentEvent(new RemovedAssignmentEventResponseProjection()
-                            .removedAssignment(new AssignmentResponseProjection().user(new UserResponseProjection().id())))
+                            .removedAssignment(new AssignmentResponseProjection().user(new UserResponseProjection().username()
+                                    .id())))
                     .onStateChangedEvent(new StateChangedEventResponseProjection()
                             .newState(new IssueStateResponseProjection().id())
                             .oldState(new IssueStateResponseProjection().id()))
@@ -93,7 +95,6 @@ public class GropiusProjections {
             GropiusIssueType newType,
             GropiusIssueType oldType
     ) {
-
         public String typename() {
             return __typename;
         }

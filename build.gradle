@@ -144,7 +144,7 @@ repositories {
 
 dependencies {
     implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.4'
-    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.4d'
+    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.4e'
     implementation 'de.unistuttgart.iste.meitrex:gamification_engine:1.0.4b'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'

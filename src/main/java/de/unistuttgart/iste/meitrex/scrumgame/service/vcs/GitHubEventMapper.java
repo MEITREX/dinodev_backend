@@ -5,6 +5,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.AllowedDataType;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
 import de.unistuttgart.iste.meitrex.generated.dto.EventVisibility;
 import de.unistuttgart.iste.meitrex.generated.dto.TemplateFieldInput;
+import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,9 +19,17 @@ import java.util.function.*;
 public class GitHubEventMapper implements VscEventMapper {
 
     private final Function<String, Optional<UUID>> githubUsernameToUserId;
+    private final ProjectService projectService;
 
     @Override
-    public Optional<CreateEventInput> mapToCreateEventInput(JsonNode jsonNode, Map<String, String> headers) {
+    public List<CreateEventInput> mapToCreateEventInputList(JsonNode jsonNode, Map<String, String> headers) {
+        return projectService.getAllProjects() // todo: only projects with the respective repository
+                .stream()
+                .flatMap(project -> mapToSingleEvent(jsonNode, headers, project.getId()).stream())
+                .toList();
+    }
+
+    public Optional<CreateEventInput> mapToSingleEvent(JsonNode jsonNode, Map<String, String> headers, UUID projectId) {
         Optional<String> eventType = getEventType(headers);
 
         if (eventType.isEmpty()) {
@@ -29,9 +38,9 @@ public class GitHubEventMapper implements VscEventMapper {
         }
 
         return switch (eventType.get()) {
-            case "push" -> mapPushEvent(jsonNode);
-            case "pull_request" -> mapPullRequestEvent(jsonNode);
-            case "pull_request_review" -> mapReviewEvent(jsonNode);
+            case "push" -> mapPushEvent(jsonNode, projectId);
+            case "pull_request" -> mapPullRequestEvent(jsonNode, projectId);
+            case "pull_request_review" -> mapReviewEvent(jsonNode, projectId);
             default -> {
                 log.warn("Unsupported event type {}", eventType.get());
                 yield Optional.empty();
@@ -39,8 +48,8 @@ public class GitHubEventMapper implements VscEventMapper {
         };
     }
 
-    private Optional<CreateEventInput> mapPushEvent(JsonNode jsonNode) {
-        CreateEventInput baseEvent = createBaseEvent(jsonNode);
+    private Optional<CreateEventInput> mapPushEvent(JsonNode jsonNode, UUID projectId) {
+        CreateEventInput baseEvent = createBaseEvent(jsonNode, projectId);
 
         baseEvent.setEventTypeIdentifier(VcsEventTypes.PUSH.getIdentifier());
 
@@ -56,40 +65,40 @@ public class GitHubEventMapper implements VscEventMapper {
                 baseEvent.setVisibility(EventVisibility.PRIVATE);
             }
 
-            baseEvent.getEventData().add(TemplateFieldInput.builder()
-                    .setKey("branch")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(branch)
-                    .build());
-
+            addStringField(baseEvent.getEventData(), "branch", branch);
         }
 
-        JsonNode commitsNode = jsonNode.get("commits");
-        if (commitsNode != null) {
-            baseEvent.getEventData().add(TemplateFieldInput.builder()
-                    .setKey("commitCount")
-                    .setType(AllowedDataType.INTEGER)
-                    .setValue(Integer.toString(commitsNode.size()))
-                    .build());
-        }
-
-        JsonNode compareUrlNode = jsonNode.get("compare");
-        if (compareUrlNode != null) {
-            baseEvent.getEventData().add(TemplateFieldInput.builder()
-                    .setKey("branchUrl")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(compareUrlNode.asText())
-                    .build());
-        }
+        List<TemplateFieldInput> fields = baseEvent.getEventData();
+        ifIntValuePresent(jsonNode, "commits",
+                value -> addIntField(fields, "commitCount", value));
+        ifStringValuePresent(jsonNode, "compare",
+                value -> addStringField(fields, "branchUrl", value));
 
         return Optional.of(baseEvent);
     }
 
-    private Optional<CreateEventInput> mapPullRequestEvent(JsonNode jsonNode) {
-        return Optional.empty();
+    private Optional<CreateEventInput> mapPullRequestEvent(JsonNode jsonNode, UUID projectId) {
+        CreateEventInput baseEvent = createBaseEvent(jsonNode, projectId);
+
+        ifStringValuePresent(jsonNode, "action", value -> {
+            if ("opened".equals(value)) {
+                baseEvent.setEventTypeIdentifier(VcsEventTypes.OPEN_PULL_REQUEST.getIdentifier());
+            } else if ("closed".equals(value)) {
+                baseEvent.setEventTypeIdentifier(VcsEventTypes.CLOSE_PULL_REQUEST.getIdentifier());
+            }
+        });
+
+        JsonNode pullRequestNode = jsonNode.get("pull_request");
+        if (pullRequestNode == null) {
+            return Optional.empty();
+        }
+
+        addPullRequestData(jsonNode, baseEvent);
+
+        return Optional.of(baseEvent);
     }
 
-    private Optional<CreateEventInput> mapReviewEvent(JsonNode jsonNode) {
+    private Optional<CreateEventInput> mapReviewEvent(JsonNode jsonNode, UUID projectId) {
         String action = jsonNode.get("action").asText();
         if (!"submitted".equals(action)) {
             return Optional.empty();
@@ -102,20 +111,24 @@ public class GitHubEventMapper implements VscEventMapper {
 
         String reviewState = reviewNode.get("state").asText();
         if ("approved".equals(reviewState)) {
-            return mapReviewEvent(jsonNode, VcsEventTypes.REVIEW_ACCEPT.getIdentifier());
+            return mapReviewEvent(jsonNode, VcsEventTypes.REVIEW_ACCEPT.getIdentifier(), projectId);
         } else if ("changes_requested".equals(reviewState)) {
-            return mapReviewEvent(jsonNode, VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier());
+            return mapReviewEvent(jsonNode, VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier(), projectId);
         }
 
         return Optional.empty();
     }
 
-    private Optional<CreateEventInput> mapReviewEvent(JsonNode jsonNode, @NotNull String eventTypeIdentifier) {
+    private Optional<CreateEventInput> mapReviewEvent(
+            JsonNode jsonNode,
+            @NotNull String eventTypeIdentifier,
+            UUID projectId
+    ) {
         JsonNode reviewNode = jsonNode.get("review");
         if (reviewNode == null) {
             return Optional.empty();
         }
-        CreateEventInput baseEvent = createBaseEvent(jsonNode);
+        CreateEventInput baseEvent = createBaseEvent(jsonNode, projectId);
 
         baseEvent.setEventTypeIdentifier(eventTypeIdentifier);
 
@@ -140,25 +153,51 @@ public class GitHubEventMapper implements VscEventMapper {
         if (pullRequestNode == null) {
             return;
         }
-        JsonNode titleNode = pullRequestNode.get("title");
-        if (titleNode != null) {
-            baseEvent.getEventData().add(TemplateFieldInput.builder()
-                    .setKey("pullRequestTitle")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(titleNode.asText())
-                    .build());
-        }
-        JsonNode urlNode = pullRequestNode.get("html_url");
-        if (urlNode != null) {
-            baseEvent.getEventData().add(TemplateFieldInput.builder()
-                    .setKey("pullRequestUrl")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(urlNode.asText())
-                    .build());
+
+        ifStringValuePresent(pullRequestNode, "title",
+                value -> addStringField(baseEvent.getEventData(), "pullRequestTitle", value));
+        ifStringValuePresent(pullRequestNode, "html_url",
+                value -> addStringField(baseEvent.getEventData(), "pullRequestUrl", value));
+
+        ifIntValuePresent(pullRequestNode, "commits",
+                value -> addIntField(baseEvent.getEventData(), "commitCount", value));
+        ifIntValuePresent(pullRequestNode, "additions",
+                value -> addIntField(baseEvent.getEventData(), "additions", value));
+        ifIntValuePresent(pullRequestNode, "deletions",
+                value -> addIntField(baseEvent.getEventData(), "deletions", value));
+    }
+
+    private static void ifStringValuePresent(JsonNode node, String key, Consumer<String> consumer) {
+        JsonNode valueNode = node.get(key);
+        if (valueNode != null) {
+            consumer.accept(valueNode.asText());
         }
     }
 
-    private CreateEventInput createBaseEvent(JsonNode jsonNode) {
+    private static void ifIntValuePresent(JsonNode node, String key, IntConsumer consumer) {
+        JsonNode valueNode = node.get(key);
+        if (valueNode != null) {
+            consumer.accept(valueNode.asInt());
+        }
+    }
+
+    private static void addStringField(List<TemplateFieldInput> fields, String key, String value) {
+        fields.add(TemplateFieldInput.builder()
+                .setKey(key)
+                .setType(AllowedDataType.STRING)
+                .setValue(value)
+                .build());
+    }
+
+    private static void addIntField(List<TemplateFieldInput> fields, String key, Integer value) {
+        fields.add(TemplateFieldInput.builder()
+                .setKey(key)
+                .setType(AllowedDataType.INTEGER)
+                .setValue(Integer.toString(value))
+                .build());
+    }
+
+    private CreateEventInput createBaseEvent(JsonNode jsonNode, UUID projectId) {
         OffsetDateTime timestamp = OffsetDateTime.now();
         List<TemplateFieldInput> baseData = createBaseData(jsonNode);
 
@@ -168,7 +207,7 @@ public class GitHubEventMapper implements VscEventMapper {
                 .setTimestamp(timestamp)
                 .setEventData(baseData)
                 .setUserId(githubUsernameToUserId.apply(userNameNode.asText()).orElse(null))
-                .setProjectId(null) // currently VCS events are not associated with a single project
+                .setProjectId(projectId)
                 .build();
     }
 
@@ -188,55 +227,22 @@ public class GitHubEventMapper implements VscEventMapper {
         if (senderNode == null) {
             return;
         }
-        JsonNode usernameNode = senderNode.get("login");
-        if (usernameNode != null) {
-            baseData.add(TemplateFieldInput.builder()
-                    .setKey("vcsUsername")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(usernameNode.asText())
-                    .build());
-        }
-
-        JsonNode avatarUrlNode = senderNode.get("avatar_url");
-        if (avatarUrlNode != null) {
-            baseData.add(TemplateFieldInput.builder()
-                    .setKey("vcsAvatarUrl")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(avatarUrlNode.asText())
-                    .build());
-        }
-
-        JsonNode profileUrlNode = senderNode.get("html_url");
-        if (profileUrlNode != null) {
-            baseData.add(TemplateFieldInput.builder()
-                    .setKey("vcsProfileUrl")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(profileUrlNode.asText())
-                    .build());
-        }
+        ifStringValuePresent(senderNode, "login",
+                value -> addStringField(baseData, "vcsUsername", value));
+        ifStringValuePresent(senderNode, "avatar_url",
+                value -> addStringField(baseData, "vcsAvatarUrl", value));
+        ifStringValuePresent(senderNode, "html_url",
+                value -> addStringField(baseData, "vcsProfileUrl", value));
     }
 
     private static void addRepositoryBaseData(JsonNode repositoryNode, List<TemplateFieldInput> baseData) {
         if (repositoryNode == null) {
             return;
         }
-        JsonNode nameNode = repositoryNode.get("name");
-        if (nameNode != null) {
-            baseData.add(TemplateFieldInput.builder()
-                    .setKey("repositoryName")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(nameNode.asText())
-                    .build());
-        }
-
-        JsonNode repositoryUrlNode = repositoryNode.get("html_url");
-        if (repositoryUrlNode != null) {
-            baseData.add(TemplateFieldInput.builder()
-                    .setKey("repositoryUrl")
-                    .setType(AllowedDataType.STRING)
-                    .setValue(repositoryUrlNode.asText())
-                    .build());
-        }
+        ifStringValuePresent(repositoryNode, "name",
+                value -> addStringField(baseData, "repositoryName", value));
+        ifStringValuePresent(repositoryNode, "html_url",
+                value -> addStringField(baseData, "repositoryUrl", value));
     }
 
     private Optional<String> getEventType(Map<String, String> headers) {

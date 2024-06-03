@@ -1,33 +1,62 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementProgressEntity.AchievementProgressId;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+import java.util.*;
+
 @Entity
-@Table(name = "achivement_progress")
 @Getter
 @ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(of = "identifier")
+@EqualsAndHashCode(of = "id")
 @Accessors(chain = true)
-@Builder
+@Builder(setterPrefix = "set")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AchievementProgressEntity {
+public class AchievementProgressEntity implements IWithId<AchievementProgressId> {
 
-    @Id
-    @Setter
+    @EmbeddedId
     @ToString.Include
-    private String identifier;
+    private AchievementProgressId id;
 
     @Column
     @Setter
     private int progress;
 
-    @Column
-    @Setter
-    private boolean achieved;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "achievement_identifier")
+    @MapsId("achievementIdentifier")
+    @Builder.Default
+    private AchievementEntity achievement = new AchievementEntity();
+
+    public boolean getAchieved() {
+        return progress >= achievement.getGoal();
+    }
+
+    public String getAchievementIdentifier() {
+        return id.achievementIdentifier;
+    }
+
+    public UUID getProjectId() {
+        return id.projectId;
+    }
+
+    public UUID getUserId() {
+        return id.userId;
+    }
+
+    @Embeddable
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class AchievementProgressId implements Serializable {
+
+        @Column(name = "achievement_identifier")
+        private String achievementIdentifier;
+        private UUID   projectId;
+        private UUID   userId;
+    }
 }

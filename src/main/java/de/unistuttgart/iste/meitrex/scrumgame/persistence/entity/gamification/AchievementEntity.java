@@ -1,28 +1,27 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmbeddable;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
 
 @Entity
-@Table(name = "achivement")
+@Table(name = "achievement")
 @Getter
 @ToString(onlyExplicitlyIncluded = true)
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = "identifier")
 @Accessors(chain = true)
-@Builder
+@Builder(setterPrefix = "set")
 @NoArgsConstructor
 @AllArgsConstructor
-public class AchievementEntity {
+public class AchievementEntity implements IWithId<String> {
 
     @Id
-    @Generated
     @ToString.Include
-    private UUID id;
+    private String identifier;
 
     @Setter
     @ToString.Include
@@ -33,4 +32,16 @@ public class AchievementEntity {
 
     @Setter
     private int goal;
+
+    @Setter
+    private IconEmbeddable icon;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<AchievementProgressEntity> progress = new ArrayList<>();
+
+    @Override
+    public String getId() {
+        return identifier;
+    }
 }

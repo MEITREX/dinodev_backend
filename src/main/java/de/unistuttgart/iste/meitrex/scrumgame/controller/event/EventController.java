@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.controller.event;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.EventService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -67,6 +67,11 @@ public class EventController {
     }
 
     @SchemaMapping
+    public Integer xpForCurrentUser(DefaultEvent event) {
+        return eventService.getXpForCurrentUser(event);
+    }
+
+    @SchemaMapping
     public List<Reaction> reactions(DefaultEvent event) {
         return eventService.getReactions(event);
     }
@@ -77,7 +82,7 @@ public class EventController {
     }
 
     @SubscriptionMapping
-    public Flux<Event> events(@Argument UUID projectId) {
-        return eventService.getEventFlux(projectId);
+    public Flux<Event> event(@Argument UUID projectId, @Argument UUID userId) {
+        return eventService.getEventFlux(projectId, userId);
     }
 }

@@ -54,7 +54,7 @@ public interface EventRepository extends MeitrexRepository<EventEntity, UUID> {
     @Query("SELECT e FROM EventEntity e WHERE (e.projectId = :projectId OR e.projectId IS NULL) " +
            "AND e.parent IS NULL " +
            "AND e.visibility = 'PUBLIC' " +
-           "AND e.userId = :userId " +
+           "AND (e.userId = :userId OR :userId MEMBER OF e.visibleToUserIds) " +
            "ORDER BY e.timestamp DESC")
     Page<EventEntity> findPublicEventsForUser(
             UUID projectId,

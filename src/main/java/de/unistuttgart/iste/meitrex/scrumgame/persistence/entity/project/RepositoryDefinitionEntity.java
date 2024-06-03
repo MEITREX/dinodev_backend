@@ -1,10 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -30,6 +27,7 @@ public class RepositoryDefinitionEntity {
     private String name;
     @Nullable
     @Setter
+    @Column(name = "repository_url")
     private String url;
 
     @Setter

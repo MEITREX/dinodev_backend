@@ -8,14 +8,16 @@ import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
+import java.util.stream.*;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class GropiusTimelineItemToEventConverter {
 
-    public static CreateEventInput convertTimelineItemToEvent(
+    public static List<CreateEventInput> convertTimelineItemToEvents(
             GropiusIssue issue,
             TimelineItemResponse timelineItem,
-            GropiusIssueMappingConfiguration configuration) {
+            GropiusIssueMappingConfiguration configuration
+    ) {
         EventType eventType = getEventType(timelineItem, configuration);
 
         CreateEventInput baseEvent = CreateEventInput.builder()
@@ -32,17 +34,38 @@ public class GropiusTimelineItemToEventConverter {
         if (baseEvent.getEventTypeIdentifier().equals(ImsEventTypes.COMMENT_ON_ISSUE.getIdentifier())) {
             baseEvent.setMessage(timelineItem.body());
         }
+
         if (timelineItem.answers() != null && timelineItem.answers().getId() != null) {
             baseEvent.setParentId(UUID.fromString(timelineItem.answers().getId()));
         }
 
-        baseEvent.setEventData(getEventData(issue, timelineItem, eventType, configuration));
+        baseEvent.setEventData(getEventData(issue, timelineItem, eventType));
 
-        return baseEvent;
+        if (baseEvent.getEventTypeIdentifier().equals(ImsEventTypes.ISSUE_COMPLETED.getIdentifier())) {
+            if (!issue.getAssignments().getNodes().isEmpty()) {
+                return issue.getAssignments().getNodes().stream()
+                        .map(assignment -> CreateEventInput.builder()
+                                .setEventData(baseEvent.getEventData())
+                                .setEventTypeIdentifier(baseEvent.getEventTypeIdentifier())
+                                // unique ID for each event, also prevents opening and closing the same issue multiple times
+                                .setId(UUID.fromString(assignment.getId()))
+                                .setMessage(baseEvent.getMessage())
+                                .setParentId(baseEvent.getParentId())
+                                .setProjectId(baseEvent.getProjectId())
+                                .setTimestamp(baseEvent.getTimestamp())
+                                .setUserId(UUID.fromString(assignment.getUser().getId()))
+                                .build())
+                        .toList();
+            }
+        }
+
+        return List.of(baseEvent);
     }
 
-    private static EventType getEventType(TimelineItemResponse timelineItem,
-            GropiusIssueMappingConfiguration configuration) {
+    private static EventType getEventType(
+            TimelineItemResponse timelineItem,
+            GropiusIssueMappingConfiguration configuration
+    ) {
         return switch (timelineItem.typename()) {
             case "IssueComment", "Comment" -> ImsEventTypes.COMMENT_ON_ISSUE;
             case "Body" -> ImsEventTypes.ISSUE_CREATED; // Body is the first timeline item of an issue
@@ -132,17 +155,25 @@ public class GropiusTimelineItemToEventConverter {
     private static List<TemplateFieldInput> getEventData(
             GropiusIssue issue,
             TimelineItemResponse timelineItem,
-            EventType eventType,
-            GropiusIssueMappingConfiguration configuration) {
+            EventType eventType
+    ) {
         var eventData = new ArrayList<TemplateFieldInput>();
 
         eventData.add(new TemplateFieldInput("issueId", AllowedDataType.STRING, issue.getId()));
         eventData.add(new TemplateFieldInput("issueTitle", AllowedDataType.STRING, issue.getTitle()));
+        eventData.add(new TemplateFieldInput("assigneeIds", AllowedDataType.STRING,
+                issue.getAssignments().getNodes().stream()
+                        .map(assignment -> assignment.getUser().getId())
+                        .collect(Collectors.joining(","))));
+        eventData.add(new TemplateFieldInput("assigneeNames", AllowedDataType.STRING,
+                issue.getAssignments().getNodes().stream()
+                        .map(assignment -> assignment.getUser().getUsername())
+                        .collect(Collectors.joining(","))));
 
         if (eventType == ImsEventTypes.COMMENT_ON_ISSUE) {
             eventData.add(new TemplateFieldInput("comment", AllowedDataType.STRING, timelineItem.body()));
         }
-        if (eventType == ImsEventTypes.ASSIGNED_ISSUE) {
+        if (eventType == ImsEventTypes.ASSIGNED_ISSUE || eventType == ImsEventTypes.UNASSIGNED_ISSUE) {
             var userId = UUID.fromString(timelineItem.user().getId());
             eventData.add(new TemplateFieldInput("assigneeId", AllowedDataType.STRING, userId.toString()));
             eventData.add(new TemplateFieldInput("assigneeName",

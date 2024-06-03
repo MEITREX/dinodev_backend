@@ -1,4 +1,4 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
+package de.unistuttgart.iste.meitrex.scrumgame.service.event;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
@@ -6,6 +6,7 @@ import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.EventEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
+import de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils;
 import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,6 +23,9 @@ import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils.findIntField;
+import static de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils.findStringField;
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -33,12 +37,12 @@ public class EventService {
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
     private final EventPersistenceService                 eventPersistenceService;
 
-    private static final Duration SYNC_INTERVAL = Duration.ofMinutes(2);
+    // min time between event syncs
+    private static final Duration GLOBAL_SYNC_INTERVAL = Duration.ofMinutes(2);
 
-    private OffsetDateTime lastGlobalEventSync = LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC);
+    private OffsetDateTime lastGlobalEventSync = OffsetDateTime.MIN;
 
     public Page<Event> getAndSyncEvents(Project project, Pageable pageable) {
-        log.info("Getting and syncing events for project {}", project.getId());
         syncEventsFromGropius(project);
 
         Page<EventEntity> events = eventPersistenceService.getRepository()
@@ -47,14 +51,13 @@ public class EventService {
     }
 
     public Page<Event> getPublicUserEvents(UUID projectId, UUID userId, Pageable pageable) {
-
         return eventPersistenceService.getRepository()
                 .findPublicEventsForUser(projectId, userId, pageable)
                 .map(eventPersistenceService::convertToDto);
     }
 
     public void syncEventsFromGropius(Project project) {
-        if (Duration.between(lastGlobalEventSync, OffsetDateTime.now()).abs().compareTo(SYNC_INTERVAL) < 0) {
+        if (Duration.between(lastGlobalEventSync, OffsetDateTime.now()).abs().compareTo(GLOBAL_SYNC_INTERVAL) < 0) {
             return;
         }
 
@@ -85,11 +88,19 @@ public class EventService {
      * subscription.
      *
      * @param projectId The project id to subscribe to
+     * @param userId    The user id to filter events for
      * @return A Flux of events for the given project
      */
-    public Flux<Event> getEventFlux(UUID projectId) {
+    public Flux<Event> getEventFlux(UUID projectId, UUID userId) {
         return eventPublisher.getEventStream()
-                .filter(event -> event.getProjectId().equals(projectId));
+                .filter(event -> {
+                    if (event.getProjectId() == null || !event.getProjectId().equals(projectId)) {
+                        return false;
+                    }
+                    return event.getVisibility() == EventVisibility.PUBLIC
+                           || event.getUserId().equals(userId)
+                           || event.getVisibleToUserIds().contains(userId);
+                });
     }
 
     public Event reactToEvent(ProjectMutation projectMutation, UUID eventId, String reaction) {
@@ -129,9 +140,7 @@ public class EventService {
     }
 
     public Optional<? extends TemplateField> findField(Event event, String name) {
-        return event.getEventData().stream()
-                .filter(field -> field.getKey().equals(name))
-                .findFirst();
+        return TemplateDataUtils.findField(event, name);
     }
 
     public List<DefaultEvent> getChildren(DefaultEvent event) {
@@ -147,23 +156,25 @@ public class EventService {
                         child.getEventType().getIdentifier()
                                 .equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier()))
                 .map(childEvent -> Reaction.builder()
-                        .setReaction(findField(childEvent, "reaction").map(TemplateField::getValue).orElse(""))
+                        .setReaction(findStringField(childEvent, "reaction").orElse(""))
                         .setUserId(childEvent.getUserId())
                         .build())
                 .distinct()
                 .toList();
     }
 
+    public Integer getXpForCurrentUser(DefaultEvent event) {
+        return getChildren(event).stream()
+                .filter(child -> child.getEventType().getIdentifier()
+                        .equals(ScrumGameEventTypes.XP_GAIN.getIdentifier()))
+                .filter(child -> child.getUserId().equals(authService.getCurrentUserId()))
+                .mapToInt(child -> findIntField(child, "xp").orElse(0))
+                .sum();
+    }
+
     private void syncEvents(Issue issue) {
         Optional<EventEntity> lastSynchronizedEvent
                 = eventPersistenceService.getRepository().findLastSyncForIssue(issue.getId());
-
-        if (lastSynchronizedEvent.isPresent()) {
-            if (Duration.between(lastSynchronizedEvent.get().getTimestamp(), OffsetDateTime.now())
-                        .abs().compareTo(SYNC_INTERVAL) < 0) {
-                return;
-            }
-        }
 
         imsService.getEventsForIssue(issue,
                         lastSynchronizedEvent.map(Event::getTimestamp)

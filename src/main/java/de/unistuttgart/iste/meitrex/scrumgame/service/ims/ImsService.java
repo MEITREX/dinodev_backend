@@ -169,10 +169,8 @@ public class ImsService {
     }
 
     public Issue commentOnIssue(IssueMutation issueMutation, String comment, @Nullable String parentId) {
-        Issue issue = imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
                 .addCommentToIssue(issueMutation.getIssueId(), comment, parentId);
-
-        return issue;
     }
 
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {

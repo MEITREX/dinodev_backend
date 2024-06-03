@@ -1,18 +1,19 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-@Getter
-@Setter
 @Entity
 @Table(name = "user_in_project")
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -31,12 +32,13 @@ public class UserInProjectEntity implements IWithId<UserProjectId> {
     @JoinColumn(name = "project_id")
     private ProjectEntity project;
 
-    @OneToMany(cascade = CascadeType.DETACH)
+    @OneToMany(cascade = {})
     @Builder.Default
     private List<ProjectRoleEntity> roles = new ArrayList<>();
 
     @Embedded
-    private PrivateUserInfoEmbeddable privateInfo;
+    @Nullable
+    private IconEmbeddable currentBadge;
 
     @PreRemove
     public void onDelete() {

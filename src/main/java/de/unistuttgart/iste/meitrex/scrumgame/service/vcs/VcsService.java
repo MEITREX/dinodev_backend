@@ -17,8 +17,8 @@ public class VcsService {
     private final VscEventMapper                          vscEventMapper;
 
     public void handleWebhook(JsonNode jsonNode, Map<String, String> headers) {
-        Optional<CreateEventInput> input = vscEventMapper.mapToCreateEventInput(jsonNode, headers);
-        input.ifPresent(eventPublisher::publishEvent);
+        List<CreateEventInput> inputs = vscEventMapper.mapToCreateEventInputList(jsonNode, headers);
+        inputs.forEach(eventPublisher::publishEvent);
     }
 
 }
