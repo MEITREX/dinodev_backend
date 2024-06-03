@@ -22,6 +22,8 @@ public class IconEmbeddable {
     private String    path;
     @Column(columnDefinition = "TEXT")
     private String    url;
+    @Column
+    private String emoji;
     @Enumerated
     private KnownIcon knownIcon;
 
