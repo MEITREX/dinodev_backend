@@ -88,6 +88,7 @@ public class SecurityConfiguration {
     DefaultSecurityFilterChain prodSpringWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/webhook**") // allow access to webhooks
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .cors(AbstractHttpConfigurer::disable)
