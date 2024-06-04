@@ -195,8 +195,13 @@ public class GropiusConnector implements ImsConnector {
                 .request(request)
                 .projectTo(GropiusChangeIssueTemplatedFieldPayload.class, projection)
                 .retrieve()
-                .map(response -> gropiusIssueToScrumGameIssue(response.getTemplatedFieldChangedEvent().getIssue(),
-                        mappingConfiguration))
+                .map(response -> {
+                    if (response.getTemplatedFieldChangedEvent() == null) {
+                        return findIssue(issueId).orElseThrow();
+                    }
+                    return gropiusIssueToScrumGameIssue(response.getTemplatedFieldChangedEvent().getIssue(),
+                            mappingConfiguration);
+                })
                 .block();
     }
 
@@ -241,7 +246,6 @@ public class GropiusConnector implements ImsConnector {
                     .retrieve()
                     .map(response -> gropiusIssueToScrumGameIssue(response.getIssueComment().getIssue(),
                             mappingConfiguration))
-                    .log("Commented on issue", Level.INFO)
                     .block();
         } catch (Exception e) {
             // try without parent id
