@@ -52,6 +52,7 @@ public class AchievementProgressEntity implements IWithId<AchievementProgressId>
     @Embeddable
     @NoArgsConstructor
     @AllArgsConstructor
+    @Data
     public static class AchievementProgressId implements Serializable {
 
         @Column(name = "achievement_identifier")

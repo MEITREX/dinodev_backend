@@ -69,10 +69,13 @@ public class GitHubEventMapper implements VscEventMapper {
         }
 
         List<TemplateFieldInput> fields = baseEvent.getEventData();
-        ifIntValuePresent(jsonNode, "commits",
-                value -> addIntField(fields, "commitCount", value));
-        ifStringValuePresent(jsonNode, "compare",
-                value -> addStringField(fields, "branchUrl", value));
+
+        JsonNode valueNode = jsonNode.get("commits");
+        if (valueNode != null && valueNode.isArray()) {
+            addIntField(fields, "commitCount", valueNode.size());
+        }
+
+        findStringValue(jsonNode, "compare").ifPresent(value -> addStringField(fields, "branchUrl", value));
 
         return Optional.of(baseEvent);
     }
@@ -80,7 +83,7 @@ public class GitHubEventMapper implements VscEventMapper {
     private Optional<CreateEventInput> mapPullRequestEvent(JsonNode jsonNode, UUID projectId) {
         CreateEventInput baseEvent = createBaseEvent(jsonNode, projectId);
 
-        ifStringValuePresent(jsonNode, "action", value -> {
+        findStringValue(jsonNode, "action").ifPresent(value -> {
             if ("opened".equals(value)) {
                 baseEvent.setEventTypeIdentifier(VcsEventTypes.OPEN_PULL_REQUEST.getIdentifier());
             } else if ("closed".equals(value)) {
@@ -99,7 +102,7 @@ public class GitHubEventMapper implements VscEventMapper {
     }
 
     private Optional<CreateEventInput> mapReviewEvent(JsonNode jsonNode, UUID projectId) {
-        String action = jsonNode.get("action").asText();
+        String action = findStringValue(jsonNode, "action").orElse("");
         if (!"submitted".equals(action)) {
             return Optional.empty();
         }
@@ -109,7 +112,7 @@ public class GitHubEventMapper implements VscEventMapper {
             return Optional.empty();
         }
 
-        String reviewState = reviewNode.get("state").asText();
+        String reviewState = findStringValue(reviewNode, "state").orElse("");
         if ("approved".equals(reviewState)) {
             return mapReviewEvent(jsonNode, VcsEventTypes.REVIEW_ACCEPT.getIdentifier(), projectId);
         } else if ("changes_requested".equals(reviewState)) {
@@ -154,31 +157,33 @@ public class GitHubEventMapper implements VscEventMapper {
             return;
         }
 
-        ifStringValuePresent(pullRequestNode, "title",
-                value -> addStringField(baseEvent.getEventData(), "pullRequestTitle", value));
-        ifStringValuePresent(pullRequestNode, "html_url",
-                value -> addStringField(baseEvent.getEventData(), "pullRequestUrl", value));
+        findStringValue(pullRequestNode, "title")
+                .ifPresent(value -> addStringField(baseEvent.getEventData(), "pullRequestTitle", value));
+        findStringValue(pullRequestNode, "html_url")
+                .ifPresent(value -> addStringField(baseEvent.getEventData(), "pullRequestUrl", value));
 
-        ifIntValuePresent(pullRequestNode, "commits",
-                value -> addIntField(baseEvent.getEventData(), "commitCount", value));
-        ifIntValuePresent(pullRequestNode, "additions",
-                value -> addIntField(baseEvent.getEventData(), "additions", value));
-        ifIntValuePresent(pullRequestNode, "deletions",
-                value -> addIntField(baseEvent.getEventData(), "deletions", value));
+        findIntValue(pullRequestNode, "commits")
+                .ifPresent(value -> addIntField(baseEvent.getEventData(), "commitCount", value));
+        findIntValue(pullRequestNode, "additions")
+                .ifPresent(value -> addIntField(baseEvent.getEventData(), "additions", value));
+        findIntValue(pullRequestNode, "deletions")
+                .ifPresent(value -> addIntField(baseEvent.getEventData(), "deletions", value));
     }
 
-    private static void ifStringValuePresent(JsonNode node, String key, Consumer<String> consumer) {
+    private static Optional<String> findStringValue(JsonNode node, String key) {
         JsonNode valueNode = node.get(key);
-        if (valueNode != null) {
-            consumer.accept(valueNode.asText());
+        if (valueNode != null && valueNode.isTextual()) {
+            return Optional.of(valueNode.asText());
         }
+        return Optional.empty();
     }
 
-    private static void ifIntValuePresent(JsonNode node, String key, IntConsumer consumer) {
+    private static OptionalInt findIntValue(JsonNode node, String key) {
         JsonNode valueNode = node.get(key);
-        if (valueNode != null) {
-            consumer.accept(valueNode.asInt());
+        if (valueNode != null && valueNode.isInt()) {
+            return OptionalInt.of(valueNode.asInt());
         }
+        return OptionalInt.empty();
     }
 
     private static void addStringField(List<TemplateFieldInput> fields, String key, String value) {
@@ -227,22 +232,19 @@ public class GitHubEventMapper implements VscEventMapper {
         if (senderNode == null) {
             return;
         }
-        ifStringValuePresent(senderNode, "login",
-                value -> addStringField(baseData, "vcsUsername", value));
-        ifStringValuePresent(senderNode, "avatar_url",
-                value -> addStringField(baseData, "vcsAvatarUrl", value));
-        ifStringValuePresent(senderNode, "html_url",
-                value -> addStringField(baseData, "vcsProfileUrl", value));
+        findStringValue(senderNode, "login").ifPresent(value -> addStringField(baseData, "vcsUsername", value));
+        findStringValue(senderNode, "avatar_url").ifPresent(value -> addStringField(baseData, "vcsAvatarUrl", value));
+        findStringValue(senderNode, "html_url").ifPresent(value -> addStringField(baseData, "vcsProfileUrl", value));
     }
 
     private static void addRepositoryBaseData(JsonNode repositoryNode, List<TemplateFieldInput> baseData) {
         if (repositoryNode == null) {
             return;
         }
-        ifStringValuePresent(repositoryNode, "name",
-                value -> addStringField(baseData, "repositoryName", value));
-        ifStringValuePresent(repositoryNode, "html_url",
-                value -> addStringField(baseData, "repositoryUrl", value));
+        findStringValue(repositoryNode, "name").ifPresent(value -> addStringField(baseData, "repositoryName", value));
+        findStringValue(repositoryNode, "html_url").ifPresent(value -> addStringField(baseData,
+                "repositoryUrl",
+                value));
     }
 
     private Optional<String> getEventType(Map<String, String> headers) {

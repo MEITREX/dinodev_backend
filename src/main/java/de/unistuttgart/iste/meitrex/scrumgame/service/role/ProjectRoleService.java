@@ -83,7 +83,7 @@ public class ProjectRoleService
                         baseRoleEntityBuilder(projectId)
                                 .id(createId(projectId, DEFAULT_ROLE_NAME))
                                 .projectPrivileges(List.of(ProjectPrivilege.READ_PROJECT))
-                                .gamifiedName("Zoo Visitor")
+                                .gamifiedName("Park Visitor")
                                 .build()));
     }
 
@@ -94,7 +94,7 @@ public class ProjectRoleService
                         baseRoleEntityBuilder(projectId)
                                 .id(createId(projectId, ADMIN_ROLE_NAME))
                                 .projectPrivileges(Arrays.asList(ProjectPrivilege.values()))
-                                .gamifiedName("Zoo Owner")
+                                .gamifiedName("Park Owner")
                                 .build()));
     }
 

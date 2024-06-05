@@ -1,7 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.config;
 
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AudienceValidator;
-import org.springframework.beans.factory.annotation.Value;
+import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -10,20 +9,13 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
-import org.springframework.security.oauth2.core.OAuth2TokenValidator;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.JwtValidators;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.*;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -83,8 +75,8 @@ public class SecurityConfiguration {
      */
     @Bean
     @Profile("prod")
-    @SuppressWarnings({"java:S3330"})
-    // currently CSRF uses cookie with httpOnly=false, which could be improved
+    @SuppressWarnings({"java:S3330", "java:S4502"})
+    // currently we use a rudimentary CSRF protection, also webhook access needs to be allowed
     DefaultSecurityFilterChain prodSpringWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
@@ -108,26 +100,8 @@ public class SecurityConfiguration {
 
     @Bean
     @Profile({"prod", "dev"})
-    public JwtDecoder jwtDecoder() {
-        NimbusJwtDecoder jwtDecoder = initNimbusDecoder();
-        OAuth2TokenValidator<Jwt> withAudience = createAudienceValidator();
-
-        jwtDecoder.setJwtValidator(withAudience);
-
-        return jwtDecoder;
-    }
-
-    @Value("${gropius.auth.secret}")
-    private String secret;
-
-    private OAuth2TokenValidator<Jwt> createAudienceValidator() {
-        return new DelegatingOAuth2TokenValidator<>(JwtValidators.createDefault(),
-                new AudienceValidator("backend"));
-    }
-
-    private NimbusJwtDecoder initNimbusDecoder() {
-        SecretKey secretKey = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+    public JwtDecoder jwtDecoder(AuthConnector authConnector) {
+        return authConnector.getJwtDecoder();
     }
 
 }

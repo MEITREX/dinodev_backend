@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.util.DodConfirmStateFormatter;
 import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
 import jakarta.annotation.Nullable;
@@ -18,7 +19,8 @@ import java.util.stream.*;
 @Slf4j
 public class ImsService {
 
-    private final ImsConnectorFactory imsConnectorFactory;
+    private final ImsConnectorFactory                     imsConnectorFactory;
+    private final EventPublisher<Event, CreateEventInput> eventPublisher;
 
     public List<Issue> getIssues(Project project) {
         return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
@@ -150,7 +152,11 @@ public class ImsService {
         imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
                 .addCommentToIssue(issueMutation.getIssueId(), comment, null);
 
-        return changeIssueState(issueMutation, doneStateName);
+        Issue result = changeIssueState(issueMutation, doneStateName);
+
+        syncEvents(result, OffsetDateTime.now().minusMinutes(5));
+
+        return result;
     }
 
     public void changeIssueEstimation(IssueMutation issueMutation, TShirtSizeEstimation estimation) {
@@ -171,6 +177,10 @@ public class ImsService {
     public Issue commentOnIssue(IssueMutation issueMutation, String comment, @Nullable String parentId) {
         return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
                 .addCommentToIssue(issueMutation.getIssueId(), comment, parentId);
+    }
+
+    public void syncEvents(Issue issue, OffsetDateTime since) {
+        getEventsForIssue(issue, since).forEach(eventPublisher::publishEvent);
     }
 
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {

@@ -69,51 +69,54 @@ public class ScrumGameEventTypes {
             .setMessageTemplate("The sprint was ended.")
             .build();
 
-    public static final EventType SPRINT_PLANNING_STARTED = DefaultEventType.builder()
-            .setIdentifier("SPRINT_PLANNING_STARTED")
-            .setDescription("A sprint planning was started.")
-            .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("The sprint planning was started.")
-            .build();
-
     public static final EventType SPRINT_PLANNING_ENDED = DefaultEventType.builder()
             .setIdentifier("SPRINT_PLANNING_ENDED")
             .setDescription("A sprint planning was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("The sprint planning was ended.")
+            .setEventSchema(DefaultSchemaDefinition.builder()
+                    .setFields(List.of(
+                            DefaultFieldSchemaDefinition.builder()
+                                    .setName("meetingLeader")
+                                    .setType(AllowedDataType.STRING)
+                                    .setDescription("The ID of the user who led the meeting.")
+                                    .setRequired(true)
+                                    .build()
+                    ))
+                    .build())
+            .setMessageTemplate("The sprint planning has ended.")
             .build();
 
-    public static final EventType DAILY_SCRUM_STARTED = DefaultEventType.builder()
-            .setIdentifier("DAILY_SCRUM_STARTED")
-            .setDescription("A daily scrum was started.")
-            .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("The daily scrum was started.")
-            .build();
-
-    public static final EventType DAILY_SCRUM_ENDED = DefaultEventType.builder()
-            .setIdentifier("DAILY_SCRUM_ENDED")
+    public static final EventType STANDUP_ENDED = DefaultEventType.builder()
+            .setIdentifier("STANDUP_ENDED")
             .setDescription("A daily scrum was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("The daily scrum was ended.")
-            .build();
-
-    public static final EventType RETROSPECTIVE_STARTED = DefaultEventType.builder()
-            .setIdentifier("RETROSPECTIVE_STARTED")
-            .setDescription("A retrospective was started.")
-            .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
-            .setMessageTemplate("The retrospective was started.")
+            .setEventSchema(DefaultSchemaDefinition.builder()
+                    .setFields(List.of(
+                            DefaultFieldSchemaDefinition.builder()
+                                    .setName("meetingLeaderId")
+                                    .setType(AllowedDataType.STRING)
+                                    .setDescription("The ID of the user who led the meeting.")
+                                    .setRequired(true)
+                                    .build()
+                    ))
+                    .build())
+            .setMessageTemplate("The daily scrum has ended.")
             .build();
 
     public static final EventType RETROSPECTIVE_ENDED = DefaultEventType.builder()
             .setIdentifier("RETROSPECTIVE_ENDED")
             .setDescription("A retrospective was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
+            .setEventSchema(DefaultSchemaDefinition.builder()
+                    .setFields(List.of(
+                            DefaultFieldSchemaDefinition.builder()
+                                    .setName("meetingLeaderId")
+                                    .setType(AllowedDataType.STRING)
+                                    .setDescription("The ID of the user who led the meeting.")
+                                    .setRequired(true)
+                                    .build()
+                    ))
+                    .build())
             .setMessageTemplate("The retrospective was ended.")
             .build();
 
@@ -158,11 +161,8 @@ public class ScrumGameEventTypes {
                 ACHIEVEMENT_UNLOCKED,
                 SPRINT_STARTED,
                 SPRINT_ENDED,
-                SPRINT_PLANNING_STARTED,
                 SPRINT_PLANNING_ENDED,
-                DAILY_SCRUM_STARTED,
-                DAILY_SCRUM_ENDED,
-                RETROSPECTIVE_STARTED,
+                STANDUP_ENDED,
                 RETROSPECTIVE_ENDED);
     }
 }

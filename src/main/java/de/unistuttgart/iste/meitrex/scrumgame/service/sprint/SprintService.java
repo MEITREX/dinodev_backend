@@ -40,10 +40,15 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
      */
     public Sprint createNewSprint(UUID projectId, CreateSprintInput input) {
         ProjectEntity project = projectRepository.findByIdOrThrow(projectId);
-        project.setCurrentSprintNumber(project.getCurrentSprintNumber() + 1);
+
+        int newSprintNumber = findMostRecentSprint(projectId)
+                                      .map(Sprint::getNumber)
+                                      .orElse(0) + 1;
+
+        project.setCurrentSprintNumber(newSprintNumber);
         project = projectRepository.save(project);
 
-        return createSprintWithNumber(project, project.getCurrentSprintNumber(), input);
+        return createSprintWithNumber(project, newSprintNumber, input);
     }
 
     /**
@@ -86,5 +91,10 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
     public Sprint getSprint(UUID projectId, @Nullable Integer sprintNumber) {
         return findSprint(projectId, sprintNumber)
                 .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
+    }
+
+    private Optional<Sprint> findMostRecentSprint(UUID projectId) {
+        return repository.findFirstByProjectIdOrderByNumberDesc(projectId)
+                .map(this::convertToDto);
     }
 }

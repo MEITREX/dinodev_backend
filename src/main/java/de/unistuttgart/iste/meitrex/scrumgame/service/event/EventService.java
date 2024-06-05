@@ -38,7 +38,7 @@ public class EventService {
     private final EventPersistenceService                 eventPersistenceService;
 
     // min time between event syncs
-    private static final Duration GLOBAL_SYNC_INTERVAL = Duration.ofMinutes(2);
+    private static final Duration GLOBAL_SYNC_INTERVAL = Duration.ofSeconds(30);
 
     private OffsetDateTime lastGlobalEventSync = OffsetDateTime.MIN;
 
@@ -176,9 +176,9 @@ public class EventService {
         Optional<EventEntity> lastSynchronizedEvent
                 = eventPersistenceService.getRepository().findLastSyncForIssue(issue.getId());
 
-        imsService.getEventsForIssue(issue,
-                        lastSynchronizedEvent.map(Event::getTimestamp)
-                                .orElse(LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC)))
-                .forEach(eventPublisher::publishEvent);
+        OffsetDateTime since = lastSynchronizedEvent.map(Event::getTimestamp)
+                .orElse(LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC));
+
+        imsService.syncEvents(issue, since);
     }
 }

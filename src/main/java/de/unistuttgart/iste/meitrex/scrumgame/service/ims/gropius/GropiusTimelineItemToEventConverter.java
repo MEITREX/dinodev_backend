@@ -35,20 +35,21 @@ public class GropiusTimelineItemToEventConverter {
             baseEvent.setMessage(timelineItem.body());
         }
 
-        if (timelineItem.answers() != null && timelineItem.answers().getId() != null) {
+        if (timelineItem.answers() != null) {
             baseEvent.setParentId(UUID.fromString(timelineItem.answers().getId()));
         }
 
         baseEvent.setEventData(getEventData(issue, timelineItem, eventType));
 
-        if (baseEvent.getEventTypeIdentifier().equals(ImsEventTypes.ISSUE_COMPLETED.getIdentifier())) {
-            if (!issue.getAssignments().getNodes().isEmpty()) {
+        if (baseEvent.getEventTypeIdentifier().equals(ImsEventTypes.ISSUE_COMPLETED.getIdentifier())
+            && !issue.getAssignments().getNodes().isEmpty()) {
                 return issue.getAssignments().getNodes().stream()
                         .map(assignment -> CreateEventInput.builder()
                                 .setEventData(baseEvent.getEventData())
                                 .setEventTypeIdentifier(baseEvent.getEventTypeIdentifier())
                                 // unique ID for each event, also prevents opening and closing the same issue multiple times
-                                .setId(UUID.fromString(assignment.getId()))
+                                .setId(UUID.nameUUIDFromBytes((issue.getId() +
+                                                               assignment.getUser().getId()).getBytes()))
                                 .setMessage(baseEvent.getMessage())
                                 .setParentId(baseEvent.getParentId())
                                 .setProjectId(baseEvent.getProjectId())
@@ -57,7 +58,7 @@ public class GropiusTimelineItemToEventConverter {
                                 .build())
                         .toList();
             }
-        }
+
 
         return List.of(baseEvent);
     }
@@ -81,14 +82,14 @@ public class GropiusTimelineItemToEventConverter {
         IssueState oldState = configuration.getIssueStateConverter().getIssueState(timelineItem.oldState().getId());
         IssueState newState = configuration.getIssueStateConverter().getIssueState(timelineItem.newState().getId());
 
+        if (StateUtils.isMovedToDone(oldState, newState)) {
+            return ImsEventTypes.ISSUE_COMPLETED;
+        }
         if (StateUtils.isMovedOutOfSprint(oldState, newState)) {
             return ImsEventTypes.REMOVE_ISSUE_FROM_SPRINT;
         }
         if (StateUtils.isMovedIntoSprint(oldState, newState)) {
             return ImsEventTypes.ADD_ISSUE_TO_SPRINT;
-        }
-        if (StateUtils.isMovedToDone(oldState, newState)) {
-            return ImsEventTypes.ISSUE_COMPLETED;
         }
         if (StateUtils.isReopened(oldState, newState)) {
             return ImsEventTypes.ISSUE_REOPENED;

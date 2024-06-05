@@ -13,6 +13,8 @@ public interface SprintRepository extends MeitrexRepository<SprintEntity, UUID> 
 
     Optional<SprintEntity> findByProjectIdAndNumber(UUID projectId, Integer sprintNumber);
 
+    Optional<SprintEntity> findFirstByProjectIdOrderByNumberDesc(UUID projectId);
+
     @Override
     default String getEntityName() {
         return "Sprint";
