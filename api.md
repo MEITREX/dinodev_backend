@@ -104,6 +104,7 @@
     * [GlobalPrivilege](#globalprivilege)
     * [IssuePriority](#issuepriority)
     * [IssueStateType](#issuestatetype)
+    * [KnownIcon](#knownicon)
     * [MeetingRole](#meetingrole)
     * [MeetingType](#meetingtype)
     * [PlanningMeetingPage](#planningmeetingpage)
@@ -458,6 +459,11 @@
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>icon</strong></td>
+<td valign="top"><a href="#icon">Icon</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -484,7 +490,7 @@
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>completed</strong></td>
+<td colspan="2" valign="top"><strong>achieved</strong></td>
 <td valign="top"><a href="#boolean">Boolean</a>!</td>
 <td></td>
 </tr>
@@ -630,7 +636,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>eventType</strong></td>
-<td valign="top"><a href="#eventtype">EventType</a>!</td>
+<td valign="top"><a href="#defaulteventtype">DefaultEventType</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -703,6 +709,11 @@
 <td valign="top"><a href="#string">String</a>!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>xpForCurrentUser</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -735,7 +746,7 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>eventSchema</strong></td>
-<td valign="top"><a href="#schemadefinition">SchemaDefinition</a>!</td>
+<td valign="top"><a href="#defaultschemadefinition">DefaultSchemaDefinition</a>!</td>
 <td></td>
 </tr>
 <tr>
@@ -800,7 +811,7 @@
 <tbody>
 <tr>
 <td colspan="2" valign="top"><strong>fields</strong></td>
-<td valign="top">[<a href="#fieldschemadefinition">FieldSchemaDefinition</a>!]!</td>
+<td valign="top">[<a href="#defaultfieldschemadefinition">DefaultFieldSchemaDefinition</a>!]!</td>
 <td></td>
 </tr>
 </tbody>
@@ -1030,6 +1041,21 @@
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>mdiIcon</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>url</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>knownIcon</strong></td>
+<td valign="top"><a href="#knownicon">KnownIcon</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>emoji</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
@@ -2556,7 +2582,7 @@ Whether there is a next page.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>icon</strong></td>
-<td valign="top"><a href="#icon">Icon</a>!</td>
+<td valign="top"><a href="#icon">Icon</a></td>
 <td></td>
 </tr>
 </tbody>
@@ -3000,12 +3026,17 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
-<td colspan="2" valign="top"><strong>events</strong></td>
-<td valign="top">[<a href="#event">Event</a>!]!</td>
+<td colspan="2" valign="top"><strong>event</strong></td>
+<td valign="top"><a href="#event">Event</a>!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" align="right" valign="top">projectId</td>
+<td valign="top"><a href="#uuid">UUID</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" align="right" valign="top">userId</td>
 <td valign="top"><a href="#uuid">UUID</a>!</td>
 <td></td>
 </tr>
@@ -3074,6 +3105,11 @@ Whether there is a next page.
 <td valign="top">[<a href="#achievementprogress">AchievementProgress</a>!]!</td>
 <td></td>
 </tr>
+<tr>
+<td colspan="2" valign="top"><strong>currentBadge</strong></td>
+<td valign="top"><a href="#icon">Icon</a></td>
+<td></td>
+</tr>
 </tbody>
 </table>
 
@@ -3095,12 +3131,67 @@ Whether there is a next page.
 <td></td>
 </tr>
 <tr>
+<td colspan="2" valign="top"><strong>totalXp</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
 <td colspan="2" valign="top"><strong>xpToNextLevel</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>level</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issuesCompleted</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>issuesCreated</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>commentsWritten</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>reactionsGiven</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>pullRequestsCreated</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>pullRequestsClosed</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>pullRequestsReviewed</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>goldMedals</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>silverMedals</strong></td>
+<td valign="top"><a href="#int">Int</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>bronzeMedals</strong></td>
 <td valign="top"><a href="#int">Int</a>!</td>
 <td></td>
 </tr>
@@ -3212,6 +3303,11 @@ Whether there is a next page.
 <tr>
 <td colspan="2" valign="top"><strong>parentId</strong></td>
 <td valign="top"><a href="#uuid">UUID</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>visibleToUserIds</strong></td>
+<td valign="top">[<a href="#uuid">UUID</a>!]</td>
 <td></td>
 </tr>
 </tbody>
@@ -3671,6 +3767,21 @@ If specified, filters for dates before the specified value.
 </tr>
 <tr>
 <td colspan="2" valign="top"><strong>mdiIcon</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>url</strong></td>
+<td valign="top"><a href="#string">String</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>knownIcon</strong></td>
+<td valign="top"><a href="#knownicon">KnownIcon</a></td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>emoji</strong></td>
 <td valign="top"><a href="#string">String</a></td>
 <td></td>
 </tr>
@@ -4538,6 +4649,73 @@ Enumeration of possible states an issue can be in during its lifecycle.
 </tbody>
 </table>
 
+### KnownIcon
+
+<table>
+<thead>
+<th align="left">Value</th>
+<th align="left">Description</th>
+</thead>
+<tbody>
+<tr>
+<td valign="top"><strong>GROPIUS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_NIGHT_OWL</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_EARLY_BIRD</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_FIRST_STEPS</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_GETTING_STARTED</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_QUICK_BROWN_FOX</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_SPRINT_CHAMPION</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_SPRINT_LEGEND</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_TASK_CHAMPION</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_TASK_LEGEND</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_TEAM_PLAYER</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_SOCIAL_BUTTERFLY</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_REVIEWER</strong></td>
+<td></td>
+</tr>
+<tr>
+<td valign="top"><strong>ACHIEVEMENT_CRITIC</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
 ### MeetingRole
 
 <table>
@@ -4927,6 +5105,11 @@ often used by GraphQL to represent free-form human-readable text.
 <tr>
 <td colspan="2" align="right" valign="top">name</td>
 <td valign="top"><a href="#string">String</a>!</td>
+<td></td>
+</tr>
+<tr>
+<td colspan="2" valign="top"><strong>xpForCurrentUser</strong></td>
+<td valign="top"><a href="#int">Int</a></td>
 <td></td>
 </tr>
 </tbody>

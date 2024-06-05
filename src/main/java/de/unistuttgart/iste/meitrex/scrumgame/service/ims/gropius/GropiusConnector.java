@@ -14,8 +14,8 @@ import java.util.*;
 import java.util.logging.*;
 import java.util.stream.*;
 
+import static de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils.distinctByKey;
 import static de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusMapping.gropiusIssueToScrumGameIssue;
-import static de.unistuttgart.iste.meitrex.scrumgame.util.ScrumGameCollectionUtils.distinctByKey;
 
 @Slf4j
 @RequiredArgsConstructor
