@@ -12,6 +12,8 @@ import java.util.*;
 @Component
 public class NightOwlAchievementRule extends AchievementRule {
 
+    private static final int MIN_HOUR = 20;
+
     public NightOwlAchievementRule(AchievementService achievementService) {
         super(List.of(DefaultAchievements.ACHIEVEMENT_NIGHT_OWL), achievementService);
     }
@@ -25,7 +27,7 @@ public class NightOwlAchievementRule extends AchievementRule {
     public boolean checkCondition(Event triggerEvent) {
         OffsetDateTime issueCompletedAt = triggerEvent.getTimestamp();
 
-        return issueCompletedAt.getHour() > 21;
+        return issueCompletedAt.getHour() >= MIN_HOUR;
     }
 
 }

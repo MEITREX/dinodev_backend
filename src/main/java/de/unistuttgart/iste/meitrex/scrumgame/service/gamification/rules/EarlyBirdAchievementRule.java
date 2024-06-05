@@ -25,7 +25,7 @@ public class EarlyBirdAchievementRule extends AchievementRule {
     public boolean checkCondition(Event triggerEvent) {
         OffsetDateTime issueCompletedAt = triggerEvent.getTimestamp();
 
-        return issueCompletedAt.getHour() < 9;
+        return issueCompletedAt.getHour() <= 9;
     }
 
 }

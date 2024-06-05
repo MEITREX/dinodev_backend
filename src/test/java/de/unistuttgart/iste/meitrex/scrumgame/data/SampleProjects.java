@@ -100,7 +100,7 @@ public class SampleProjects {
                 .setDescription("Updated Test Project")
                 .setProjectSettings(ProjectSettingsInput.builder()
                         .setCodeRepositorySettings(CodeRepositorySettingsInput.builder()
-                                .setRepositories(
+                                .setRepositories(new ArrayList<>(
                                         List.of(RepositoryDefinitionInput.builder()
                                                         .setName("Updated Test Repository")
                                                         .setUrl("Updated Test URL")
@@ -114,8 +114,7 @@ public class SampleProjects {
                                                         .setIcon(IconInput.builder()
                                                                 .setPath("Updated Test Path")
                                                                 .build())
-                                                        .build())
-                                )
+                                                        .build())))
                                 .build())
                         .setImsSettings(ImsSettingsInput.builder()
                                 .setImsName("Updated Test IMS")
@@ -183,7 +182,7 @@ public class SampleProjects {
                 .description("Test Description")
                 .projectSettings(ProjectSettingsEntity.builder()
                         .codeRepositorySettings(CodeRepositorySettingsEntity.builder()
-                                .setRepositories(
+                                .setRepositories(new ArrayList<>(
                                         List.of(RepositoryDefinitionEntity.builder()
                                                         .setName("Test Repository")
                                                         .setUrl("Test URL")
@@ -197,7 +196,7 @@ public class SampleProjects {
                                                         .setIcon(IconEmbeddable.builder()
                                                                 .setMdiIcon("Test Icon")
                                                                 .build())
-                                                        .build()))
+                                                        .build())))
                                 .build())
                         .imsSettings(ImsSettingsEntity.builder()
                                 .imsName("Test IMS")
