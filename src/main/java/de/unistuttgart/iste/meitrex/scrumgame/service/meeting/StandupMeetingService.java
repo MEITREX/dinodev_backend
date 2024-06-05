@@ -74,7 +74,12 @@ public class StandupMeetingService extends AbstractCrudService<UUID, StandupMeet
     }
 
     public StandupMeeting finishStandupMeeting(Project project) {
-        return updateStandupMeeting(project.getId(), standupMeeting -> standupMeeting.setActive(false));
+        StandupMeeting result = updateStandupMeeting(project.getId(),
+                standupMeeting -> standupMeeting.setActive(false));
+
+        meetingService.publishMeetingFinishedEvents(result);
+
+        return result;
     }
 
     public StandupMeeting startStandupMeeting(Project project) {

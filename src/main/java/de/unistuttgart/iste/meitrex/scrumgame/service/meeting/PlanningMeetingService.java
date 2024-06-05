@@ -25,6 +25,14 @@ import java.util.*;
 import java.util.function.*;
 import java.util.stream.*;
 
+/**
+ * Service for handling planning meetings.
+ * <p>
+ * Remark: This service has many dependencies. This is because the planning meeting modify issues, projects,
+ * can create sprints etc. This might be considered as a code smell but refactoring
+ * this service into smaller services might not necessarily lead to a better design, as this class bundles all
+ * the logic for planning meetings.
+ */
 @Slf4j
 @Service
 @Getter(AccessLevel.PROTECTED)
@@ -43,7 +51,8 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
             AuthService auth,
             ImsService imsService,
             SprintService sprintService,
-            ProjectService projectService) {
+            ProjectService projectService
+    ) {
         super(repository, modelMapper, PlanningMeetingEntity.class, PlanningMeeting.class);
         this.planningMeetingRepository = repository;
         this.meetingService = meetingService;
@@ -65,7 +74,7 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
         planningMeeting.setActive(true);
         planningMeeting.getAnimalVoting()
                 .setVotableAnimals(new ArrayList<>(
-                        List.of(Animal.TRICERATOPS, Animal.DODO, Animal.TREX)
+                        List.of(Animal.DODO, Animal.TREX)
                 )); // TODO only unlocked animals
 
         initSprintGoalVoting(planningMeeting, project);
@@ -78,9 +87,15 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
     }
 
     private void initSprintGoalVoting(PlanningMeetingEntity planningMeeting, Project project) {
+        List<Issue> issuesOfProject = imsService.getIssues(project);
         planningMeeting.getSprintGoalVoting().getNonSprintIssueIds().addAll(
-                imsService.getIssues(project).stream()
+                issuesOfProject.stream()
                         .filter(issue -> issue.getState().getType() == IssueStateType.BACKLOG)
+                        .map(Issue::getId)
+                        .toList());
+        planningMeeting.getSprintGoalVoting().getSprintIssueIds().addAll(
+                issuesOfProject.stream()
+                        .filter(issue -> issue.getState().getType() == IssueStateType.SPRINT_BACKLOG)
                         .map(Issue::getId)
                         .toList());
     }
@@ -151,15 +166,15 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
     }
 
     public PlanningMeeting endEstimation(UUID projectId) {
-        return updatePlanningMeeting(projectId, planningMeeting -> {
-            planningMeeting.getIssueEstimation().finishVoting();
-        });
+        return updatePlanningMeeting(projectId, planningMeeting ->
+                planningMeeting.getIssueEstimation().finishVoting());
     }
 
     public PlanningMeeting setFinalResult(Project project, TShirtSizeEstimation estimation) {
         return updatePlanningMeeting(project.getId(), planningMeeting -> {
             IssueMutation issueMutation = new IssueMutation(project, planningMeeting.getIssueEstimation().getIssueId());
             imsService.changeIssueEstimation(issueMutation, estimation);
+
             planningMeeting.getIssueEstimation().finishVoting();
             planningMeeting.getIssueEstimation().setFinalResult(estimation);
             planningMeeting.getIssueEstimation().getVotes().clear();
@@ -182,9 +197,8 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
     }
 
     public PlanningMeeting finishSprintGoalVoting(UUID projectId) {
-        return updatePlanningMeeting(projectId, planningMeeting -> {
-            planningMeeting.getSprintGoalVoting().finishVoting();
-        });
+        return updatePlanningMeeting(projectId, planningMeeting ->
+                planningMeeting.getSprintGoalVoting().finishVoting());
     }
 
     /**
@@ -199,13 +213,14 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
      * @throws MeitrexNotFoundException If no active planning meeting is found for the project ID.
      */
     public Sprint finishMeeting(UUID projectId) {
-        PlanningMeeting planningMeeting = updatePlanningMeeting(projectId, meetingEntity -> {
-            meetingEntity.setActive(false);
-        });
+        PlanningMeeting planningMeeting = updatePlanningMeeting(projectId, meetingEntity ->
+                meetingEntity.setActive(false));
 
         setStateAndSprintNumberForPlannedIssues(projectId, planningMeeting);
 
         CreateSprintInput input = getCreateSprintInputFromMeeting(projectId, planningMeeting);
+
+        meetingService.publishMeetingFinishedEvents(planningMeeting);
 
         return sprintService.createNewSprint(projectId, input);
     }

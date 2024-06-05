@@ -8,7 +8,7 @@ public class XpAdder {
 
     private static final int    INITIAL_XP_COST       = 3000;
     private static final int    LINEAR_SCALE_FACTOR   = 250;
-    private static final double MULTIPLICATIVE_FACTOR = 1.05;
+    private static final double MULTIPLICATIVE_FACTOR = 1.01;
 
     public static UserStatsEntity addXp(UserStatsEntity userStats, int xpToAdd) {
         int xpToLevelUp = userStats.getXpToNextLevel();

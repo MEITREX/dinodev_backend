@@ -35,8 +35,7 @@ public class IssueXpRule extends XpRule {
     @Override
     public int getXp(Event triggerEvent) {
         Optional<Issue> issue = findStringField(triggerEvent, "issueId")
-                .flatMap(issueId ->
-                        imsService.findIssue(triggerEvent.getProjectId(), issueId));
+                .flatMap(issueId -> imsService.findIssue(triggerEvent.getProjectId(), issueId));
 
         if (issue.isEmpty()) {
             return 0;
@@ -44,7 +43,7 @@ public class IssueXpRule extends XpRule {
 
         Integer storyPoints = issue.get().getStoryPoints();
         if (storyPoints == null) {
-            return 1000; // assume at least 1 story point
+            return 0;
         }
 
         int assigneeCount = issue.get().getAssigneeIds().size();

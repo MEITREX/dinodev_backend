@@ -9,6 +9,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.Meeting
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.MeetingRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -39,9 +40,6 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
         this.eventPublisher = eventPublisher;
         this.authService = authService;
         this.repository = repository;
-
-        meetingSubscriptionPublisher.getEventStream().subscribe(meeting ->
-                log.debug("Meeting updated: {}, {}", meeting.getMeetingType(), meeting.getProjectId()));
     }
 
 
@@ -122,6 +120,46 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
                 .setState(UserState.ONLINE)
                 .build());
         return attendees;
+    }
+
+    /**
+     * Publishes the meeting finished events for the given meeting.
+     * One event is published for each attendee of the meeting.
+     * The event type is determined by the meeting type.
+     *
+     * @param meeting the meeting for which to publish the events
+     */
+    public void publishMeetingFinishedEvents(Meeting meeting) {
+        String eventTypeIdentifier = switch (meeting.getMeetingType()) {
+            case PLANNING -> ScrumGameEventTypes.SPRINT_PLANNING_ENDED.getIdentifier();
+            case STANDUP -> ScrumGameEventTypes.STANDUP_ENDED.getIdentifier();
+            case RETROSPECTIVE -> ScrumGameEventTypes.RETROSPECTIVE_ENDED.getIdentifier();
+        };
+
+        Optional<String> meetingLeaderId = meeting.getAttendees().stream()
+                .filter(attendee -> attendee.getRole() == MeetingRole.MEETING_LEADER)
+                .findFirst()
+                .map(attendee -> attendee.getUserId().toString());
+
+        Optional<TemplateFieldInput> meetingLeaderField = meetingLeaderId.map(id -> new TemplateFieldInput(
+                "meetingLeaderId",
+                AllowedDataType.STRING,
+                id
+        ));
+
+        List<TemplateFieldInput> eventData = meetingLeaderField.stream().toList();
+
+        for (MeetingAttendee attendee : meeting.getAttendees()) {
+
+            CreateEventInput eventInput = CreateEventInput.builder()
+                    .setProjectId(meeting.getProjectId())
+                    .setUserId(attendee.getUserId())
+                    .setEventTypeIdentifier(eventTypeIdentifier)
+                    .setEventData(eventData)
+                    .build();
+
+            eventPublisher.publishEvent(eventInput);
+        }
     }
 
     protected void publishMeetingUpdated(Meeting meeting) {
