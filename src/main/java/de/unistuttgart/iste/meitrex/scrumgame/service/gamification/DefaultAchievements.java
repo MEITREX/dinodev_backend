@@ -1,6 +1,5 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
-import de.unistuttgart.iste.meitrex.generated.dto.KnownIcon;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmbeddable;
 import lombok.NoArgsConstructor;
@@ -16,7 +15,7 @@ public class DefaultAchievements {
             .setDescription("Finish an issue after 8pm.")
             .setGoal(1)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_NIGHT_OWL)
+                    .setEmoji("🦉")
                     .build())
             .build();
 
@@ -26,7 +25,7 @@ public class DefaultAchievements {
             .setDescription("Finish an issue before 9am.")
             .setGoal(1)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_EARLY_BIRD)
+                    .setEmoji("🐦")
                     .build())
             .build();
 
@@ -36,7 +35,7 @@ public class DefaultAchievements {
             .setDescription("Complete your first task.")
             .setGoal(1)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_FIRST_STEPS)
+                    .setEmoji("👣")
                     .build())
             .build();
 
@@ -46,7 +45,7 @@ public class DefaultAchievements {
             .setDescription("Complete 10 tasks.")
             .setGoal(10)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_GETTING_STARTED)
+                    .setEmoji("🚀")
                     .build())
             .build();
 
@@ -56,7 +55,7 @@ public class DefaultAchievements {
             .setDescription("Complete 5 tasks on the first three days of the sprint.")
             .setGoal(5)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_QUICK_BROWN_FOX)
+                    .setEmoji("🦊")
                     .build())
             .build();
 
@@ -66,7 +65,7 @@ public class DefaultAchievements {
             .setDescription("Complete 25 tasks.")
             .setGoal(25)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_TASK_CHAMPION)
+                    .setEmoji("🤺")
                     .build())
             .build();
 
@@ -76,7 +75,7 @@ public class DefaultAchievements {
             .setDescription("Complete 100 tasks.")
             .setGoal(100)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_TASK_LEGEND)
+                    .setEmoji("🌟")
                     .build())
             .build();
 
@@ -86,7 +85,7 @@ public class DefaultAchievements {
             .setDescription("Complete 5 tasks with more than one assignee.")
             .setGoal(5)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_TEAM_PLAYER)
+                    .setEmoji("👥")
                     .build())
             .build();
 
@@ -96,7 +95,7 @@ public class DefaultAchievements {
             .setDescription("React to 100 events with a ♥️.")
             .setGoal(100)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_SOCIAL_BUTTERFLY)
+                    .setEmoji("🦋")
                     .build())
             .build();
 
@@ -106,7 +105,7 @@ public class DefaultAchievements {
             .setDescription("Review 10 pull requests.")
             .setGoal(10)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_REVIEWER)
+                    .setEmoji("👀")
                     .build())
             .build();
 
@@ -116,7 +115,7 @@ public class DefaultAchievements {
             .setDescription("Request changes on 10 pull requests.")
             .setGoal(10)
             .setIcon(IconEmbeddable.builder()
-                    .setKnownIcon(KnownIcon.ACHIEVEMENT_CRITIC)
+                    .setEmoji("🔍")
                     .build())
             .build();
 
