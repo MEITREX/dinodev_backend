@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.sprint;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsServiceExtension;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,8 +14,8 @@ import java.util.stream.*;
 @RequiredArgsConstructor
 public class SprintStatsService {
 
-    private final ImsService imsService;
-    private final SprintService sprintService;
+    private final ImsServiceExtension imsServiceExtension;
+    private final SprintService       sprintService;
 
     public SprintStats getSprintStats(Sprint sprint) {
         SprintStats sprintStats = new SprintStats();
@@ -64,7 +64,7 @@ public class SprintStatsService {
     }
 
     private void calculateIssueStatistics(SprintStats sprintStats) {
-        List<Issue> issues = imsService.getIssuesBySprints(List.of(sprintStats.getSprint()))
+        List<Issue> issues = imsServiceExtension.getIssuesBySprints(List.of(sprintStats.getSprint()))
                 .get(sprintStats.getSprint());
         sprintStats.setIssueCount(issues.size());
 

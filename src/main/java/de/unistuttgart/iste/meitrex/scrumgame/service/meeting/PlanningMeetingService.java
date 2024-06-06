@@ -40,9 +40,9 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
 
     private final PlanningMeetingRepository planningMeetingRepository;
     private final MeetingService            meetingService;
-    private final AuthService               auth;
-    private final ImsService                imsService;
-    private final SprintService             sprintService;
+    private final AuthService   auth;
+    private final ImsService    imsService;
+    private final SprintService sprintService;
     private final ProjectService            projectService;
 
     public PlanningMeetingService(PlanningMeetingRepository repository,
@@ -172,7 +172,8 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
 
     public PlanningMeeting setFinalResult(Project project, TShirtSizeEstimation estimation) {
         return updatePlanningMeeting(project.getId(), planningMeeting -> {
-            IssueMutation issueMutation = new IssueMutation(project, planningMeeting.getIssueEstimation().getIssueId());
+            IssueMutation issueMutation = imsService.mutateIssue(project,
+                    planningMeeting.getIssueEstimation().getIssueId());
             imsService.changeIssueEstimation(issueMutation, estimation);
 
             planningMeeting.getIssueEstimation().finishVoting();
@@ -241,7 +242,7 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
         Project project = projectService.getProjectOrThrow(projectId);
 
         for (String issueId : planningMeeting.getSprintGoalVoting().getSprintIssueIds()) {
-            IssueMutation issueMutation = new IssueMutation(project, issueId);
+            IssueMutation issueMutation = imsService.mutateIssue(project, issueId);
             imsService.changeIssueState(issueMutation, IssueStateType.SPRINT_BACKLOG);
             imsService.changeSprint(issueMutation, project.getCurrentSprintNumber() + 1);
         }

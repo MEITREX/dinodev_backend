@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.controller.ims;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsServiceExtension;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
@@ -17,6 +18,7 @@ import java.util.*;
 public class ImsController {
 
     private final ImsService imsService;
+    private final ImsServiceExtension imsServiceExtension;
 
     /* Schema mappings */
 
@@ -45,12 +47,12 @@ public class ImsController {
 
     @BatchMapping
     public Map<IssueStateInBoard, List<Issue>> issues(List<IssueStateInBoard> states) {
-        return imsService.getIssuesByStates(states);
+        return imsServiceExtension.getIssuesByStates(states);
     }
 
     @BatchMapping(typeName = "Sprint", field = "issues")
     public Map<Sprint, List<Issue>> issuesOfSprints(List<Sprint> sprints) {
-        return imsService.getIssuesBySprints(sprints);
+        return imsServiceExtension.getIssuesBySprints(sprints);
     }
 
     @SchemaMapping(typeName = "IssueEstimation", field = "issue")
@@ -78,7 +80,7 @@ public class ImsController {
 
     @SchemaMapping
     public IssueMutation mutateIssue(ProjectMutation projectMutation, @Argument String id) {
-        return imsService.mutateIssue(projectMutation, id);
+        return imsService.mutateIssue(projectMutation.getProject(), id);
     }
 
     @SchemaMapping

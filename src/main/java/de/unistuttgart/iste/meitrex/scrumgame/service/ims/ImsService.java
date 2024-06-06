@@ -8,6 +8,10 @@ import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
@@ -22,15 +26,18 @@ public class ImsService {
     private final ImsConnectorFactory                     imsConnectorFactory;
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
 
-    public List<Issue> getIssues(Project project) {
+    @Cacheable(value = "issues", key = "#project.id")
+    public synchronized List<Issue> getIssues(Project project) {
         return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
     }
 
-    public Optional<Issue> findIssue(Project project, String id) {
+    @Cacheable(value = "issue", key = "#project.id + #id")
+    public synchronized Optional<Issue> findIssue(Project project, String id) {
         return imsConnectorFactory.getImsConnectorForProject(project).findIssue(id);
     }
 
-    public Optional<Issue> findIssue(UUID projectId, String issueId) {
+    @Cacheable(value = "issue", key = "#projectId + #issueId")
+    public synchronized Optional<Issue> findIssue(UUID projectId, String issueId) {
         return imsConnectorFactory.getImsConnectorForProject(projectId).findIssue(issueId);
     }
 
@@ -43,8 +50,12 @@ public class ImsService {
                 board.getProject().getProjectSettings().getImsSettings().getIssueStates(), board);
     }
 
-    public IssueMutation mutateIssue(ProjectMutation projectMutation, String id) {
-        return new IssueMutation(projectMutation.getProject(), id);
+    @Caching(evict = {
+            @CacheEvict(value = "issues", key = "#project.id"),
+            @CacheEvict(value = "issue", key = "#project.id + #id")
+    })
+    public IssueMutation mutateIssue(Project project, String id) {
+        return new IssueMutation(project, id);
     }
 
     public Issue changeIssueTitle(IssueMutation issueMutation, String title) {
@@ -107,34 +118,6 @@ public class ImsService {
                 .assignIssue(issueMutation.getIssueId(), assigneeId);
     }
 
-    public Map<IssueStateInBoard, List<Issue>> getIssuesByStates(List<IssueStateInBoard> states) {
-        Map<IssueStateInBoard, List<Issue>> resultMap = new HashMap<>();
-
-        for (IssueStateInBoard state : states) {
-            List<Issue> issues = getIssues(state.getProjectBoard().getProject());
-            List<Issue> stateIssues = issues.stream()
-                    .filter(issue -> Objects.equals(issue.getState().getImsStateId(), state.getState().getImsStateId()))
-                    .collect(Collectors.toList());
-            resultMap.put(state, stateIssues);
-        }
-
-        return resultMap;
-    }
-
-    public Map<Sprint, List<Issue>> getIssuesBySprints(List<Sprint> sprints) {
-        Map<Sprint, List<Issue>> resultMap = new HashMap<>();
-
-        for (Sprint sprint : sprints) {
-            List<Issue> issues = getIssues(sprint.getProject());
-            List<Issue> sprintIssues = issues.stream()
-                    .filter(issue -> Objects.equals(issue.getSprintNumber(), sprint.getNumber()))
-                    .collect(Collectors.toList());
-            resultMap.put(sprint, sprintIssues);
-        }
-
-        return resultMap;
-    }
-
     public List<Issue> getIssuesByIds(UUID projectId, List<String> issueIds) {
         return imsConnectorFactory.getImsConnectorForProject(projectId).findIssuesBatched(issueIds);
     }
@@ -169,6 +152,8 @@ public class ImsService {
                 .getEventsForIssue(issue.getId(), since);
     }
 
+    @CachePut(value = "issue", key = "#projectMutation.getProject().id + #result.getId()")
+    @CacheEvict(value = "issues", key = "#projectMutation.getProject().id")
     public Issue createIssue(ProjectMutation projectMutation, CreateIssueInput input) {
         return imsConnectorFactory.getImsConnectorForProject(projectMutation.getProject())
                 .createIssue(input);
@@ -179,6 +164,10 @@ public class ImsService {
                 .addCommentToIssue(issueMutation.getIssueId(), comment, parentId);
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "issues", key = "#issue.projectId"),
+            @CacheEvict(value = "issue", key = "#issue.projectId + #issue.id")
+    })
     public void syncEvents(Issue issue, OffsetDateTime since) {
         getEventsForIssue(issue, since).forEach(eventPublisher::publishEvent);
     }

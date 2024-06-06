@@ -40,6 +40,9 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
         this.eventPublisher = eventPublisher;
         this.authService = authService;
         this.repository = repository;
+
+        // todo: remove this line after updating gamification engine
+        meetingSubscriptionPublisher.getEventStream().subscribe();
     }
 
 
