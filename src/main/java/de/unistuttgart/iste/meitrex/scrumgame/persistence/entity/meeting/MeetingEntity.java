@@ -9,6 +9,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Getter
 @Entity
 @Table(name = "meeting")
@@ -25,7 +27,6 @@ public class MeetingEntity implements IWithId<UUID> {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    @Setter
     private List<MeetingAttendeeEmbeddable> attendees = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -41,4 +42,7 @@ public class MeetingEntity implements IWithId<UUID> {
     @Setter
     private ProjectEntity project;
 
+    public void setAttendees(List<MeetingAttendeeEmbeddable> attendees) {
+        this.attendees = replaceContent(this.attendees, attendees);
+    }
 }

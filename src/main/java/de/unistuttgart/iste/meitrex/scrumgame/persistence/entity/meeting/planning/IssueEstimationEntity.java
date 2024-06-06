@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "issue_estimation")
 @Getter
@@ -44,7 +46,6 @@ public class IssueEstimationEntity implements VotingStateHolder<TShirtSizeEstima
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @Setter
     private List<EstimationVoteEntity> votes = new ArrayList<>();
 
     public void resetVotes() {
@@ -63,6 +64,10 @@ public class IssueEstimationEntity implements VotingStateHolder<TShirtSizeEstima
     @Override
     public List<EstimationVoteEntity> getVotingStates() {
         return votes;
+    }
+
+    public void setVotes(List<EstimationVoteEntity> votes) {
+        this.votes = replaceContent(this.votes, votes);
     }
 
     @Override

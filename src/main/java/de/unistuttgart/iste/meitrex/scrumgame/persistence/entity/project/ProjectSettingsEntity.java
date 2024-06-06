@@ -6,6 +6,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "project_settings")
 @Getter
@@ -33,7 +35,9 @@ public class ProjectSettingsEntity {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @Setter
     private List<DefinitionOfDoneItemEntity> definitionOfDone = new ArrayList<>();
 
+    public void setDefinitionOfDone(List<DefinitionOfDoneItemEntity> definitionOfDone) {
+        this.definitionOfDone = replaceContent(this.definitionOfDone, definitionOfDone);
+    }
 }

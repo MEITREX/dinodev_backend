@@ -6,6 +6,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "dod_item")
 @Getter
@@ -31,4 +33,7 @@ public class DefinitionOfDoneItemEntity {
     @ToString.Exclude
     private List<DefinitionOfDoneItemEntity> implies = new ArrayList<>();
 
+    public void setImplies(List<DefinitionOfDoneItemEntity> implies) {
+        this.implies = replaceContent(this.implies, implies);
+    }
 }

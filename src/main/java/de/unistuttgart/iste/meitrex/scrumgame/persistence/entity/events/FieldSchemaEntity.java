@@ -35,4 +35,5 @@ public class FieldSchemaEntity implements FieldSchemaDefinition {
     public boolean getRequired() {
         return required;
     }
+
 }

@@ -15,6 +15,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.time.OffsetDateTime;
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Slf4j
 @Entity
 @Table(name = "event")
@@ -80,7 +82,6 @@ public class EventEntity implements Event, IWithId<UUID> {
     private UUID userId;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Setter
     @Builder.Default
     private List<UUID> visibleToUserIds = new ArrayList<>();
 
@@ -94,7 +95,6 @@ public class EventEntity implements Event, IWithId<UUID> {
     private EventEntity parent;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Setter
     @Builder.Default
     private List<TemplateFieldEmbeddable> eventData = new ArrayList<>();
 
@@ -133,6 +133,18 @@ public class EventEntity implements Event, IWithId<UUID> {
         } else {
             dbEventType = null;
         }
+    }
+
+    public void setVisibleToUserIds(List<UUID> visibleToUserIds) {
+        this.visibleToUserIds = replaceContent(this.visibleToUserIds, visibleToUserIds);
+    }
+
+    public void setChildren(List<EventEntity> children) {
+        this.children = replaceContent(this.children, children);
+    }
+
+    public void setEventData(List<TemplateFieldEmbeddable> eventData) {
+        this.eventData = replaceContent(this.eventData, eventData);
     }
 
     public Optional<Event> getOptionalParent() {

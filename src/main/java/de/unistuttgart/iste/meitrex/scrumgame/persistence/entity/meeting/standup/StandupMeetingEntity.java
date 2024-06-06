@@ -7,6 +7,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "standup_meeting")
 @Getter
@@ -30,7 +32,11 @@ public class StandupMeetingEntity extends MeetingEntity {
     }
 
     public void setOrder(List<UUID> order) {
-        this.userIdsOrdered = order;
+        setUserIdsOrdered(order);
+    }
+
+    public void setUserIdsOrdered(List<UUID> userIdsOrdered) {
+        this.userIdsOrdered = replaceContent(this.userIdsOrdered, userIdsOrdered);
     }
 
     public StandupMeetingSettingsEmbeddable getStandupMeetingSettings() {

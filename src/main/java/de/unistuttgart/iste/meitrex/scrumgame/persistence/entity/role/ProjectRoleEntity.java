@@ -6,8 +6,9 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.Project
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -34,11 +35,13 @@ public class ProjectRoleEntity implements IWithId<ProjectRoleId> {
     @ElementCollection(fetch = FetchType.EAGER)
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    @Setter
     private List<ProjectPrivilege> projectPrivileges = new ArrayList<>();
 
     public String getName() {
         return id.getName();
     }
 
+    public void setProjectPrivileges(List<ProjectPrivilege> projectPrivileges) {
+        this.projectPrivileges = replaceContent(this.projectPrivileges, projectPrivileges);
+    }
 }

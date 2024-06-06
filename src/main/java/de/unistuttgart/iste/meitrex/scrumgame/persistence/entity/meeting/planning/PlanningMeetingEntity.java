@@ -15,17 +15,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class PlanningMeetingEntity extends MeetingEntity {
 
-    // planningSettings: PlanningSettings!
-    //
-    //    currentPage: PlanningMeetingPage!
-    //
-    //    animalVoting: AnimalVoting!
-    //    nameVoting: NameVoting!
-    //
-    //    issueEstimation: IssueEstimation!
-    //
-    //    sprintGoalVoting: SprintGoalVoting!
-
     @Embedded
     private PlanningSettingsEmbeddable planningSettings;
 

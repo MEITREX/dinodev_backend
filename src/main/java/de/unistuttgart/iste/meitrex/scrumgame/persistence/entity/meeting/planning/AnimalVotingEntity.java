@@ -9,6 +9,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "animal_voting")
 @Getter
@@ -26,12 +28,10 @@ public class AnimalVotingEntity implements VotingStateHolder<Animal, AnimalVotin
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    @Setter
     private List<Animal> votableAnimals = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    @Setter
     private List<AnimalVotingStateEntity> animalVotingStates = new ArrayList<>();
 
     @Column
@@ -54,5 +54,13 @@ public class AnimalVotingEntity implements VotingStateHolder<Animal, AnimalVotin
     @Override
     public AnimalVotingStateEntity createVotingState(Animal votedFor) {
         return AnimalVotingStateEntity.builder().setVotedFor(votedFor).build();
+    }
+
+    public void setAnimalVotingStates(List<AnimalVotingStateEntity> animalVotingStates) {
+        this.animalVotingStates = replaceContent(this.animalVotingStates, animalVotingStates);
+    }
+
+    public void setVotableAnimals(List<Animal> votableAnimals) {
+        this.votableAnimals = replaceContent(this.votableAnimals, votableAnimals);
     }
 }

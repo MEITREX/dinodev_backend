@@ -7,6 +7,8 @@ import lombok.*;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Getter
 @Entity
 @Table(name = "global_user")
@@ -35,7 +37,6 @@ public class GlobalUserEntity implements IWithId<UUID> {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @Builder.Default
-    @Setter
     private List<GlobalUserRoleEntity> roles = new ArrayList<>();
 
     @OneToMany(
@@ -53,4 +54,7 @@ public class GlobalUserEntity implements IWithId<UUID> {
         }
     }
 
+    public void setRoles(List<GlobalUserRoleEntity> roles) {
+        this.roles = replaceContent(this.roles, roles);
+    }
 }

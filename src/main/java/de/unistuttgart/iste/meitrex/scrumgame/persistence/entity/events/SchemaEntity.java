@@ -7,6 +7,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "schema")
 @Getter
@@ -23,7 +25,9 @@ public class SchemaEntity implements SchemaDefinition {
     private UUID id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    @Setter
     private List<FieldSchemaEntity> fields;
 
+    public void setFields(List<FieldSchemaEntity> fields) {
+        this.fields = replaceContent(this.fields, fields);
+    }
 }

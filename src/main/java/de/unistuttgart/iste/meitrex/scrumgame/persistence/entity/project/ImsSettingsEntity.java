@@ -6,6 +6,8 @@ import lombok.experimental.Accessors;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "ims_settings")
 @Getter
@@ -43,7 +45,6 @@ public class ImsSettingsEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @OrderColumn(name = "position")
-    @Setter
     @ToString.Exclude
     @Builder.Default
     private List<IssueStateEmbeddable> issueStates = new ArrayList<>();
@@ -61,13 +62,22 @@ public class ImsSettingsEntity {
     private String partOfRelationId;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Setter
     @Builder.Default
     private List<IssuePriorityEmbeddable> issuePriorities = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Setter
     @Builder.Default
     private List<IssueTypeEmbeddable> issueTypes = new ArrayList<>();
 
+    public void setIssueStates(List<IssueStateEmbeddable> issueStates) {
+        this.issueStates = replaceContent(this.issueStates, issueStates);
+    }
+
+    public void setIssuePriorities(List<IssuePriorityEmbeddable> issuePriorities) {
+        this.issuePriorities = replaceContent(this.issuePriorities, issuePriorities);
+    }
+
+    public void setIssueTypes(List<IssueTypeEmbeddable> issueTypes) {
+        this.issueTypes = replaceContent(this.issueTypes, issueTypes);
+    }
 }

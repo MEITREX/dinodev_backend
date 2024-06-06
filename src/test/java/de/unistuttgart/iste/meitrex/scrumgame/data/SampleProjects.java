@@ -240,7 +240,7 @@ public class SampleProjects {
                                                 .imsTypeId("Test IMS Type ID 2")
                                                 .build())))
                                 .build())
-                        .definitionOfDone(List.of(
+                        .definitionOfDone(new ArrayList<>(List.of(
                                 DefinitionOfDoneItemEntity.builder()
                                         .text("Test DoD Item")
                                         .required(true)
@@ -248,12 +248,12 @@ public class SampleProjects {
                                 DefinitionOfDoneItemEntity.builder()
                                         .text("Test DoD Item 2")
                                         .required(false)
-                                        .implies(List.of(
+                                        .implies(new ArrayList<>(List.of(
                                                 DefinitionOfDoneItemEntity.builder()
                                                         .text("Test DoD Item 3")
                                                         .required(true)
-                                                        .build()))
-                                        .build()))
+                                                        .build())))
+                                        .build())))
                         .build());
     }
 }

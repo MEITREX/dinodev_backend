@@ -3,7 +3,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planni
 import de.unistuttgart.iste.meitrex.generated.dto.Animal;
 import de.unistuttgart.iste.meitrex.scrumgame.util.VotingStateHolder.VotingState;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.*;
 
@@ -13,7 +16,6 @@ import java.util.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 public class AnimalVotingStateEntity implements VotingState<Animal> {
 
     @Id

@@ -6,8 +6,9 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUser
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -24,7 +25,6 @@ public class GlobalUserRoleEntity implements IWithId<String> {
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     @Enumerated(EnumType.STRING)
-    @Setter
     private List<GlobalPrivilege> globalPrivileges = new ArrayList<>();
 
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
@@ -41,5 +41,9 @@ public class GlobalUserRoleEntity implements IWithId<String> {
         for (GlobalUserEntity user : users) {
             user.getRoles().remove(this);
         }
+    }
+
+    public void setGlobalPrivileges(List<GlobalPrivilege> globalPrivileges) {
+        this.globalPrivileges = replaceContent(this.globalPrivileges, globalPrivileges);
     }
 }

@@ -10,10 +10,11 @@ import lombok.*;
 
 import java.util.*;
 
+import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
+
 @Entity
 @Table(name = "user_in_project")
 @Getter
-@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -32,12 +33,13 @@ public class UserInProjectEntity implements IWithId<UserProjectId> {
     @JoinColumn(name = "project_id")
     private ProjectEntity project;
 
-    @OneToMany(cascade = {})
+    @ManyToMany(cascade = {})
     @Builder.Default
     private List<ProjectRoleEntity> roles = new ArrayList<>();
 
     @Embedded
     @Nullable
+    @Setter
     private IconEmbeddable currentBadge;
 
     @PreRemove
@@ -46,4 +48,7 @@ public class UserInProjectEntity implements IWithId<UserProjectId> {
         user.getUserInProjects().remove(this);
     }
 
+    public void setRoles(List<ProjectRoleEntity> roles) {
+        this.roles = replaceContent(this.roles, roles);
+    }
 }
