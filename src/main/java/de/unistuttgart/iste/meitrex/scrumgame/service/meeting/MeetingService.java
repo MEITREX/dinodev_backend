@@ -60,13 +60,6 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
                         attendee -> attendee.setRole(MeetingRole.MEETING_LEADER)));
     }
 
-    public Meeting pingMeeting(UUID projectId, MeetingType type) {
-        return updateMeeting(projectId, type, meetingEntity -> {
-            UUID currentUserId = authService.getCurrentUserId();
-            updateMeetingAttendee(meetingEntity, currentUserId, attendee -> attendee.setState(UserState.ONLINE));
-        });
-    }
-
     public Meeting leaveMeeting(UUID projectId, MeetingType type) {
         if (findActiveMeeting(projectId, type, Meeting.class).isEmpty()) {
             return null;
@@ -123,6 +116,10 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
                 .setState(UserState.ONLINE)
                 .build());
         return attendees;
+    }
+
+    public Meeting cancelMeeting(UUID projectId, MeetingType type) {
+        return updateMeeting(projectId, type, meetingEntity -> meetingEntity.setActive(false));
     }
 
     /**

@@ -5,6 +5,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.MeetingType;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectMutation;
 import de.unistuttgart.iste.meitrex.scrumgame.service.meeting.MeetingService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.SchemaMapping;
 import org.springframework.graphql.data.method.annotation.SubscriptionMapping;
@@ -13,6 +14,7 @@ import reactor.core.publisher.Flux;
 
 import java.util.*;
 
+@Slf4j
 @Controller
 @RequiredArgsConstructor
 public class MeetingController {
@@ -29,9 +31,10 @@ public class MeetingController {
         return meetingService.leaveMeeting(projectMutation.getProject().getId(), type);
     }
 
-    @SchemaMapping(typeName = "ProjectMutation", field = "pingMeeting")
-    public Meeting pingMeeting(ProjectMutation projectMutation, @Argument MeetingType type) {
-        return meetingService.pingMeeting(projectMutation.getProject().getId(), type);
+    @SchemaMapping(typeName = "ProjectMutation", field = "cancelMeeting")
+    public Meeting cancelMeeting(ProjectMutation projectMutation, @Argument MeetingType type) {
+        log.info("Canceling meeting");
+        return meetingService.cancelMeeting(projectMutation.getProject().getId(), type);
     }
 
     @SchemaMapping(typeName = "ProjectMutation", field = "promoteToMeetingLeader")
@@ -46,18 +49,4 @@ public class MeetingController {
         return meetingService.getMeetingUpdates(projectId, meetingType, Meeting.class);
     }
 
-//    @SubscriptionMapping
-//    public Flux<Meeting> meetingStarted(@Argument UUID projectId) {
-//        return meetingEventHandler.subscribeToMeetingStarted(projectId);
-//    }
-//
-//    @SubscriptionMapping
-//    public Flux<Meeting> meetingFinished(@Argument UUID projectId) {
-//        return meetingEventHandler.subscribeToMeetingFinished(projectId);
-//    }
-//
-//    @SubscriptionMapping
-//    public Flux<List<MeetingAttendee>> meetingAttendeesChanged(@Argument UUID projectId, @Argument MeetingType meetingType) {
-//        return meetingEventHandler.subscribeToMeetingAttendeesChanged(projectId, meetingType);
-//    }
 }
