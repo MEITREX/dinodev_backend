@@ -26,19 +26,23 @@ public class ImsService {
     private final ImsConnectorFactory                     imsConnectorFactory;
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
 
-    @Cacheable(value = "issues", key = "#project.id")
+    @Cacheable(value = "issues", key = "#project.id", sync = true)
     public synchronized List<Issue> getIssues(Project project) {
         return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
     }
 
-    @Cacheable(value = "issue", key = "#project.id + #id")
+    @Cacheable(value = "issue", key = "#project.id + #id", sync = true)
     public synchronized Optional<Issue> findIssue(Project project, String id) {
         return imsConnectorFactory.getImsConnectorForProject(project).findIssue(id);
     }
 
-    @Cacheable(value = "issue", key = "#projectId + #issueId")
+    @Cacheable(value = "issue", key = "#projectId + #issueId", sync = true)
     public synchronized Optional<Issue> findIssue(UUID projectId, String issueId) {
         return imsConnectorFactory.getImsConnectorForProject(projectId).findIssue(issueId);
+    }
+
+    public List<Issue> getIssuesByIds(UUID projectId, List<String> issueIds) {
+        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssuesBatched(issueIds);
     }
 
     public ProjectBoard getProjectBoard(Project project) {
@@ -118,10 +122,6 @@ public class ImsService {
                 .assignIssue(issueMutation.getIssueId(), assigneeId);
     }
 
-    public List<Issue> getIssuesByIds(UUID projectId, List<String> issueIds) {
-        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssuesBatched(issueIds);
-    }
-
     public Issue changeSprint(IssueMutation issueMutation, Integer sprintNumber) {
         return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
                 .changeSprintOfIssue(issueMutation.getIssueId(), sprintNumber);
@@ -170,6 +170,11 @@ public class ImsService {
     })
     public void syncEvents(Issue issue, OffsetDateTime since) {
         getEventsForIssue(issue, since).forEach(eventPublisher::publishEvent);
+    }
+
+    public List<CreateEventInput> getEventsForProject(Project project, OffsetDateTime lastGlobalEventSync) {
+        return imsConnectorFactory.getImsConnectorForProject(project)
+                .getEventsForProject(project.getId(), lastGlobalEventSync);
     }
 
     private IssueStateInBoard toIssueStateInBoard(IssueState issueState, ProjectBoard board) {

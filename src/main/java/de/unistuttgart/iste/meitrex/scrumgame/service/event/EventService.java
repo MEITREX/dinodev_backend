@@ -61,13 +61,7 @@ public class EventService {
             return;
         }
 
-        // Note that this method could be implemented in a more efficient way
-        // by fetching all issues with timeline items in a single request,
-        // however, with this approach we can consider the last sync date
-        // of each issue individually and avoid fetching unnecessary data,
-        // which is difficult to do with a single request.
-        List<Issue> issues = imsService.getIssues(project);
-        issues.forEach(this::syncEvents);
+        imsService.getEventsForProject(project, lastGlobalEventSync).forEach(eventPublisher::publishEvent);
 
         lastGlobalEventSync = OffsetDateTime.now();
     }

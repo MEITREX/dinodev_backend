@@ -58,6 +58,7 @@ public class EventFactory {
                 .stream()
                 .map(field -> new TemplateFieldEmbeddable(field.getKey(), field.getType(), field.getValue()))
                 .collect(Collectors.toList()));
+        eventEntity.setVisibleToUserIds(Optional.ofNullable(input.getVisibleToUserIds()).orElseGet(ArrayList::new));
 
         return eventEntity;
     }

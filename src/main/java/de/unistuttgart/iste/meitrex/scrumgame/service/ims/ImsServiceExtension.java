@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.*;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +21,7 @@ public class ImsServiceExtension {
             List<Issue> issues = baseImsService.getIssues(state.getProjectBoard().getProject());
             List<Issue> stateIssues = issues.stream()
                     .filter(issue -> Objects.equals(issue.getState().getImsStateId(), state.getState().getImsStateId()))
-                    .collect(Collectors.toList());
+                    .toList();
             resultMap.put(state, stateIssues);
         }
 
@@ -36,7 +35,7 @@ public class ImsServiceExtension {
             List<Issue> issues = baseImsService.getIssues(sprint.getProject());
             List<Issue> sprintIssues = issues.stream()
                     .filter(issue -> Objects.equals(issue.getSprintNumber(), sprint.getNumber()))
-                    .collect(Collectors.toList());
+                    .toList();
             resultMap.put(sprint, sprintIssues);
         }
 

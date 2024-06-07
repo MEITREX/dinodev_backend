@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.util;
 
+import de.unistuttgart.iste.meitrex.generated.dto.AllowedDataType;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.generated.dto.TemplateField;
+import de.unistuttgart.iste.meitrex.generated.dto.TemplateFieldInput;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
@@ -27,6 +29,22 @@ public class TemplateDataUtils {
         } catch (NumberFormatException e) {
             return Optional.empty();
         }
+    }
+
+    public static TemplateFieldInput intField(String key, int value) {
+        return TemplateFieldInput.builder()
+                .setType(AllowedDataType.INTEGER)
+                .setKey(key)
+                .setValue(String.valueOf(value))
+                .build();
+    }
+
+    public static TemplateFieldInput stringField(String key, String value) {
+        return TemplateFieldInput.builder()
+                .setType(AllowedDataType.STRING)
+                .setKey(key)
+                .setValue(value)
+                .build();
     }
 
 }

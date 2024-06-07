@@ -9,7 +9,7 @@ import java.util.*;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class GropiusRequests {
 
-    static ProjectsQueryRequest getProjectRequest(String imsProjectId) {
+    public static ProjectsQueryRequest getProjectRequest(String imsProjectId) {
         return ProjectsQueryRequest.builder()
                 .setFilter(GropiusProjectFilterInput.builder()
                         .setId(idFilter(imsProjectId))

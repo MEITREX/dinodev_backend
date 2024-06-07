@@ -36,14 +36,7 @@ public class GropiusConnector implements ImsConnector {
     }
 
     private List<Issue> getAllIssuesFromProjectConnection(GropiusProjectConnection response) {
-        Stream<GropiusIssue> issuesFromProject = response.getNodes().stream()
-                .flatMap(project -> project.getIssues().getNodes().stream());
-        Stream<GropiusIssue> issuesFromComponents = response.getNodes().stream()
-                .flatMap(project -> project.getComponents().getNodes().stream())
-                .flatMap(component -> component.getComponent().getIssues().getNodes().stream());
-
-        return Stream.concat(issuesFromProject, issuesFromComponents)
-                .filter(distinctByKey(GropiusIssue::getId)) // remove duplicates
+        return getIssuesFromProjectAndComponents(response)
                 .map(gropiusIssue -> gropiusIssueToScrumGameIssue(gropiusIssue, mappingConfiguration))
                 .filter(Objects::nonNull)
                 .toList();
@@ -298,7 +291,19 @@ public class GropiusConnector implements ImsConnector {
     @Override
     public List<CreateEventInput> getEventsForIssue(String issueId,
             OffsetDateTime since) {
-        var projection = new IssueResponseProjection()
+        var projection = getIssueWithTimelineItemsProjection(since);
+
+        return graphQlRequestExecutor
+                .request(GropiusRequests.getIssueQueryRequest(issueId))
+                .projectTo(GropiusIssue.class, projection)
+                .retrieveList()
+                .map(issues -> getTimeLineItemsOfFirstIssue(mappingConfiguration, issues))
+                .defaultIfEmpty(List.of())
+                .block();
+    }
+
+    private static IssueResponseProjection getIssueWithTimelineItemsProjection(OffsetDateTime since) {
+        return new IssueResponseProjection()
                 .id()
                 .title()
                 .assignments(new AssignmentConnectionResponseProjection()
@@ -316,14 +321,47 @@ public class GropiusConnector implements ImsConnector {
                                         .setDirection(GropiusOrderDirection.DESC)
                                         .build()),
                         GropiusProjections.TIMELINE_ITEM_CONNECTION_RESPONSE_PROJECTION);
+    }
+
+    @Override
+    public List<CreateEventInput> getEventsForProject(UUID projectId, OffsetDateTime since) {
+        var request = GropiusRequests.getProjectRequest(mappingConfiguration.getImsProjectId());
+
+        var projection = new ProjectConnectionResponseProjection()
+                .nodes(new ProjectResponseProjection()
+                        .issues(new ProjectIssuesParametrizedInput()
+                                        .filter(GropiusIssueFilterInput.builder()
+                                                .setLastModifiedAt(GropiusDateTimeFilterInput.builder()
+                                                        .setGt(since.toString())
+                                                        .build())
+                                                .build()),
+                                new IssueConnectionResponseProjection()
+                                        .nodes(getIssueWithTimelineItemsProjection(since)))
+                        .components(new ComponentVersionConnectionResponseProjection()
+                                .nodes(new ComponentVersionResponseProjection()
+                                        .component(new ComponentResponseProjection()
+                                                .issues(new IssueConnectionResponseProjection()
+                                                        .nodes(getIssueWithTimelineItemsProjection(since)))))));
 
         return graphQlRequestExecutor
-                .request(GropiusRequests.getIssueQueryRequest(issueId))
-                .projectTo(GropiusIssue.class, projection)
-                .retrieveList()
-                .map(issues -> getTimeLineItemsOfFirstIssue(mappingConfiguration, issues))
-                .defaultIfEmpty(List.of())
+                .request(request)
+                .projectTo(GropiusProjectConnection.class, projection)
+                .retrieve()
+                .map(response -> getIssuesFromProjectAndComponents(response)
+                        .flatMap(gropiusIssue -> getTimeLineItemsOfIssue(mappingConfiguration, gropiusIssue).stream())
+                        .toList())
                 .block();
+    }
+
+    private static Stream<GropiusIssue> getIssuesFromProjectAndComponents(GropiusProjectConnection response) {
+        Stream<GropiusIssue> issuesFromProject = response.getNodes().stream()
+                .flatMap(project -> project.getIssues().getNodes().stream());
+        Stream<GropiusIssue> issuesFromComponents = response.getNodes().stream()
+                .flatMap(project -> project.getComponents().getNodes().stream())
+                .flatMap(component -> component.getComponent().getIssues().getNodes().stream());
+
+        return Stream.concat(issuesFromProject, issuesFromComponents)
+                .filter(distinctByKey(GropiusIssue::getId)); // remove duplicates
     }
 
     private static List<CreateEventInput> getTimeLineItemsOfFirstIssue(GropiusIssueMappingConfiguration mappingConfiguration,
@@ -333,6 +371,11 @@ public class GropiusConnector implements ImsConnector {
         }
 
         var issue = issues.getFirst();
+        return getTimeLineItemsOfIssue(mappingConfiguration, issue);
+    }
+
+    private static List<CreateEventInput> getTimeLineItemsOfIssue(GropiusIssueMappingConfiguration mappingConfiguration,
+            GropiusIssue issue) {
         return issue.getTimelineItems().getNodes().stream()
                 .flatMap(timelineItem -> GropiusTimelineItemToEventConverter
                         .convertTimelineItemToEvents(issue, timelineItem, mappingConfiguration).stream())
