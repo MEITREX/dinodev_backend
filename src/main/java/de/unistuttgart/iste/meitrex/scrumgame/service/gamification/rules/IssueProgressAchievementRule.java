@@ -39,7 +39,7 @@ public class IssueProgressAchievementRule extends AchievementRule {
     @Override
     public boolean checkCondition(Event triggerEvent) {
         return triggerEvent.getEventData().stream()
-                .filter(eventData -> eventData.getKey().equals("assigneeIds"))
+                .filter(eventData -> "assigneeIds".equals(eventData.getKey()))
                 .anyMatch(eventData -> eventData.getValue().contains(triggerEvent.getUserId().toString()));
     }
 

@@ -189,7 +189,7 @@ type ProjectMutation {
 
     joinMeeting(type: MeetingType!): Meeting! @OnDemand
     leaveMeeting(type: MeetingType!): Meeting @OnDemand
-    pingMeeting(type: MeetingType!): Meeting! @OnDemand
+    cancelMeeting(type: MeetingType!): Meeting! @OnDemand
     promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
 
     reactToEvent(eventId: UUID!, reaction: String! = "♥️"): Event! @OnDemand
@@ -211,4 +211,6 @@ type ProjectMutation {
     mutateIssue(id: ID!): IssueMutation! @OnDemand
     createIssue(input: CreateIssueInput!): Issue! @OnDemand
 
+    resetUserStats: Boolean! @OnDemand
+    resetAchievements: Boolean! @OnDemand
 }

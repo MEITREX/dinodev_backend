@@ -3,7 +3,6 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
-import de.unistuttgart.iste.meitrex.generated.dto.UserStats;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
@@ -26,7 +25,6 @@ public class UserInProjectService
     private final UserInProjectRepository repository;
     private final AuthService                     authService;
     private final UserInProjectInitializerService userInProjectInitializerService;
-    private final UserStatsRepository     userStatsRepository;
 
     public UserInProjectService(
             UserInProjectRepository repository,
@@ -39,7 +37,6 @@ public class UserInProjectService
         this.repository = repository;
         this.authService = authService;
         this.userInProjectInitializerService = userInProjectInitializerService;
-        this.userStatsRepository = userStatsRepository;
     }
 
     /**
@@ -85,18 +82,6 @@ public class UserInProjectService
     public Optional<UserInProject> findCurrentUserInProject(UUID projectId) {
         UUID currentUserId = authService.getCurrentUserId();
         return findUserInProject(currentUserId, projectId);
-    }
-
-    /**
-     * Resolves the user stats of a user in a project.
-     *
-     * @param userId the user ID
-     * @return the private information of the user in the project
-     */
-    public UserStats getUserStats(UUID userId, UUID projectId) {
-        return userStatsRepository.findById(new UserProjectId(userId, projectId))
-                .map(userStatsEntity -> getModelMapper().map(userStatsEntity, UserStats.class))
-                .orElseGet(UserStats::new);
     }
 
     public UserInProject createUserInProject(UUID userId, UUID projectId) {

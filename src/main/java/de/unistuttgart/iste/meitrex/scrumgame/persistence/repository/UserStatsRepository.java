@@ -5,8 +5,12 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjec
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserStatsEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.*;
+
 @Repository
 public interface UserStatsRepository extends MeitrexRepository<UserStatsEntity, UserProjectId> {
+
+    void deleteAllByIdProjectId(UUID projectId);
 
     @Override
     default String getEntityName() {

@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.controller.user;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.AchievementService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.UserStatsService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import java.util.*;
 public class UserInProjectController {
 
     private final UserInProjectService userInProjectService;
+    private final UserStatsService userStatsService;
     private final AchievementService achievementService;
 
     @SchemaMapping
@@ -51,7 +53,7 @@ public class UserInProjectController {
 
     @SchemaMapping
     public UserStats userStats(UserInProject userInProject) {
-        return userInProjectService.getUserStats(userInProject.getUserId(), userInProject.getProjectId());
+        return userStatsService.findOrInitUserStats(userInProject.getUserId(), userInProject.getProjectId());
     }
 
     @SchemaMapping
@@ -62,6 +64,18 @@ public class UserInProjectController {
     @MutationMapping
     public UserInProject joinProject(@Argument UUID projectId) {
         return userInProjectService.joinProject(projectId);
+    }
+
+    @SchemaMapping
+    public boolean resetUserStats(ProjectMutation projectMutation) {
+        userStatsService.resetUserStatsInProject(projectMutation.getProject().getId());
+        return true;
+    }
+
+    @SchemaMapping
+    public boolean resetAchievements(ProjectMutation projectMutation) {
+        achievementService.resetAchievements(projectMutation.getProject().getId());
+        return true;
     }
 
 }

@@ -5,10 +5,9 @@ import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.Rule;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserStatsEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.UserStatsService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VcsEventTypes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,15 +20,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class StatCounterRule implements Rule {
 
-    // TODO remove need for id
-    private static final UUID ID = UUID.fromString("3b539342-53db-4ce4-bcdc-8c4f7c040aa3");
-
-    private final UserStatsRepository userStatsRepository;
-
-    @Override
-    public UUID getId() {
-        return ID;
-    }
+    private final UserStatsService userStatsService;
 
     @Override
     public List<String> getTriggerEventTypeIdentifiers() {
@@ -50,12 +41,15 @@ public class StatCounterRule implements Rule {
     }
 
     @Override
-    public synchronized Optional<CreateEventInput> executeAction(Event triggerEvent) {
-        UserProjectId userProjectId = new UserProjectId(triggerEvent.getUserId(), triggerEvent.getProjectId());
+    public Optional<CreateEventInput> executeAction(Event triggerEvent) {
+        userStatsService.updateUserStats(triggerEvent.getUserId(), triggerEvent.getProjectId(),
+                userStats -> incrementUserStatOfEvent(triggerEvent, userStats));
 
-        UserStatsEntity userStats = userStatsRepository.findById(userProjectId)
-                .orElseGet(() -> UserStatsEntity.builder().id(userProjectId).build());
+        // no follow-up event
+        return Optional.empty();
+    }
 
+    private static void incrementUserStatOfEvent(Event triggerEvent, UserStatsEntity userStats) {
         if (triggerEvent.getEventType().getIdentifier().equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier())) {
             userStats.setReactionsGiven(userStats.getReactionsGiven() + 1);
         }
@@ -86,12 +80,6 @@ public class StatCounterRule implements Rule {
             || triggerEvent.getEventType().getIdentifier().equals(DefaultEventTypes.USER_MESSAGE.getIdentifier())) {
             userStats.setCommentsWritten(userStats.getCommentsWritten() + 1);
         }
-
-        userStatsRepository.save(userStats);
-
-
-        // no follow-up event
-        return Optional.empty();
     }
 
 }

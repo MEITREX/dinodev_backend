@@ -11,7 +11,9 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.Achievement
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.AchievementRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -65,6 +67,12 @@ public class AchievementService
         }
 
         return convertToDto(achievementProgressRepository.save(achievementProgressEntity));
+    }
+
+    @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.UPDATE_USER)")
+    @Transactional
+    public void resetAchievements(UUID projectId) {
+        achievementProgressRepository.deleteAllByIdProjectId(projectId);
     }
 
     @PostConstruct

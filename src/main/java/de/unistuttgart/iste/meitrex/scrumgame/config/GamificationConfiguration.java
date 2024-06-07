@@ -6,6 +6,7 @@ import de.unistuttgart.iste.meitrex.rulesengine.EventTypeRegistry;
 import de.unistuttgart.iste.meitrex.rulesengine.GamificationEngine;
 import de.unistuttgart.iste.meitrex.rulesengine.Rule;
 import de.unistuttgart.iste.meitrex.rulesengine.RuleRegistry;
+import de.unistuttgart.iste.meitrex.rulesengine.util.DefaultEventPublisher;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventPersistenceService;
@@ -15,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
 
 import java.util.*;
 
@@ -24,9 +24,8 @@ import java.util.*;
 public class GamificationConfiguration {
 
     @Bean
-    @Scope("singleton")
-    public EventPublisher<Event, CreateEventInput> eventPublisher(EventPersistenceService eventService) {
-        return new EventPublisher<>(eventService);
+    public DefaultEventPublisher eventPublisher(EventPersistenceService eventService) {
+        return new DefaultEventPublisher(eventService);
     }
 
     @Bean
@@ -58,7 +57,6 @@ public class GamificationConfiguration {
             EventTypeRegistry eventTypeRegistry,
             RuleRegistry ruleRegistry
     ) {
-
         return new GamificationEngine(eventPublisher, ruleRegistry, eventTypeRegistry);
     }
 
@@ -68,7 +66,7 @@ public class GamificationConfiguration {
         VcsEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
         ScrumGameEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
 
-        // TODO add other event types
+        // add other event types as needed
     }
 
 }

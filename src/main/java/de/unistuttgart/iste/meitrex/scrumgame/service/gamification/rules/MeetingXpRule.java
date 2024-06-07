@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class MeetingXpRule extends XpRule {
+public class MeetingXpRule extends XpAndLevelRule {
 
     private static final int STANDUP_BASE_XP       = 300;
     private static final int PLANNING_BASE_XP      = 800;
