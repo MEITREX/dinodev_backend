@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 
 @Component
-public class PullRequestXpRule extends XpRule {
+public class PullRequestXpRule extends XpAndLevelRule {
 
     public PullRequestXpRule(
             UserStatsRepository userStatsRepository,

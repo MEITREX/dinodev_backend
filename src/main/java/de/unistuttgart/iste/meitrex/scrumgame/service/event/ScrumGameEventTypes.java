@@ -147,9 +147,15 @@ public class ScrumGameEventTypes {
                                             .setType(AllowedDataType.INTEGER)
                                             .setDescription("The new level of the user.")
                                             .setRequired(true)
+                                            .build(),
+                                    DefaultFieldSchemaDefinition.builder()
+                                            .setName("virtualCurrency")
+                                            .setType(AllowedDataType.INTEGER)
+                                            .setDescription("The amount of virtual currency the user received.")
+                                            .setRequired(true)
                                             .build()))
                     .build())
-            .setMessageTemplate("leveled up to level ${newLevel}!")
+            .setMessageTemplate("leveled up to level ${newLevel}! You gain +${virtualCurrency} 💎!")
             .build();
 
     public static Iterable<EventType> allEventTypes() {

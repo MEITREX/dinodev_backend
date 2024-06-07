@@ -14,7 +14,7 @@ import java.util.*;
 import static de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils.findStringField;
 
 @Component
-public class IssueXpRule extends XpRule {
+public class IssueXpRule extends XpAndLevelRule {
 
     private final ImsService imsService;
 
