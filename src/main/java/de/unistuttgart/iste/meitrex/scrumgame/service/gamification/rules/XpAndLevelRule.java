@@ -14,11 +14,33 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.*;
 
-@RequiredArgsConstructor
-public abstract class XpRule implements Rule {
+import static de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils.intField;
 
-    private final UserStatsRepository                     userStatsRepository;
+/**
+ * A rule that adds XP to the user's stats and manages level ups.
+ */
+@RequiredArgsConstructor
+public abstract class XpAndLevelRule implements Rule {
+
+    private final UserStatsRepository userStatsRepository;
     private final EventPublisher<Event, CreateEventInput> eventPublisher;
+
+    /**
+     * Returns the amount of XP to add to the user's stats.
+     *
+     * @param triggerEvent The event that triggered the rule.
+     * @return The amount of XP to add. If the return value is less than or equal to 0, no XP will be added.
+     */
+    protected abstract int getXp(Event triggerEvent);
+
+    /**
+     * Returns the message that should be displayed to the user when they gain XP.
+     *
+     * @param triggerEvent The event that triggered the rule.
+     * @param xpToAdd      The amount of XP that was added.
+     * @return The message to display to the user.
+     */
+    public abstract String getXpMessage(Event triggerEvent, int xpToAdd);
 
     @Override
     public UUID getId() {
@@ -43,7 +65,7 @@ public abstract class XpRule implements Rule {
         userStats = addXp(userStats, xpToAdd);
 
         if (userStats.getLevel() > levelBefore) {
-            publishLevelUpEvent(userStats.getLevel(), triggerEvent);
+            doLevelUp(userStats, triggerEvent);
         }
 
         return Optional.of(getXpGainEvent(triggerEvent, xpToAdd));
@@ -65,21 +87,33 @@ public abstract class XpRule implements Rule {
         return userStatsRepository.save(XpAdder.addXp(userStats, xpToAdd));
     }
 
-    public void publishLevelUpEvent(int newLevel, Event triggerEvent) {
-        CreateEventInput levelUpEvent = CreateEventInput.builder()
-                .setEventTypeIdentifier(ScrumGameEventTypes.LEVEL_UP.getIdentifier())
-                .setProjectId(triggerEvent.getProjectId())
-                .setUserId(triggerEvent.getUserId())
-                .setEventData(List.of(
-                        new TemplateFieldInput("newLevel", AllowedDataType.INTEGER, Integer.toString(newLevel))))
-                .build();
+    public void doLevelUp(UserStatsEntity userStats, Event triggerEvent) {
+        int newLevel = userStats.getLevel();
+        int virtualCurrency = VirtualCurrencyCalculator.getVirtualCurrencyForLevelUp(newLevel);
+
+        addVirtualCurrency(userStats, virtualCurrency);
+
+        CreateEventInput levelUpEvent = getLevelUpEvent(triggerEvent, newLevel, virtualCurrency);
 
         eventPublisher.publishEvent(levelUpEvent);
     }
 
-    public abstract int getXp(Event triggerEvent);
+    private void addVirtualCurrency(UserStatsEntity userStats, int virtualCurrency) {
+        userStats.setVirtualCurrency(userStats.getVirtualCurrency() + virtualCurrency);
+        userStatsRepository.save(userStats);
+    }
 
-    public abstract String getXpMessage(Event triggerEvent, int xpToAdd);
+    private static CreateEventInput getLevelUpEvent(Event triggerEvent, int newLevel, int virtualCurrencyGained) {
+        return CreateEventInput.builder()
+                .setEventTypeIdentifier(ScrumGameEventTypes.LEVEL_UP.getIdentifier())
+                .setProjectId(triggerEvent.getProjectId())
+                .setUserId(triggerEvent.getUserId())
+                .setEventData(List.of(
+                        intField("newLevel", newLevel),
+                        intField("virtualCurrency", virtualCurrencyGained)))
+                .build();
+    }
+
 
     private UserStatsEntity getUserStatsEntity(UUID userId, UUID projectId) {
         UserProjectId userProjectId = new UserProjectId(userId, projectId);

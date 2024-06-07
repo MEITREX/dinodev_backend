@@ -15,10 +15,10 @@ public class XpAdder {
         int currentXp = userStats.getXp();
         userStats.setTotalXp(userStats.getTotalXp() + xpToAdd);
 
-        if (xpToAdd < xpToLevelUp) {
+        if (xpToAdd + currentXp < xpToLevelUp) {
             userStats.setXp(currentXp + xpToAdd);
         } else {
-            userStats.setXp(xpToAdd - xpToLevelUp);
+            userStats.setXp(xpToAdd + currentXp - xpToLevelUp);
             userStats.setLevel(userStats.getLevel() + 1);
             userStats.setXpToNextLevel(calcXpToNextLevel(userStats.getLevel()));
         }
@@ -27,8 +27,9 @@ public class XpAdder {
     }
 
     public static int calcXpToNextLevel(int level) {
-        return (int) ((INITIAL_XP_COST + (level - 1) * LINEAR_SCALE_FACTOR)
-                      * Math.pow(MULTIPLICATIVE_FACTOR, level - 1));
+        return (int) (
+                (INITIAL_XP_COST + (level - 1) * LINEAR_SCALE_FACTOR)
+                * Math.pow(MULTIPLICATIVE_FACTOR, (double) level - 1));
     }
 
 }
