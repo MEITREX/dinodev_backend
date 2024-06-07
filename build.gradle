@@ -144,9 +144,9 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.5'
-    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.5a'
-    implementation 'de.unistuttgart.iste.meitrex:gamification_engine:1.0.5a'
+    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.6'
+    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.6'
+    implementation 'de.unistuttgart.iste.meitrex:gamification_engine:1.0.6'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -170,7 +170,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.5'
+    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.6'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'
     testImplementation 'org.springframework.graphql:spring-graphql-test'
