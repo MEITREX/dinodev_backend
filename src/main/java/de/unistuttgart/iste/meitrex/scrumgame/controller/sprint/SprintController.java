@@ -31,7 +31,7 @@ public class SprintController {
     @SchemaMapping
     @Nullable
     public Sprint currentSprint(Project project) {
-        return sprintService.findSprint(project.getId(), project.getCurrentSprintNumber()).orElse(null);
+        return sprintService.findCurrentSprint(project).orElse(null);
     }
 
     @SchemaMapping

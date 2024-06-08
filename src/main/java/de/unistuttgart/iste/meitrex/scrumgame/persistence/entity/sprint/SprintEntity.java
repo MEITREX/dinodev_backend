@@ -54,5 +54,7 @@ public class SprintEntity implements IWithId<UUID> {
     @Nullable
     private String customGoldChallengeReward;
 
-
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<PlacedAssetEntity> placedAssets = new ArrayList<>();
 }

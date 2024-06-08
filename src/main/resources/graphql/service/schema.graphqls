@@ -43,6 +43,8 @@ type Query {
     eventTypes: [EventType!]!
     eventType(id: String!): EventType
 
+    # shop
+    shopItems: [ShopItem!]!
 }
 
 type Subscription {

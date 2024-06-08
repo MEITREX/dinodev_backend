@@ -48,8 +48,10 @@ public class SprintStatsService {
 
             // TODO this could be optimized by storing the sprint stats in the database or caching them
             SprintStats previousSprintStats = getSprintStats(previousSprint.get());
+            Integer previousStoryPointsPlanned = previousSprintStats.getSprint().getStoryPointsPlanned();
 
-            if (sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints()) {
+            if (previousStoryPointsPlanned != null &&
+                sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE);
                 return;
             }

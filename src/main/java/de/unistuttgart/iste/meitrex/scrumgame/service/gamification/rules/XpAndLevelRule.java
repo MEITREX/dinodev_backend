@@ -63,9 +63,10 @@ public abstract class XpAndLevelRule implements Rule {
 
         int levelBefore = userStats.getLevel();
         userStats = addXp(userStats, xpToAdd);
+        int levelsGained = userStats.getLevel() - levelBefore;
 
-        if (userStats.getLevel() > levelBefore) {
-            doLevelUp(userStats, triggerEvent);
+        for (int i = 0; i < levelsGained; i++) {
+            doLevelUp(userStats, triggerEvent, i + levelBefore + 1);
         }
 
         return Optional.of(getXpGainEvent(triggerEvent, xpToAdd));
@@ -87,8 +88,7 @@ public abstract class XpAndLevelRule implements Rule {
         return userStatsRepository.save(XpAdder.addXp(userStats, xpToAdd));
     }
 
-    public void doLevelUp(UserStatsEntity userStats, Event triggerEvent) {
-        int newLevel = userStats.getLevel();
+    public void doLevelUp(UserStatsEntity userStats, Event triggerEvent, int newLevel) {
         int virtualCurrency = VirtualCurrencyCalculator.getVirtualCurrencyForLevelUp(newLevel);
 
         addVirtualCurrency(userStats, virtualCurrency);

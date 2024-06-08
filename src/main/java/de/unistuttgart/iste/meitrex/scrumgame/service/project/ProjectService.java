@@ -9,6 +9,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.UpdateProjectInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper.ProjectMapping;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,14 +27,15 @@ import java.util.*;
 public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Project> {
 
     private final ProjectInitializerService projectInitializerService;
+    private final ProjectRepository projectRepository;
 
     public ProjectService(
             ProjectRepository repository,
             ModelMapper modelMapper,
-            ProjectInitializerService projectInitializerService
-    ) {
+            ProjectInitializerService projectInitializerService) {
         super(repository, modelMapper, ProjectEntity.class, Project.class);
         this.projectInitializerService = projectInitializerService;
+        this.projectRepository = repository;
     }
 
     /**
@@ -97,9 +99,18 @@ public class ProjectService extends AbstractCrudService<UUID, ProjectEntity, Pro
     }
 
     @PreAuthorize("@auth.hasPrivilege(@projectPrivileges.DELETE_PROJECT, #projectId)")
+    @Transactional()
     public boolean deleteProject(UUID projectId) {
-        // TODO: more sophisticated deletion logic
-        return delete(projectId);
+        log.info("Deleting project with id {}", projectId);
+        if (projectRepository.existsById(projectId)) {
+            projectRepository.deleteById(projectId);
+            projectRepository.flush(); // Ensure the delete is committed
+            log.info("Project with id {} deleted successfully", projectId);
+            return true;
+        } else {
+            log.warn("Project with id {} does not exist", projectId);
+            return false;
+        }
     }
 
     /**

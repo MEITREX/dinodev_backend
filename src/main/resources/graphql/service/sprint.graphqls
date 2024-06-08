@@ -14,6 +14,8 @@ type Sprint {
 
     issues: [Issue!]! @OnDemand
     stats: SprintStats! @OnDemand
+
+    placedAssets: [PlacedAsset!]!
 }
 
 type SprintStats {
@@ -37,6 +39,21 @@ enum SprintSuccessState {
     FAILED
     SUCCESS
     SUCCESS_WITH_GOLD_CHALLENGE
+}
+
+type PlacedAsset {
+    id: UUID!
+    asset: KnownAsset!
+    x: Int!
+    y: Int!
+    placedByUserId: UUID!
+    placedBy: UserInProject! @OnDemand
+}
+
+input PlaceAssetInput {
+    asset: KnownAsset!
+    x: Int!
+    y: Int!
 }
 
 input CreateSprintInput {

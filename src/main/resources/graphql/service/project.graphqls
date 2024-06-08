@@ -213,4 +213,6 @@ type ProjectMutation {
 
     resetUserStats: Boolean! @OnDemand
     resetAchievements: Boolean! @OnDemand
+
+    buyAndPlace(input: PlaceAssetInput!): PlacedAsset! @OnDemand
 }

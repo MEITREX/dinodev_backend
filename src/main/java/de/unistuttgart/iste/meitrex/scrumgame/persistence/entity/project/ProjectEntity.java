@@ -65,4 +65,5 @@ public class ProjectEntity implements IWithId<UUID> {
     @JoinColumn(name = "project_settings_id")
     @Setter
     private ProjectSettingsEntity projectSettings;
+
 }

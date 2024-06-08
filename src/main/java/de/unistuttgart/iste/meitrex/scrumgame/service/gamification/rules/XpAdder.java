@@ -15,13 +15,16 @@ public class XpAdder {
         int currentXp = userStats.getXp();
         userStats.setTotalXp(userStats.getTotalXp() + xpToAdd);
 
-        if (xpToAdd + currentXp < xpToLevelUp) {
-            userStats.setXp(currentXp + xpToAdd);
-        } else {
-            userStats.setXp(xpToAdd + currentXp - xpToLevelUp);
+        currentXp += xpToAdd;
+
+        while (currentXp >= xpToLevelUp) {
+            currentXp -= xpToLevelUp;
             userStats.setLevel(userStats.getLevel() + 1);
-            userStats.setXpToNextLevel(calcXpToNextLevel(userStats.getLevel()));
+            xpToLevelUp = calcXpToNextLevel(userStats.getLevel());
         }
+
+        userStats.setXp(currentXp);
+        userStats.setXpToNextLevel(xpToLevelUp);
 
         return userStats;
     }

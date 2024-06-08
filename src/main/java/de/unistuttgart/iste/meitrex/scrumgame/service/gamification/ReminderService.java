@@ -34,15 +34,13 @@ public class ReminderService {
     }
 
     private void publishRemindersForProject(Project project) {
-        Optional<Sprint> currentSprint = sprintService.findSprint(project.getId(), project.getCurrentSprintNumber());
+        Optional<Sprint> currentSprint = sprintService.findCurrentSprint(project);
         if (currentSprint.isEmpty()) {
-            log.info("No current sprint found for project {}", project.getId());
             return;
         }
 
         SprintStats stats = sprintStatsService.getSprintStats(currentSprint.get());
         if (!isBehindSchedule(stats)) {
-            log.info("No reminder needed for project {}", project.getId());
             return; // no reminder needed
         }
 
@@ -57,8 +55,6 @@ public class ReminderService {
             publishCatchUpReminder(project, currentSprint.get(), stats, (int) timeLeft.toDays());
             return;
         }
-
-        log.info("No xxx reminder needed for project {}", project.getId());
 
     }
 

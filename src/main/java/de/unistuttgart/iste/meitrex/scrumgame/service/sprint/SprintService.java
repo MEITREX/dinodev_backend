@@ -2,9 +2,9 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.sprint;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.CreateSprintInput;
-import de.unistuttgart.iste.meitrex.generated.dto.Sprint;
+import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.PlacedAssetEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.SprintEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.ProjectRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.SprintRepository;
@@ -80,12 +80,32 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
     }
 
     public Optional<Sprint> findSprint(UUID projectId, @Nullable Integer sprintNumber) {
+        return findSprintEntity(projectId, sprintNumber).map(this::convertToDto);
+    }
+
+    public Optional<SprintEntity> findSprintEntity(UUID projectId, @Nullable Integer sprintNumber) {
         if (sprintNumber == null) {
             return Optional.empty();
         }
 
-        return repository.findByProjectIdAndNumber(projectId, sprintNumber)
-                .map(this::convertToDto);
+        return repository.findByProjectIdAndNumber(projectId, sprintNumber);
+    }
+
+    public Optional<Sprint> findCurrentSprint(Project project) {
+        return findSprint(project.getId(), project.getCurrentSprintNumber());
+    }
+
+    public PlacedAsset placeAsset(Project project, PlaceAssetInput input) {
+        SprintEntity sprintEntity = findSprintEntity(project.getId(), project.getCurrentSprintNumber())
+                .orElseThrow(() -> new MeitrexNotFoundException("No current sprint found"));
+
+        PlacedAssetEntity placedAssetEntity = getModelMapper().map(input, PlacedAssetEntity.class);
+
+        sprintEntity.getPlacedAssets().add(placedAssetEntity);
+
+        repository.save(sprintEntity);
+
+        return getModelMapper().map(placedAssetEntity, PlacedAsset.class);
     }
 
     public Sprint getSprint(UUID projectId, @Nullable Integer sprintNumber) {

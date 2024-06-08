@@ -8,6 +8,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsConnector;
 import jakarta.annotation.Nullable;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -112,9 +113,15 @@ public class GropiusConnector implements ImsConnector {
                 .request(request)
                 .projectTo(GropiusChangeIssueStatePayload.class, projection)
                 .retrieve()
-                .map(response -> gropiusIssueToScrumGameIssue(response.getStateChangedEvent().getIssue(),
-                        mappingConfiguration))
-                .block();
+                .flatMap(response -> {
+                    if (response.getStateChangedEvent() == null) {
+                        return Mono.empty();
+                    }
+                    return Mono.just(gropiusIssueToScrumGameIssue(response.getStateChangedEvent().getIssue(),
+                            mappingConfiguration));
+                })
+                .blockOptional()
+                .orElseGet(() -> findIssue(issueId).orElseThrow());
     }
 
     @Override
@@ -131,8 +138,13 @@ public class GropiusConnector implements ImsConnector {
                 .request(request)
                 .projectTo(GropiusChangeIssuePriorityPayload.class, projection)
                 .retrieve()
-                .map(response -> gropiusIssueToScrumGameIssue(response.getPriorityChangedEvent().getIssue(),
-                        mappingConfiguration))
+                .flatMap(response -> {
+                    if (response.getPriorityChangedEvent() == null) {
+                        return Mono.empty();
+                    }
+                    return Mono.just(gropiusIssueToScrumGameIssue(response.getPriorityChangedEvent().getIssue(),
+                            mappingConfiguration));
+                })
                 .block();
     }
 
@@ -149,8 +161,13 @@ public class GropiusConnector implements ImsConnector {
                 .request(request)
                 .projectTo(GropiusChangeIssueTypePayload.class, projection)
                 .retrieve()
-                .map(response -> gropiusIssueToScrumGameIssue(response.getTypeChangedEvent().getIssue(),
-                        mappingConfiguration))
+                .flatMap(response -> {
+                    if (response.getTypeChangedEvent() == null) {
+                        return Mono.empty();
+                    }
+                    return Mono.just(gropiusIssueToScrumGameIssue(response.getTypeChangedEvent().getIssue(),
+                            mappingConfiguration));
+                })
                 .block();
     }
 
@@ -188,12 +205,12 @@ public class GropiusConnector implements ImsConnector {
                 .request(request)
                 .projectTo(GropiusChangeIssueTemplatedFieldPayload.class, projection)
                 .retrieve()
-                .map(response -> {
+                .flatMap(response -> {
                     if (response.getTemplatedFieldChangedEvent() == null) {
-                        return findIssue(issueId).orElseThrow();
+                        return Mono.empty();
                     }
-                    return gropiusIssueToScrumGameIssue(response.getTemplatedFieldChangedEvent().getIssue(),
-                            mappingConfiguration);
+                    return Mono.just(gropiusIssueToScrumGameIssue(response.getTemplatedFieldChangedEvent().getIssue(),
+                            mappingConfiguration));
                 })
                 .block();
     }

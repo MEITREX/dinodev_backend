@@ -81,6 +81,10 @@ public class ImsService {
         Issue issue = imsConnectorFactory.getImsConnectorForProject(project)
                 .changeIssueState(issueMutation.getIssueId(), state);
 
+        if (issue == null) {
+            return null; // TODO make return optional
+        }
+
         // set sprint if necessary
         if (StateUtils.isMovedOutOfSprint(issue.getState(), state)) {
             changeSprint(issueMutation, null);

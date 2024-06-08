@@ -12,6 +12,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.util.OrdinalScaleStats;
 import de.unistuttgart.iste.meitrex.scrumgame.util.TShirtSizeEstimationStoryPointsConverter;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -213,6 +214,7 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
      * @return The newly created sprint.
      * @throws MeitrexNotFoundException If no active planning meeting is found for the project ID.
      */
+    @Transactional
     public Sprint finishMeeting(UUID projectId) {
         PlanningMeeting planningMeeting = updatePlanningMeeting(projectId, meetingEntity ->
                 meetingEntity.setActive(false));

@@ -14,9 +14,9 @@ import java.util.*;
 public class MeetingXpRule extends XpAndLevelRule {
 
     private static final int STANDUP_BASE_XP       = 300;
-    private static final int PLANNING_BASE_XP      = 800;
+    private static final int PLANNING_BASE_XP      = 700;
     private static final int RETRO_BASE_XP         = 500;
-    private static final int MEETING_LEADER_FACTOR = 10;
+    private static final int MEETING_LEADER_FACTOR = 5;
 
     public MeetingXpRule(
             UserStatsRepository userStatsRepository,
