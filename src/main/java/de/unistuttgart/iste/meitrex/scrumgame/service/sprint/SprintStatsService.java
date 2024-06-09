@@ -50,8 +50,9 @@ public class SprintStatsService {
             SprintStats previousSprintStats = getSprintStats(previousSprint.get());
             Integer previousStoryPointsPlanned = previousSprintStats.getSprint().getStoryPointsPlanned();
 
-            if (previousStoryPointsPlanned != null &&
-                sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned) {
+            if ((previousStoryPointsPlanned != null &&
+                 sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned)
+                || sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints()) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE);
                 return;
             }

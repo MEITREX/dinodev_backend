@@ -7,6 +7,7 @@ import java.util.*;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class VirtualCurrencyCalculator {
 
+    @SuppressWarnings("java:S2245") // random is not used for security purposes
     private static final Random RANDOM = new Random();
 
     private static final int RANDOM_VIRTUAL_CURRENCY    = 10;
