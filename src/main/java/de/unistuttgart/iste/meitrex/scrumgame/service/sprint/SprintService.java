@@ -95,11 +95,12 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
         return findSprint(project.getId(), project.getCurrentSprintNumber());
     }
 
-    public PlacedAsset placeAsset(Project project, PlaceAssetInput input) {
+    public PlacedAsset placeAsset(Project project, PlaceAssetInput input, UUID placedBy) {
         SprintEntity sprintEntity = findSprintEntity(project.getId(), project.getCurrentSprintNumber())
                 .orElseThrow(() -> new MeitrexNotFoundException("No current sprint found"));
 
         PlacedAssetEntity placedAssetEntity = getModelMapper().map(input, PlacedAssetEntity.class);
+        placedAssetEntity.setPlacedByUserId(placedBy);
 
         sprintEntity.getPlacedAssets().add(placedAssetEntity);
 

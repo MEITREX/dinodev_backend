@@ -38,7 +38,7 @@ public class ShopService {
                     userStatsEntity.setVirtualCurrency(userStatsEntity.getVirtualCurrency() - shopItem.getPrice());
                 });
 
-        return sprintService.placeAsset(projectMutation.getProject(), input);
+        return sprintService.placeAsset(projectMutation.getProject(), input, authService.getCurrentUserId());
     }
 
     public ShopItem getShopItemByKnownAsset(KnownAsset knownAsset) {
