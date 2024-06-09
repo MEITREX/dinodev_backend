@@ -175,11 +175,13 @@ public class GropiusTimelineItemToEventConverter {
             eventData.add(new TemplateFieldInput("comment", AllowedDataType.STRING, timelineItem.body()));
         }
         if (eventType == ImsEventTypes.ASSIGNED_ISSUE || eventType == ImsEventTypes.UNASSIGNED_ISSUE) {
-            var userId = UUID.fromString(timelineItem.user().getId());
-            eventData.add(new TemplateFieldInput("assigneeId", AllowedDataType.STRING, userId.toString()));
-            eventData.add(new TemplateFieldInput("assigneeName",
-                    AllowedDataType.STRING,
-                    timelineItem.user().getUsername()));
+            if (timelineItem.user() != null) {
+                var userId = UUID.fromString(timelineItem.user().getId());
+                eventData.add(new TemplateFieldInput("assigneeId", AllowedDataType.STRING, userId.toString()));
+                eventData.add(new TemplateFieldInput("assigneeName",
+                        AllowedDataType.STRING,
+                        timelineItem.user().getUsername()));
+            }
         }
 
         return eventData;
