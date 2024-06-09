@@ -18,6 +18,8 @@ import java.util.function.*;
 @Configuration
 public class GropiusConfiguration {
 
+    private static final int MAX_IN_MEMORY_SIZE = 16 * 1024 * 1024;
+
     @Bean
     public Supplier<String> tokenSupplier() {
         return new AuthTokenFromHeaderSupplier();
@@ -30,6 +32,7 @@ public class GropiusConfiguration {
     public HttpGraphQlClient baseGraphQlClient() {
         WebClient webClient = WebClient.builder()
                 .baseUrl(gropiusUrl + "/graphql")
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(MAX_IN_MEMORY_SIZE))
                 .build();
 
         return HttpGraphQlClient.builder(webClient).build();

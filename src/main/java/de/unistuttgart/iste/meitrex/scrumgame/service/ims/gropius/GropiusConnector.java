@@ -336,7 +336,8 @@ public class GropiusConnector implements ImsConnector {
                                 .orderBy(GropiusTimelineItemOrder.builder()
                                         .setField(GropiusTimelineItemOrderField.CREATED_AT)
                                         .setDirection(GropiusOrderDirection.DESC)
-                                        .build()),
+                                        .build())
+                                .last(500),
                         GropiusProjections.TIMELINE_ITEM_CONNECTION_RESPONSE_PROJECTION);
     }
 
@@ -351,7 +352,8 @@ public class GropiusConnector implements ImsConnector {
                                                 .setLastModifiedAt(GropiusDateTimeFilterInput.builder()
                                                         .setGt(since.toString())
                                                         .build())
-                                                .build()),
+                                                .build())
+                                        .last(1000),
                                 new IssueConnectionResponseProjection()
                                         .nodes(getIssueWithTimelineItemsProjection(since)))
                         .components(new ComponentVersionConnectionResponseProjection()

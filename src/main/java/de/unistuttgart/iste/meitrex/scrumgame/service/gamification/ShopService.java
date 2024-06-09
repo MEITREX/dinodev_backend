@@ -5,7 +5,6 @@ import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -16,7 +15,6 @@ public class ShopService {
 
     private final SprintService    sprintService;
     private final UserStatsService userStatsService;
-    private final ModelMapper      modelMapper;
     private final AuthService      authService;
 
     public List<ShopItem> getShopItems() {
