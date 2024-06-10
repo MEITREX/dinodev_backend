@@ -24,6 +24,13 @@ public class SprintController {
     }
 
     @SchemaMapping
+    public Sprint updateSprint(ProjectMutation projectMutation,
+            @Argument int number,
+            @Argument UpdateSprintInput input) {
+        return sprintService.updateSprint(projectMutation.getProject().getId(), number, input);
+    }
+
+    @SchemaMapping
     public List<Sprint> sprints(Project project) {
         return sprintService.getSprints(project.getId());
     }

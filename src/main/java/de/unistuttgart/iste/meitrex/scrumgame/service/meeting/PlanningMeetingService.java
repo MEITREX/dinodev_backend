@@ -246,7 +246,7 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
         for (String issueId : planningMeeting.getSprintGoalVoting().getSprintIssueIds()) {
             IssueMutation issueMutation = imsService.mutateIssue(project, issueId);
             imsService.changeIssueState(issueMutation, IssueStateType.SPRINT_BACKLOG);
-            imsService.changeSprint(issueMutation, project.getCurrentSprintNumber() + 1);
+            imsService.changeSprint(issueMutation, project.getCurrentSprintNumber());
         }
     }
 

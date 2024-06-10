@@ -207,6 +207,7 @@ type ProjectMutation {
     deleteRole(name: String!): Boolean! @OnDemand
 
     createSprint(input: CreateSprintInput): Sprint! @OnDemand
+    updateSprint(number: Int!, input: UpdateSprintInput!): Sprint! @OnDemand
 
     mutateIssue(id: ID!): IssueMutation! @OnDemand
     createIssue(input: CreateIssueInput!): Issue! @OnDemand

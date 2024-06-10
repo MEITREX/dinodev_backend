@@ -114,6 +114,15 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
                 .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
     }
 
+    public Sprint updateSprint(UUID id, int sprintNumber, UpdateSprintInput input) {
+        SprintEntity sprintEntity = findSprintEntity(id, sprintNumber)
+                .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
+
+        getModelMapper().map(input, sprintEntity);
+
+        return convertToDto(repository.save(sprintEntity));
+    }
+
     private Optional<Sprint> findMostRecentSprint(UUID projectId) {
         return repository.findFirstByProjectIdOrderByNumberDesc(projectId)
                 .map(this::convertToDto);

@@ -64,3 +64,12 @@ input CreateSprintInput {
     animal: Animal!
     customGoldChallengeReward: String
 }
+
+input UpdateSprintInput {
+    name: String
+    startDate: DateTime
+    endDate: DateTime
+    storyPointsPlanned: Int
+    animal: Animal
+    customGoldChallengeReward: String
+}
