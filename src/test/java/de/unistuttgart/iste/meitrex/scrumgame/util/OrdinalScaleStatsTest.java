@@ -10,7 +10,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class OrdinalScaleStatsTest {
 
     @Test
-    public void test_empty_list() {
+    void test_empty_list() {
         // Arrange
         List<Integer> data = Collections.emptyList();
 
@@ -19,7 +19,7 @@ class OrdinalScaleStatsTest {
     }
 
     @Test
-    public void test_empty_map() {
+    void test_empty_map() {
         // Arrange
         Map<String, Long> countMap = Collections.emptyMap();
 
@@ -28,7 +28,7 @@ class OrdinalScaleStatsTest {
     }
 
     @Test
-    public void test_calculateStatisticsForListWithDuplicates() {
+    void test_calculateStatisticsForListWithDuplicates() {
         // Arrange
         List<Integer> data = Arrays.asList(8, 2, 3, 2, 4, 5, 4, 6, 7, 7, 1);
 
@@ -43,7 +43,7 @@ class OrdinalScaleStatsTest {
     }
 
     @Test
-    public void test_calculateStatisticsForMapWithDuplicates() {
+    void test_calculateStatisticsForMapWithDuplicates() {
         // Arrange
         Map<String, Long> countMap = new HashMap<>();
         countMap.put("A", 3L);

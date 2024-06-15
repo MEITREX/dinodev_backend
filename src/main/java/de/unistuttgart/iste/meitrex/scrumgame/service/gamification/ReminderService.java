@@ -53,7 +53,6 @@ public class ReminderService {
         // otherwise: publish a reminder to catch up every 3 days
         if (timeLeft.toDays() % 3 == 0) {
             publishCatchUpReminder(project, currentSprint.get(), stats, (int) timeLeft.toDays());
-            return;
         }
 
     }

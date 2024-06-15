@@ -32,7 +32,7 @@ public class PullRequestXpRule extends XpAndLevelRule {
         int additions = TemplateDataUtils.findIntField(triggerEvent, "additions").orElse(0);
         int deletions = TemplateDataUtils.findIntField(triggerEvent, "deletions").orElse(0);
 
-        int xp = 100 + (commits - 1) * 5 + (int) Math.sqrt(10 * (additions + deletions));
+        int xp = 100 + (commits - 1) * 5 + (int) Math.sqrt(10.0 * (additions + deletions));
 
         // half xp for reviews
         if (triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.REVIEW_ACCEPT.getIdentifier()) ||

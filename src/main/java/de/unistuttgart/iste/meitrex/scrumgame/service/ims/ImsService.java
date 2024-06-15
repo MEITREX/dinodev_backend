@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-import java.util.stream.*;
 
 @Service
 @RequiredArgsConstructor
@@ -188,7 +187,7 @@ public class ImsService {
     private List<IssueStateInBoard> convertIssueStates(List<IssueState> issueStates, ProjectBoard board) {
         return issueStates.stream()
                 .map(issueState -> toIssueStateInBoard(issueState, board))
-                .collect(Collectors.toList());
+                .toList();
     }
 
 }

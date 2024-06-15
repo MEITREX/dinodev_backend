@@ -219,7 +219,7 @@ public class SprintStatsService {
     ) {
         return IntStream.range(0, storyPointsByDay.size())
                 .map(day -> storyPointsPlanned -
-                            storyPointsByDay.stream().limit(day + 1).mapToInt(Integer::intValue).sum())
+                            storyPointsByDay.stream().limit(day + 1L).mapToInt(Integer::intValue).sum())
                 .boxed()
                 .toList();
     }
@@ -231,7 +231,7 @@ public class SprintStatsService {
             int day = (int) Duration.between(startDate, date).toDays();
 
             // ensure bounds
-            day = Math.max(0, Math.min(day, totalDays - 1));
+            day = Math.clamp(day, 0, totalDays - 1);
 
             storyPointsByDay.set(day, storyPointsByDay.get(day) + issue.getStoryPoints());
         });
