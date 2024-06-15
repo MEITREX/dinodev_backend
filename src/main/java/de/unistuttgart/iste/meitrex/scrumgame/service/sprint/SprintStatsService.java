@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.sprint;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsServiceExtension;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -8,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.*;
 
 @Service
@@ -16,8 +19,16 @@ public class SprintStatsService {
 
     private final ImsServiceExtension imsServiceExtension;
     private final SprintService       sprintService;
+    private final EventService eventService;
+
+    // cache for sprint stats, does not include the current sprint
+    private final Map<Sprint, SprintStats> sprintStatsCache = new ConcurrentHashMap<>();
 
     public SprintStats getSprintStats(Sprint sprint) {
+        if (sprintStatsCache.containsKey(sprint)) {
+            return sprintStatsCache.get(sprint);
+        }
+
         SprintStats sprintStats = new SprintStats();
         sprintStats.setSprint(sprint);
 
@@ -25,13 +36,24 @@ public class SprintStatsService {
         calculateIssueStatistics(sprintStats);
         calculateSprintSuccessState(sprintStats);
 
+        if (canCache(sprintStats)) {
+            sprintStatsCache.put(sprint, sprintStats);
+        }
+
         return sprintStats;
+    }
+
+    private boolean canCache(SprintStats sprintStats) {
+        return sprintStats.getSuccessState() != SprintSuccessState.IN_PROGRESS
+               && (sprintStats.getSprint().getEndDate() == null
+                   || OffsetDateTime.now().isBefore(sprintStats.getSprint().getEndDate()));
     }
 
     private void calculateSprintSuccessState(SprintStats sprintStats) {
         Optional<Integer> storyPointsPlanned = Optional.ofNullable(sprintStats.getSprint().getStoryPointsPlanned());
 
         if (storyPointsPlanned.isEmpty()) {
+            // for sprints without planned story points, we cannot determine the success state
             sprintStats.setSuccessState(SprintSuccessState.UNKNOWN);
             return;
         }
@@ -46,13 +68,13 @@ public class SprintStatsService {
                 return;
             }
 
-            // TODO this could be optimized by storing the sprint stats in the database or caching them
             SprintStats previousSprintStats = getSprintStats(previousSprint.get());
             Integer previousStoryPointsPlanned = previousSprintStats.getSprint().getStoryPointsPlanned();
 
             if ((previousStoryPointsPlanned != null &&
                  sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned)
-                || sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints()) {
+                || sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints()
+            ) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE);
                 return;
             }
@@ -71,17 +93,32 @@ public class SprintStatsService {
                 .get(sprintStats.getSprint());
         sprintStats.setIssueCount(issues.size());
 
-        IntSummaryStatistics stats = issues.stream()
+        sprintStats.setTotalStoryPoints(getTotalSpCompleted(issues));
+        sprintStats.setAverageStoryPoints(getAverageSpPerIssue(issues));
+
+        calculatePercentages(issues, sprintStats);
+
+        calculateStoryPointsByDay(sprintStats, issues);
+        calculateBurnDown(sprintStats);
+    }
+
+    private static int getTotalSpCompleted(List<Issue> issues) {
+        return issues.stream()
                 .filter(issue -> issue.getStoryPoints() != null)
                 .filter(issue -> issue.getState().getType() == IssueStateType.DONE
                                  || issue.getState().getType() == IssueStateType.DONE_SPRINT)
                 .mapToInt(Issue::getStoryPoints)
-                .summaryStatistics();
-        int totalStoryPoints = (int) stats.getSum();
-        sprintStats.setTotalStoryPoints(totalStoryPoints);
-        sprintStats.setAverageStoryPoints(stats.getAverage());
+                .sum();
+    }
 
-        calculatePercentages(issues, sprintStats, totalStoryPoints);
+    private static int getAverageSpPerIssue(List<Issue> issues) {
+        if (issues.isEmpty()) {
+            return 0;
+        }
+        return issues.stream()
+                       .filter(issue -> issue.getStoryPoints() != null)
+                       .mapToInt(Issue::getStoryPoints)
+                       .sum() / issues.size();
     }
 
     private void calculateDateRelatedStats(SprintStats sprintStats) {
@@ -91,7 +128,7 @@ public class SprintStatsService {
         sprintStats.setPercentageTimeElapsed(calculatePercentageTimeElapsed(sprint));
     }
 
-    private void calculatePercentages(List<Issue> issues, SprintStats sprintStats, int totalStoryPoints) {
+    private void calculatePercentages(List<Issue> issues, SprintStats sprintStats) {
         Map<IssueStateType, Integer> storyPointsByState = issues.stream()
                 .filter(issue -> issue.getStoryPoints() != null && issue.getState() != null)
                 .collect(Collectors.groupingBy(issue -> issue.getState().getType(),
@@ -145,5 +182,68 @@ public class SprintStatsService {
         Duration sprintDuration = Duration.between(sprint.getStartDate(), sprint.getEndDate());
         Duration timeElapsed = Duration.between(sprint.getStartDate(), OffsetDateTime.now());
         return (double) timeElapsed.toMillis() / sprintDuration.toMillis() * 100;
+    }
+
+    private void calculateStoryPointsByDay(SprintStats sprintStats, List<Issue> issues) {
+        OffsetDateTime startDate = sprintStats.getSprint().getStartDate();
+        OffsetDateTime endDate = sprintStats.getSprint().getEndDate();
+
+        if (startDate == null || endDate == null) {
+            sprintStats.setStoryPointsByDay(Collections.emptyList());
+            return;
+        }
+
+        int totalDays = (int) Duration.between(startDate, endDate).toDays();
+        List<Integer> storyPointsByDay = new ArrayList<>(Collections.nCopies(totalDays, 0));
+
+        issues.stream()
+                .filter(issue -> issue.getStoryPoints() != null)
+                .filter(issue -> issue.getState().getType() == IssueStateType.DONE
+                                 || issue.getState().getType() == IssueStateType.DONE_SPRINT)
+                .forEach(issue -> setSpDoneForIssue(issue, startDate, storyPointsByDay));
+
+        sprintStats.setStoryPointsByDay(storyPointsByDay);
+    }
+
+    private void calculateBurnDown(SprintStats sprintStats) {
+        List<Integer> storyPointsByDay = sprintStats.getStoryPointsByDay();
+        Integer storyPointsPlanned = sprintStats.getSprint().getStoryPointsPlanned();
+        if (storyPointsPlanned != null) {
+            sprintStats.setBurnDown(constructBurnDown(storyPointsPlanned, storyPointsByDay));
+        }
+    }
+
+    private static List<Integer> constructBurnDown(
+            int storyPointsPlanned,
+            List<Integer> storyPointsByDay
+    ) {
+        return IntStream.range(0, storyPointsByDay.size())
+                .map(day -> storyPointsPlanned -
+                            storyPointsByDay.stream().limit(day + 1).mapToInt(Integer::intValue).sum())
+                .boxed()
+                .toList();
+    }
+
+    private void setSpDoneForIssue(Issue issue, OffsetDateTime startDate, List<Integer> storyPointsByDay) {
+        var totalDays = storyPointsByDay.size();
+
+        getDoneDateOfIssue(issue).ifPresent(date -> {
+            int day = (int) Duration.between(startDate, date).toDays();
+
+            // ensure bounds
+            day = Math.max(0, Math.min(day, totalDays - 1));
+
+            storyPointsByDay.set(day, storyPointsByDay.get(day) + issue.getStoryPoints());
+        });
+    }
+
+    private Optional<OffsetDateTime> getDoneDateOfIssue(Issue issue) {
+        var events = eventService.getEventsForIssue(issue);
+        return events.stream()
+                .filter(event -> event.getEventType()
+                        .getIdentifier()
+                        .equals(ImsEventTypes.ISSUE_COMPLETED.getIdentifier()))
+                .map(Event::getTimestamp)
+                .min(Comparator.naturalOrder());
     }
 }

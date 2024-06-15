@@ -68,7 +68,10 @@ public class EventService {
 
     public List<Event> getAndSyncEvents(Issue issue) {
         syncEvents(issue);
+        return getEventsForIssue(issue);
+    }
 
+    public List<Event> getEventsForIssue(Issue issue) {
         return eventPersistenceService.getRepository().findForIssue(issue.getId())
                 .stream()
                 .map(eventPersistenceService.getEventFactory()::createDefaultEvent)

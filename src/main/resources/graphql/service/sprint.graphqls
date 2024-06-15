@@ -1,38 +1,123 @@
+"""
+Represents a sprint in a project.
+"""
 type Sprint {
+    id: UUID!
+    """
+    The project this sprint belongs to.
+    """
     project: Project!
 
-    id: UUID!
-    name: String
+    """
+    The animal that represents this sprint.
+    """
     animal: Animal
+    """
+    The name of the sprint.
+    """
+    name: String
+    """
+    The number of the sprint. Starts with 1 and is incremented by 1 for each new sprint.
+    """
     number: Int!
 
     startDate: DateTime
     endDate: DateTime
 
+    """
+    The number of story points that are planned for this sprint.
+    This is null for sprints that have been created before using DinoDev.
+    """
     storyPointsPlanned: Int
+    """
+    Custom reward for achieving the gold challenge.
+    """
     customGoldChallengeReward: String
 
+    """
+    Issues that are part of this sprint.
+    """
     issues: [Issue!]! @OnDemand
+    """
+    Stats for this sprint.
+    """
     stats: SprintStats! @OnDemand
 
+    """
+    Places assets in the animal enclosure.
+    """
     placedAssets: [PlacedAsset!]!
 }
 
+"""
+Stats for a sprint.
+"""
 type SprintStats {
     Sprint: Sprint!
 
+    """
+    The success state of the sprint.
+    """
     successState: SprintSuccessState!
+    """
+    The number of story points that have been completed.
+    """
     totalStoryPoints: Int!
+    """
+    The average number of story points per issue.
+    """
     averageStoryPoints: Float!
+    """
+    The percentage of story points that have been completed.
+    """
     percentageStoryPointsCompleted: Float!
+    """
+    The percentage of story points that are in progress.
+    """
     percentageStoryPointsInProgress: Float!
+    """
+    The percentage of story points that have not been started.
+    """
     percentageStoryPointsNotStarted: Float!
+    """
+    The number of issues in this sprint.
+    """
     issueCount: Int!
+    """
+    The number of days left in this sprint.
+    """
     daysLeft: Int!
+    """
+    The number of days that have elapsed in this sprint.
+    """
     daysElapsed: Int!
+    """
+    The percentage of time that has elapsed in this sprint.
+    """
     percentageTimeElapsed: Float!
+
+    """
+    Array where each element represents the number of story points that have been completed
+    on the corresponding day of the sprint.
+    """
+    storyPointsByDay: [Int!]!
+    """
+    Array where each element represents the number of story points left to complete
+    on the corresponding day of the sprint.
+    This can be used to create a burn down chart.
+    This is null if the sprint was not created using DinoDev.
+    """
+    burnDown: [Int!]
 }
 
+"""
+A sprint can have different success states:
+- IN_PROGRESS: The sprint is currently in progress
+- UNKNOWN: The success state is unknown
+- FAILED: The sprint has failed, i.e. not all story points have been completed
+- SUCCESS: The sprint has been successfully completed
+- SUCCESS_WITH_GOLD_CHALLENGE: The sprint has been successfully completed and the gold challenge has been achieved
+"""
 enum SprintSuccessState {
     IN_PROGRESS
     UNKNOWN
@@ -56,6 +141,9 @@ input PlaceAssetInput {
     y: Int!
 }
 
+"""
+Input object to create a new sprint.
+"""
 input CreateSprintInput {
     name: String!
     startDate: DateTime!
@@ -65,6 +153,9 @@ input CreateSprintInput {
     customGoldChallengeReward: String
 }
 
+"""
+Input object to update an existing sprint.
+"""
 input UpdateSprintInput {
     name: String
     startDate: DateTime
