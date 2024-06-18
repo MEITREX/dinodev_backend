@@ -333,10 +333,10 @@ public class GropiusConnector implements ImsConnector {
                                                 .setGt(since.toString())
                                                 .build())
                                         .build())
-                                .orderBy(GropiusTimelineItemOrder.builder()
+                                .orderBy(List.of(GropiusTimelineItemOrder.builder()
                                         .setField(GropiusTimelineItemOrderField.CREATED_AT)
                                         .setDirection(GropiusOrderDirection.DESC)
-                                        .build())
+                                        .build()))
                                 .first(1000),
                         GropiusProjections.TIMELINE_ITEM_CONNECTION_RESPONSE_PROJECTION);
     }
