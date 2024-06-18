@@ -15,6 +15,9 @@ directive @include(
     if: Boolean!
   ) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 
+"Indicates an Input Object is a OneOf Input Object."
+directive @oneOf on INPUT_OBJECT
+
 "Directs the executor to skip this field or fragment when the `if` argument is true."
 directive @skip(
     "Skipped when true."
@@ -50,9 +53,9 @@ interface AbstractTypeChangedEvent implements AuditedNode & BaseNode & Node & Ti
 }
 
 """
-Entities that can be affected by an Issue, meaning that this entity is in some regard 
+Entities that can be affected by an Issue, meaning that this entity is in some regard
     impacted by e.g. a bug described by an issue, or the non-present of a feature described by an issue.
-    
+
 """
 interface AffectedByIssue implements BaseNode & Named & NamedNode & Node {
   "The issues which affect this entity"
@@ -68,7 +71,7 @@ interface AffectedByIssue implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -90,7 +93,7 @@ Node which provides auditing information, which can e.g. be used for the sync.
     When it was created and last modified, if the it is already deleted, and by who it was created and last modified.
     A modification is any change of a field on the node itself and a change of a relation (add or removed).
     A change on a related related node is not a modification.
-    
+
 """
 interface AuditedNode implements BaseNode & Node {
   "The DateTime this entity was created at."
@@ -148,7 +151,7 @@ interface BasePermission implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -158,7 +161,7 @@ interface BasePermission implements BaseNode & Named & NamedNode & Node {
 Base type for both Template and SubTemplate.
     Defines templated fields with specific types (defined using JSON schema).
     READ is always granted.
-    
+
 """
 interface BaseTemplate implements BaseNode & Named & NamedNode & Node {
   "The description of this entity."
@@ -184,7 +187,7 @@ Supertype for IssueComment and Body.
     Represents a text block in the Timeline.
     Keeps track when it was last edited and by who, but does not keep track of the change history.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 interface Comment implements AuditedNode & BaseNode & Node & TimelineItem {
   "IssueComments which answer this Comment."
@@ -200,7 +203,7 @@ interface Comment implements AuditedNode & BaseNode & Node & TimelineItem {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueCommentOrder,
+    orderBy: [IssueCommentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueCommentConnection!
@@ -209,19 +212,19 @@ interface Comment implements AuditedNode & BaseNode & Node & TimelineItem {
                   Supports GFM (GitHub Flavored Markdown).
                   Updates cause lastEditedAt and lastEditedBy to change.
                   Empty String if IssueComment is deleted.
-                  
+
   """
   body: String!
   """
   Keep track when the body of the Comment was last updated.
           If not updated yet, the DateTime of creation.
-          
+
   """
   bodyLastEditedAt: DateTime!
   """
   The User who last edited the body of this Comment.
           If not edited yet, the creator of the Comment.
-          
+
   """
   bodyLastEditedBy: User!
   "The DateTime this entity was created at."
@@ -256,7 +259,7 @@ interface MutableTemplatedNode implements TemplatedNode {
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -264,7 +267,7 @@ interface MutableTemplatedNode implements TemplatedNode {
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -350,7 +353,7 @@ interface NodePermission implements BaseNode & BasePermission & Named & NamedNod
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -359,7 +362,7 @@ interface NodePermission implements BaseNode & BasePermission & Named & NamedNod
 """
 TimelineItem which can aggregate other TimelineItems.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 interface ParentTimelineItem implements AuditedNode & BaseNode & Node & TimelineItem {
   "Child TimelineItems. These are still part of the main timeline."
@@ -375,7 +378,7 @@ interface ParentTimelineItem implements AuditedNode & BaseNode & Node & Timeline
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TimelineItemOrder,
+    orderBy: [TimelineItemOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TimelineItemConnection!
@@ -415,7 +418,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -432,7 +435,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueOrder,
+    orderBy: [AggregatedIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueConnection!
@@ -458,7 +461,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -477,7 +480,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -490,7 +493,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -498,7 +501,7 @@ interface RelationPartner implements AffectedByIssue & BaseNode & Named & NamedN
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -534,7 +537,7 @@ interface RelationPartnerTemplate implements BaseNode & BaseTemplate & Named & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -551,7 +554,7 @@ interface RelationPartnerTemplate implements BaseNode & BaseTemplate & Named & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -599,7 +602,7 @@ interface RelationTypeChangedEvent implements AuditedNode & BaseNode & Node & Ti
 
 """
 Event representing that an outgoing IssueRelation was removed.
-    
+
 """
 interface RemovedRelationEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -629,7 +632,7 @@ interface RemovedRelationEvent implements AuditedNode & BaseNode & Node & Timeli
 BaseTemplate which is part of a Template.
     Defines templated fields with specific types (defined using JSON schema).
     Does not provide any composition features, as composition is handled by the Template it is part of.
-    
+
 """
 interface SubTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node {
   "The description of this entity."
@@ -676,7 +679,7 @@ interface SyncPermissionTarget implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -693,7 +696,7 @@ interface SyncPermissionTarget implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -703,7 +706,7 @@ interface SyncPermissionTarget implements BaseNode & Named & NamedNode & Node {
 BaseTemplate with composition features.
     Can have SubTemplates.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 interface Template implements BaseNode & BaseTemplate & Named & NamedNode & Node {
   "The description of this entity."
@@ -737,7 +740,7 @@ interface TemplatedNode {
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -745,7 +748,7 @@ interface TemplatedNode {
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -779,7 +782,7 @@ An entity which can have Issues, Labels and Artefacts.
     Has pinned issues.
     Can be synced to an IMS by creating an IMSProject.
     Can be affected by Issues.
-    
+
 """
 interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & Node {
   "The issues which affect this entity"
@@ -795,7 +798,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -812,7 +815,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -828,7 +831,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
   """
   The set of Issues which are part of this Trackable.
           An Issue has to be part of a Trackable to use the Labels and Artefacts defined by the Trackable.
-          
+
   """
   issues(
     "Get only items after the cursor"
@@ -842,7 +845,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -859,7 +862,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: LabelOrder,
+    orderBy: [LabelOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): LabelConnection!
@@ -878,7 +881,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -897,7 +900,7 @@ interface Trackable implements AffectedByIssue & BaseNode & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSProjectOrder,
+    orderBy: [IMSProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSProjectConnection!
@@ -908,7 +911,7 @@ A user known to the Gropius System.
     This might be a user that registered directly, or a user the systems know via a sync adapter.
     A user can create AuditedNodes, participate in Issues and be assigned to Issues.
     READ is always granted.
-    
+
 """
 interface User implements BaseNode & Node {
   "Assignments the user is part of, this includes assignments which aren't active."
@@ -924,7 +927,7 @@ interface User implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentOrder,
+    orderBy: [AssignmentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentConnection!
@@ -943,7 +946,7 @@ interface User implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AuditedNodeOrder,
+    orderBy: [AuditedNodeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AuditedNodeConnection!
@@ -971,14 +974,14 @@ interface User implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
   """
   The identifier of the user.
           This is only unique for GropiusUsers, for IMSUsers, no constrains v  are guaranteed.
-          
+
   """
   username: String
 }
@@ -991,7 +994,7 @@ interface Versioned {
 
 union BaseStyle = FillStyle | StrokeStyle
 
-union PublicTimelineItem = AddedAffectedEntityEvent | AddedArtefactEvent | AddedLabelEvent | AddedToPinnedIssuesEvent | AddedToTrackableEvent | Assignment | AssignmentTypeChangedEvent | Body | DueDateChangedEvent | EstimatedTimeChangedEvent | IncomingRelationTypeChangedEvent | IssueComment | IssueRelation | OutgoingRelationTypeChangedEvent | PriorityChangedEvent | RemovedAffectedEntityEvent | RemovedArtefactEvent | RemovedAssignmentEvent | RemovedFromPinnedIssuesEvent | RemovedLabelEvent | RemovedTemplatedFieldEvent | SpentTimeChangedEvent | StartDateChangedEvent | StateChangedEvent | TemplatedFieldChangedEvent | TitleChangedEvent | TypeChangedEvent
+union PublicTimelineItem = AddedAffectedEntityEvent | AddedArtefactEvent | AddedLabelEvent | AddedToPinnedIssuesEvent | AddedToTrackableEvent | Assignment | AssignmentTypeChangedEvent | Body | IncomingRelationTypeChangedEvent | IssueComment | IssueRelation | OutgoingRelationTypeChangedEvent | PriorityChangedEvent | RemovedAffectedEntityEvent | RemovedArtefactEvent | RemovedAssignmentEvent | RemovedFromPinnedIssuesEvent | RemovedLabelEvent | RemovedTemplatedFieldEvent | StateChangedEvent | TemplatedFieldChangedEvent | TitleChangedEvent | TypeChangedEvent
 
 union TrackablePermission = ComponentPermission | ProjectPermission
 
@@ -1041,7 +1044,7 @@ type AddLabelToTrackablePayload {
 """
 Event representing that an entity is affected by an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AddedAffectedEntityEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The entity affected by the Issue, null if deleted."
@@ -1070,7 +1073,7 @@ type AddedAffectedEntityEvent implements AuditedNode & BaseNode & Node & Timelin
 """
 Event representing that an Artefact was added to an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AddedArtefactEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The Artefact added to the Issue, null if deleted."
@@ -1099,7 +1102,7 @@ type AddedArtefactEvent implements AuditedNode & BaseNode & Node & TimelineItem 
 """
 Event representing that a Label was added to an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AddedLabelEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The Label added to the Issue, null if deleted."
@@ -1128,7 +1131,7 @@ type AddedLabelEvent implements AuditedNode & BaseNode & Node & TimelineItem {
 """
 Event representing that an Issue was pinned on a Trackable.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AddedToPinnedIssuesEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -1157,7 +1160,7 @@ type AddedToPinnedIssuesEvent implements AuditedNode & BaseNode & Node & Timelin
 """
 Event representing that the Issue was added to a Trackable.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AddedToTrackableEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The Trackable the Issue was added to, null if deleted."
@@ -1214,7 +1217,7 @@ An aggregated Issue on a RelationPartner.
     - it affects the associated InterfaceSpecificationVersion
     - it affects the associated InterfaceSpecification
     - it affects any InterfacePart of the associated InterfaceSpecificationVersion
-    
+
 """
 type AggregatedIssue implements BaseNode & Node {
   "The amount of Issues of this type on this location."
@@ -1239,7 +1242,7 @@ type AggregatedIssue implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueRelationOrder,
+    orderBy: [AggregatedIssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueRelationConnection!
@@ -1258,7 +1261,7 @@ type AggregatedIssue implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -1275,7 +1278,7 @@ type AggregatedIssue implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueRelationOrder,
+    orderBy: [AggregatedIssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueRelationConnection!
@@ -1308,7 +1311,7 @@ type AggregatedIssueEdge {
 """
 An aggregated IssueRelation.
     IssueRelations are aggregated by both start and end Issue.
-    
+
 """
 type AggregatedIssueRelation implements BaseNode & Node {
   count: Int!
@@ -1334,7 +1337,7 @@ type AggregatedIssueRelation implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueRelationOrder,
+    orderBy: [IssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueRelationConnection!
@@ -1371,7 +1374,7 @@ An Artefact referencing a file defined via a URL.
     Can be referenced by Comments and Issues.
     Artefacts are synced to all IMSProjects of the Trackable they are part of.
     READ is granted if READ is granted on `trackable`.
-    
+
 """
 type Artefact implements AuditedNode & BaseNode & MutableTemplatedNode & Node & TemplatedNode {
   "The DateTime this entity was created at."
@@ -1402,7 +1405,7 @@ type Artefact implements AuditedNode & BaseNode & MutableTemplatedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -1423,7 +1426,7 @@ type Artefact implements AuditedNode & BaseNode & MutableTemplatedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueCommentOrder,
+    orderBy: [IssueCommentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueCommentConnection!
@@ -1438,7 +1441,7 @@ type Artefact implements AuditedNode & BaseNode & MutableTemplatedNode & Node & 
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -1446,7 +1449,7 @@ type Artefact implements AuditedNode & BaseNode & MutableTemplatedNode & Node & 
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -1481,7 +1484,7 @@ type ArtefactEdge {
 """
 Template for Artefacts
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type ArtefactTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & Template {
   "The description of this entity."
@@ -1499,7 +1502,7 @@ type ArtefactTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactTemplateOrder,
+    orderBy: [ArtefactTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactTemplateConnection!
@@ -1516,7 +1519,7 @@ type ArtefactTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactTemplateOrder,
+    orderBy: [ArtefactTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactTemplateConnection!
@@ -1549,7 +1552,7 @@ type ArtefactTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -1579,7 +1582,7 @@ type ArtefactTemplateEdge {
 Event representing that a User is assigned to an Issue.
     An Assignment is only active if it is still in `assignments` on Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type Assignment implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -1593,6 +1596,8 @@ type Assignment implements AuditedNode & BaseNode & Node & TimelineItem {
   ): Boolean!
   "The unique id of this node"
   id: ID!
+  "The initial type of Assignment, e.g. REVIEWER. Allowed types are defined by the IssueTemplate."
+  initialType: AssignmentType
   "The Issue this TimelineItem is part of."
   issue: Issue
   "The DateTime this entity was last modified at."
@@ -1630,7 +1635,7 @@ type AssignmentEdge {
 """
 Type for an Assignment, like REVIEWER. Part of an IssueTemplate.
     READ is always granted.
-    
+
 """
 type AssignmentType implements BaseNode & Named & NamedNode & Node {
   "Assignments which use this type."
@@ -1646,7 +1651,7 @@ type AssignmentType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentOrder,
+    orderBy: [AssignmentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentConnection!
@@ -1674,7 +1679,7 @@ type AssignmentType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -1683,7 +1688,7 @@ type AssignmentType implements BaseNode & Named & NamedNode & Node {
 """
 Event representing that the type of an Assignment changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type AssignmentTypeChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The Assignment of which the type was changed"
@@ -1777,7 +1782,7 @@ type BasePermissionEdge {
 Main Body of an Issue.
     Each Issue has exactly one Body. Keeps track when it was last edited and by who, but does not keep track of the change history.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type Body implements AuditedNode & BaseNode & Comment & Node & TimelineItem {
   "IssueComments which answer this Comment."
@@ -1793,7 +1798,7 @@ type Body implements AuditedNode & BaseNode & Comment & Node & TimelineItem {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueCommentOrder,
+    orderBy: [IssueCommentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueCommentConnection!
@@ -1802,19 +1807,19 @@ type Body implements AuditedNode & BaseNode & Comment & Node & TimelineItem {
                   Supports GFM (GitHub Flavored Markdown).
                   Updates cause lastEditedAt and lastEditedBy to change.
                   Empty String if IssueComment is deleted.
-                  
+
   """
   body: String!
   """
   Keep track when the body of the Comment was last updated.
           If not updated yet, the DateTime of creation.
-          
+
   """
   bodyLastEditedAt: DateTime!
   """
   The User who last edited the body of this Comment.
           If not edited yet, the creator of the Comment.
-          
+
   """
   bodyLastEditedBy: User!
   "The DateTime this entity was created at."
@@ -1838,19 +1843,19 @@ type Body implements AuditedNode & BaseNode & Comment & Node & TimelineItem {
   parentItem: ParentTimelineItem
 }
 
+type BulkCreateComponentPayload {
+  "The created Components"
+  components: [Component!]!
+}
+
+type BulkCreateRelationPayload {
+  "The created Relations"
+  relations: [Relation!]!
+}
+
 type ChangeAssignmentTypePayload {
   "The created event, if present"
   assignmentTypeChangedEvent: AssignmentTypeChangedEvent
-}
-
-type ChangeIssueDueDatePayload {
-  "The created event, if present"
-  dueDateChangedEvent: DueDateChangedEvent
-}
-
-type ChangeIssueEstimatedTimePayload {
-  "The created event, if present"
-  estimatedTimeChangedEvent: EstimatedTimeChangedEvent
 }
 
 type ChangeIssuePriorityPayload {
@@ -1861,16 +1866,6 @@ type ChangeIssuePriorityPayload {
 type ChangeIssueRelationTypePayload {
   "The created event, if present"
   outgoingRelationTypeChangedEvent: OutgoingRelationTypeChangedEvent
-}
-
-type ChangeIssueSpentTimePayload {
-  "The created event, if present"
-  spentTimeChangedEvent: SpentTimeChangedEvent
-}
-
-type ChangeIssueStartDatePayload {
-  "The created event, if present"
-  startDateChangedEvent: StartDateChangedEvent
 }
 
 type ChangeIssueStatePayload {
@@ -1904,9 +1899,9 @@ Entity which represents a software component, e.g. a library, a microservice, or
     Can have issues, labels and artefacts as this is a Trackable.
     Defines InterfaceSpecifications, but visible/invisible InterfaceSpecificationVersions depend on the ComponentVersion.
     Can be affected by Issues.
-    READ is granted via an associated ComponentPermission or if READ is granted on any Project including any 
+    READ is granted via an associated ComponentPermission or if READ is granted on any Project including any
     ComponentVersion in `versions` of this Component.
-    
+
 """
 type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & TemplatedNode & Trackable {
   "The issues which affect this entity"
@@ -1922,7 +1917,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -1939,7 +1934,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -1955,7 +1950,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
   """
   List of interfaces this component specifies.
           Note that visible/invisible InterfaceSpecifications are defined by a specific version of this component
-          
+
   """
   interfaceSpecifications(
     "Get only items after the cursor"
@@ -1969,14 +1964,14 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationOrder,
+    orderBy: [InterfaceSpecificationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationConnection!
   """
   The set of Issues which are part of this Trackable.
           An Issue has to be part of a Trackable to use the Labels and Artefacts defined by the Trackable.
-          
+
   """
   issues(
     "Get only items after the cursor"
@@ -1990,7 +1985,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -2007,7 +2002,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: LabelOrder,
+    orderBy: [LabelOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): LabelConnection!
@@ -2026,7 +2021,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentPermissionOrder,
+    orderBy: [ComponentPermissionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentPermissionConnection!
@@ -2043,7 +2038,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -2062,7 +2057,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSProjectOrder,
+    orderBy: [IMSProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSProjectConnection!
@@ -2077,7 +2072,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -2085,7 +2080,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -2102,7 +2097,7 @@ type Component implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentVersionOrder,
+    orderBy: [ComponentVersionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentVersionConnection!
@@ -2158,7 +2153,7 @@ type ComponentPermission implements BaseNode & BasePermission & Named & NamedNod
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentOrder,
+    orderBy: [ComponentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentConnection!
@@ -2175,7 +2170,7 @@ type ComponentPermission implements BaseNode & BasePermission & Named & NamedNod
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -2205,7 +2200,7 @@ type ComponentPermissionEdge {
 Template for Components.
     Defines templated fields with specific types (defined using JSON schema).
     Defines SubTemplate for ComponentVersions.
-    
+
 """
 type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & RelationPartnerTemplate & Template {
   "SubTemplate applied to all ComponentVersions of Components with this Template"
@@ -2225,7 +2220,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentTemplateOrder,
+    orderBy: [ComponentTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentTemplateConnection!
@@ -2242,7 +2237,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentTemplateOrder,
+    orderBy: [ComponentTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentTemplateConnection!
@@ -2272,7 +2267,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -2289,7 +2284,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -2306,7 +2301,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -2323,7 +2318,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -2349,7 +2344,7 @@ type ComponentTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentOrder,
+    orderBy: [ComponentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentConnection!
@@ -2376,11 +2371,11 @@ type ComponentTemplateEdge {
 }
 
 """
-Version of a component. 
+Version of a component.
     Can specifies visible/invisible InterfaceSpecifications.
     Can be used in Relations, affected by issues and included by Projects.
     READ is granted if READ is granted on `component`.
-    
+
 """
 type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & RelationPartner & TemplatedNode & Versioned {
   "The issues which affect this entity"
@@ -2396,7 +2391,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -2413,7 +2408,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueOrder,
+    orderBy: [AggregatedIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueConnection!
@@ -2441,7 +2436,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ProjectOrder,
+    orderBy: [ProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ProjectConnection!
@@ -2458,7 +2453,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -2475,7 +2470,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceDefinitionOrder,
+    orderBy: [InterfaceDefinitionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceDefinitionConnection!
@@ -2492,7 +2487,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IntraComponentDependencySpecificationOrder,
+    orderBy: [IntraComponentDependencySpecificationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IntraComponentDependencySpecificationConnection!
@@ -2511,7 +2506,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -2526,7 +2521,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -2534,7 +2529,7 @@ type ComponentVersion implements AffectedByIssue & BaseNode & MutableTemplatedNo
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -2566,7 +2561,7 @@ type ComponentVersionEdge {
 SubTemplate for ComponentVersion.
     Part of a ComponentTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type ComponentVersionTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -2600,7 +2595,7 @@ type ComponentVersionTemplate implements BaseNode & BaseTemplate & Named & Named
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentVersionOrder,
+    orderBy: [ComponentVersionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentVersionConnection!
@@ -2742,68 +2737,6 @@ type DeleteNodePayload {
   id: ID!
 }
 
-"""
-Event representing that the due date of an Issue changed.
-    READ is granted if READ is granted on `issue`.
-    
-"""
-type DueDateChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
-  "The DateTime this entity was created at."
-  createdAt: DateTime!
-  "The User who created this entity."
-  createdBy: User!
-  "Checks if the current user has a specific permission on this Node"
-  hasPermission(
-    "The permission to check for"
-    permission: AllPermissionEntry
-  ): Boolean!
-  "The unique id of this node"
-  id: ID!
-  "The Issue this TimelineItem is part of."
-  issue: Issue
-  "The DateTime this entity was last modified at."
-  lastModifiedAt: DateTime!
-  "The User who last modified this entity."
-  lastModifiedBy: User!
-  "The new due date."
-  newDueDate: DateTime
-  "The old due date."
-  oldDueDate: DateTime
-  "If existing, the parent TimelineItem"
-  parentItem: ParentTimelineItem
-}
-
-"""
-Event representing that the estimated time of an Issue changed.
-    READ is granted if READ is granted on `issue`.
-    
-"""
-type EstimatedTimeChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
-  "The DateTime this entity was created at."
-  createdAt: DateTime!
-  "The User who created this entity."
-  createdBy: User!
-  "Checks if the current user has a specific permission on this Node"
-  hasPermission(
-    "The permission to check for"
-    permission: AllPermissionEntry
-  ): Boolean!
-  "The unique id of this node"
-  id: ID!
-  "The Issue this TimelineItem is part of."
-  issue: Issue
-  "The DateTime this entity was last modified at."
-  lastModifiedAt: DateTime!
-  "The User who last modified this entity."
-  lastModifiedBy: User!
-  "The new estimated time of the Issue."
-  newEstimatedTime: Duration
-  "The old estimated time of the Issue."
-  oldEstimatedTime: Duration
-  "If existing, the parent TimelineItem"
-  parentItem: ParentTimelineItem
-}
-
 "Fill style of a shape"
 type FillStyle implements BaseNode & Node {
   "The color of the fill"
@@ -2821,7 +2754,7 @@ type FillStyle implements BaseNode & Node {
 Permission associated with a set of users.
     Can have NodePermissions to grant permissions on specific Nodes.
     READ is granted if the global admin is granted.
-    
+
 """
 type GlobalPermission implements BaseNode & BasePermission & Named & NamedNode & Node {
   "If, the permission is granted to all users. Use with caution."
@@ -2852,10 +2785,30 @@ type GlobalPermission implements BaseNode & BasePermission & Named & NamedNode &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
+}
+
+"The connection type for GlobalPermission."
+type GlobalPermissionConnection {
+  "A list of all edges of the current page."
+  edges: [GlobalPermissionEdge!]!
+  "A list of all nodes of the current page."
+  nodes: [GlobalPermission!]!
+  "Information to aid in pagination."
+  pageInfo: PageInfo!
+  "Identifies the total count of items in the connection."
+  totalCount: Int!
+}
+
+"An edge in a connection."
+type GlobalPermissionEdge {
+  "A cursor used in pagination."
+  cursor: String!
+  "The item at the end of the edge."
+  node: GlobalPermission!
 }
 
 """
@@ -2864,9 +2817,9 @@ A user of the Gropius System.
     IMSUsers can be linked to a GropiusUser.
     Note however that this link does not affect relationships, e.g. if an IMSUser is part of an Assignment,
     after the IMSUser was linked to a GropiusUser, the GropiusUser does not link directly to the Assignment.
-    Therefore, to collect all Assignments, Issue participations etc. it is necessary to also request all 
+    Therefore, to collect all Assignments, Issue participations etc. it is necessary to also request all
     linked IMSUsers and their Assignments etc.
-    
+
 """
 type GropiusUser implements BaseNode & Node & User {
   "Assignments the user is part of, this includes assignments which aren't active."
@@ -2882,7 +2835,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentOrder,
+    orderBy: [AssignmentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentConnection!
@@ -2901,7 +2854,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: SyncPermissionTargetOrder,
+    orderBy: [SyncPermissionTargetOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): SyncPermissionTargetConnection!
@@ -2918,7 +2871,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: SyncPermissionTargetOrder,
+    orderBy: [SyncPermissionTargetOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): SyncPermissionTargetConnection!
@@ -2935,7 +2888,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AuditedNodeOrder,
+    orderBy: [AuditedNodeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AuditedNodeConnection!
@@ -2963,7 +2916,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSUserOrder,
+    orderBy: [IMSUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSUserConnection!
@@ -2982,7 +2935,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -2999,7 +2952,7 @@ type GropiusUser implements BaseNode & Node & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: BasePermissionOrder,
+    orderBy: [BasePermissionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): BasePermissionConnection!
@@ -3031,7 +2984,7 @@ type GropiusUserEdge {
 Entity which represents an issue management system (like GitHub, Jira, Redmine, ...).
     Trackables can be added to this via an IMSProject, so that their issues are synced to this IMS.
     READ is granted via an associated IMSPermission.
-    
+
 """
 type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node & SyncPermissionTarget & TemplatedNode {
   "The description of this entity."
@@ -3058,7 +3011,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSPermissionOrder,
+    orderBy: [IMSPermissionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSPermissionConnection!
@@ -3075,7 +3028,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSProjectOrder,
+    orderBy: [IMSProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSProjectConnection!
@@ -3092,7 +3045,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -3109,7 +3062,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -3124,7 +3077,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -3132,7 +3085,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -3149,7 +3102,7 @@ type IMS implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSUserOrder,
+    orderBy: [IMSUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSUserConnection!
@@ -3179,7 +3132,7 @@ type IMSEdge {
 Issue on an IMS, represents an Issue synced to an IMS.
     The representation of the Issue on the IMS depends on the type of IMS.
     READ is granted if read is granted on `issue`.
-    
+
 """
 type IMSIssue implements BaseNode & Node & TemplatedNode {
   "Checks if the current user has a specific permission on this Node"
@@ -3204,7 +3157,7 @@ type IMSIssue implements BaseNode & Node & TemplatedNode {
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -3212,7 +3165,7 @@ type IMSIssue implements BaseNode & Node & TemplatedNode {
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -3242,7 +3195,7 @@ type IMSIssueEdge {
 SubTemplate for IMSIssue.
     Part of a IMSTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type IMSIssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -3276,7 +3229,7 @@ type IMSIssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSIssueOrder,
+    orderBy: [IMSIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSIssueConnection!
@@ -3312,7 +3265,7 @@ type IMSPermission implements BaseNode & BasePermission & Named & NamedNode & No
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSOrder,
+    orderBy: [IMSOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSConnection!
@@ -3329,7 +3282,7 @@ type IMSPermission implements BaseNode & BasePermission & Named & NamedNode & No
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -3359,7 +3312,7 @@ type IMSPermissionEdge {
 Project on an IMS, represents a Trackable synced to an IMS.
     The representation on the IMS depends on the type of IMS, e.g. for GitHub, a project is a repository.
     READ is granted if READ is granted on `trackable` or `ims`.
-    
+
 """
 type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode & Node & SyncPermissionTarget & TemplatedNode {
   "The description of this entity."
@@ -3386,7 +3339,7 @@ type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSIssueOrder,
+    orderBy: [IMSIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSIssueConnection!
@@ -3405,7 +3358,7 @@ type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -3422,7 +3375,7 @@ type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -3437,7 +3390,7 @@ type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode &
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -3445,7 +3398,7 @@ type IMSProject implements BaseNode & MutableTemplatedNode & Named & NamedNode &
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -3477,7 +3430,7 @@ type IMSProjectEdge {
 SubTemplate for IMSProject.
     Part of a IMSTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type IMSProjectTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -3511,7 +3464,7 @@ type IMSProjectTemplate implements BaseNode & BaseTemplate & Named & NamedNode &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSProjectOrder,
+    orderBy: [IMSProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSProjectConnection!
@@ -3520,7 +3473,7 @@ type IMSProjectTemplate implements BaseNode & BaseTemplate & Named & NamedNode &
 """
 Template for imss
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type IMSTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & Template {
   "The description of this entity."
@@ -3538,7 +3491,7 @@ type IMSTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSTemplateOrder,
+    orderBy: [IMSTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSTemplateConnection!
@@ -3555,7 +3508,7 @@ type IMSTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSTemplateOrder,
+    orderBy: [IMSTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSTemplateConnection!
@@ -3594,7 +3547,7 @@ type IMSTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSOrder,
+    orderBy: [IMSOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSConnection!
@@ -3626,7 +3579,7 @@ A user an IMS.
     Note that this link can change at any time.
     The username might not be unique.
     It is possible that this user never heard of Gropius, and is only known to the system due to sync adapters.
-    
+
 """
 type IMSUser implements BaseNode & Node & TemplatedNode & User {
   "Assignments the user is part of, this includes assignments which aren't active."
@@ -3642,7 +3595,7 @@ type IMSUser implements BaseNode & Node & TemplatedNode & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentOrder,
+    orderBy: [AssignmentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentConnection!
@@ -3661,7 +3614,7 @@ type IMSUser implements BaseNode & Node & TemplatedNode & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AuditedNodeOrder,
+    orderBy: [AuditedNodeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AuditedNodeConnection!
@@ -3693,7 +3646,7 @@ type IMSUser implements BaseNode & Node & TemplatedNode & User {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -3708,7 +3661,7 @@ type IMSUser implements BaseNode & Node & TemplatedNode & User {
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -3716,7 +3669,7 @@ type IMSUser implements BaseNode & Node & TemplatedNode & User {
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -3748,7 +3701,7 @@ type IMSUserEdge {
 SubTemplate for IMSUser.
     Part of an IMSTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type IMSUserTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -3782,7 +3735,7 @@ type IMSUserTemplate implements BaseNode & BaseTemplate & Named & NamedNode & No
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSUserOrder,
+    orderBy: [IMSUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSUserConnection!
@@ -3791,7 +3744,7 @@ type IMSUserTemplate implements BaseNode & BaseTemplate & Named & NamedNode & No
 """
 Event representing that the type of an incoming IssueRelation changed.
     READ is granted if READ is granted on `issueRelation`.
-    
+
 """
 type IncomingRelationTypeChangedEvent implements AuditedNode & BaseNode & Node & RelationTypeChangedEvent & TimelineItem {
   "The DateTime this entity was created at."
@@ -3826,7 +3779,7 @@ An interface which is part of a specific ComponentVersion.
     Its semantics depend on the InterfaceSpecification it is specified by, e.g. an Interface can represent a REST API.
     Can be used in Relations and affected by Issues.
     READ is granted if READ is granted on `interfaceDefinition`.
-    
+
 """
 type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & RelationPartner & TemplatedNode {
   "The issues which affect this entity"
@@ -3842,7 +3795,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -3859,7 +3812,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueOrder,
+    orderBy: [AggregatedIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueConnection!
@@ -3885,7 +3838,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -3904,7 +3857,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IntraComponentDependencyParticipantOrder,
+    orderBy: [IntraComponentDependencyParticipantOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IntraComponentDependencyParticipantConnection!
@@ -3923,7 +3876,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -3938,7 +3891,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -3946,7 +3899,7 @@ type Interface implements AffectedByIssue & BaseNode & MutableTemplatedNode & Na
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -3969,7 +3922,7 @@ InterfaceDefinition on a ComponentVersion
     Specifies if it is visible/invisible self-defined.
     Specifies if it is visible/invisible derived (and by which Relations)
     READ is granted if READ is granted on `componentVersion`
-    
+
 """
 type InterfaceDefinition implements BaseNode & MutableTemplatedNode & Node & TemplatedNode {
   "The ComponentVersion using the InterfaceSpecificationVersion"
@@ -3996,7 +3949,7 @@ type InterfaceDefinition implements BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -4013,7 +3966,7 @@ type InterfaceDefinition implements BaseNode & MutableTemplatedNode & Node & Tem
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -4021,7 +3974,7 @@ type InterfaceDefinition implements BaseNode & MutableTemplatedNode & Node & Tem
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -4038,7 +3991,7 @@ type InterfaceDefinition implements BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -4073,7 +4026,7 @@ SubTemplate for InterfaceDefinition.
     Part of a InterfaceSpecificationTemplate.
     Defines templated fields with specific types (defined using JSON schema).
     All templatedFieldSpecifications must allow `null` as value.
-    
+
 """
 type InterfaceDefinitionTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -4107,7 +4060,7 @@ type InterfaceDefinitionTemplate implements BaseNode & BaseTemplate & Named & Na
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceDefinitionOrder,
+    orderBy: [InterfaceDefinitionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceDefinitionConnection!
@@ -4128,7 +4081,7 @@ Part of an Interface(Specification).
     Relations can specify for both start and end included InterfaceParts.
     Can be affected by Issues, and be used as start / end of ServiceEffectSpecifications.
     READ is granted if READ is granted on `definedOn`.
-    
+
 """
 type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & TemplatedNode {
   "The issues which affect this entity"
@@ -4144,7 +4097,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -4170,7 +4123,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -4187,7 +4140,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IntraComponentDependencyParticipantOrder,
+    orderBy: [IntraComponentDependencyParticipantOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IntraComponentDependencyParticipantConnection!
@@ -4204,7 +4157,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -4223,7 +4176,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -4231,7 +4184,7 @@ type InterfacePart implements AffectedByIssue & BaseNode & MutableTemplatedNode 
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -4261,7 +4214,7 @@ type InterfacePartEdge {
 SubTemplate for InterfacePart.
     Part of a InterfaceSpecificationTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type InterfacePartTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -4295,7 +4248,7 @@ type InterfacePartTemplate implements BaseNode & BaseTemplate & Named & NamedNod
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfacePartOrder,
+    orderBy: [InterfacePartOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfacePartConnection!
@@ -4307,7 +4260,7 @@ Specification of an Interface.
     Can be affected by Issues, and be used as start / end of ServiceEffectSpecifications.
     Defines InterfaceParts, but active parts depend on the InterfaceSpecificationVersion.
     READ is granted if READ is granted on `component`, or any InterfaceSpecificationVersion in `versions`.
-    
+
 """
 type InterfaceSpecification implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & TemplatedNode {
   "The issues which affect this entity"
@@ -4323,7 +4276,7 @@ type InterfaceSpecification implements AffectedByIssue & BaseNode & MutableTempl
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -4351,7 +4304,7 @@ type InterfaceSpecification implements AffectedByIssue & BaseNode & MutableTempl
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -4359,7 +4312,7 @@ type InterfaceSpecification implements AffectedByIssue & BaseNode & MutableTempl
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -4376,7 +4329,7 @@ type InterfaceSpecification implements AffectedByIssue & BaseNode & MutableTempl
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationVersionOrder,
+    orderBy: [InterfaceSpecificationVersionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationVersionConnection!
@@ -4398,7 +4351,7 @@ type InterfaceSpecificationConnection {
 Defines which InterfaceSpecifications are derived under which conditions by a Relation.
     Part of a RelationCondition, which is part of RelationTemplates.
     READ is always granted.
-    
+
 """
 type InterfaceSpecificationDerivationCondition implements BaseNode & Node {
   "Templates of InterfaceSpecifications which are derived."
@@ -4414,7 +4367,7 @@ type InterfaceSpecificationDerivationCondition implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -4474,7 +4427,7 @@ Template for InterfaceSpecifications.
     Defines templated fields with specific types (defined using JSON schema).
     Defines on which Components InterfaceSpecifications with this Template can be (in)visible on.
     Defines SubTemplates for Interfaces and InterfaceSpecificationVersions.
-    
+
 """
 type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & RelationPartnerTemplate & Template {
   "Templates of Components InterfaceSpecifications with this template can be invisible on."
@@ -4490,7 +4443,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentTemplateOrder,
+    orderBy: [ComponentTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentTemplateConnection!
@@ -4507,13 +4460,13 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentTemplateOrder,
+    orderBy: [ComponentTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentTemplateConnection!
   """
   InterfaceSpecificationDerivationConditions which allow to derive InterfaceSpecification with this template.
-          
+
   """
   derivableBy(
     "Get only items after the cursor"
@@ -4527,7 +4480,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationDerivationConditionOrder,
+    orderBy: [InterfaceSpecificationDerivationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationDerivationConditionConnection!
@@ -4546,7 +4499,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -4563,7 +4516,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -4578,22 +4531,22 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
   id: ID!
   """
   SubTemplate applied to all InterfaceDefinitions of InterfaceSpecifications with this Template.
-          
+
   """
   interfaceDefinitionTemplate: InterfaceDefinitionTemplate!
   """
   SubTemplate applied to all InterfaceParts of InterfaceSpecifications with this Template.
-          
+
   """
   interfacePartTemplate: InterfacePartTemplate!
   """
   SubTemplate applied to all InterfaceSpecificationVersions of InterfaceSpecifications with this Template.
-          
+
   """
   interfaceSpecificationVersionTemplate: InterfaceSpecificationVersionTemplate!
   """
   SubTemplate applied to all Interfaces of InterfaceSpecifications with this Template.
-          
+
   """
   interfaceTemplate: InterfaceTemplate!
   "If true, this template is deprecated and cannot be used for new entities any more."
@@ -4613,7 +4566,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -4630,7 +4583,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -4656,7 +4609,7 @@ type InterfaceSpecificationTemplate implements BaseNode & BaseTemplate & Named &
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationOrder,
+    orderBy: [InterfaceSpecificationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationConnection!
@@ -4690,7 +4643,7 @@ A specific version of an InterfaceSpecification.
     Can be derived by Relations, and affected by Issues.
     READ is granted if READ is granted on `interfaceSpecification`,
     or any InterfaceDefinition in `definitions`
-    
+
 """
 type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & MutableTemplatedNode & Named & NamedNode & Node & TemplatedNode & Versioned {
   "The issues which affect this entity"
@@ -4706,7 +4659,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -4732,7 +4685,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceDefinitionOrder,
+    orderBy: [InterfaceDefinitionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceDefinitionConnection!
@@ -4742,7 +4695,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
   name: String!
   """
   InterfaceParts which are part of this InterfaceSpecificationVersion
-          
+
   """
   parts(
     "Get only items after the cursor"
@@ -4756,7 +4709,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfacePartOrder,
+    orderBy: [InterfacePartOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfacePartConnection!
@@ -4771,7 +4724,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -4779,7 +4732,7 @@ type InterfaceSpecificationVersion implements AffectedByIssue & BaseNode & Mutab
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -4811,7 +4764,7 @@ type InterfaceSpecificationVersionEdge {
 SubTemplate for InterfaceSpecificationVersion.
     Part of a InterfaceSpecificationTemplate.
     Defines templated fields with specific types (defined using JSON schema).
-    
+
 """
 type InterfaceSpecificationVersionTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -4845,7 +4798,7 @@ type InterfaceSpecificationVersionTemplate implements BaseNode & BaseTemplate & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationVersionOrder,
+    orderBy: [InterfaceSpecificationVersionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationVersionConnection!
@@ -4856,7 +4809,7 @@ SubTemplate for Interface.
     Part of a InterfaceSpecificationTemplate.
     Defines templated fields with specific types (defined using JSON schema).
     All templatedFieldSpecifications must allow `null` as value.
-    
+
 """
 type InterfaceTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & SubTemplate {
   "The description of this entity."
@@ -4890,7 +4843,7 @@ type InterfaceTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceOrder,
+    orderBy: [InterfaceOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceConnection!
@@ -4900,7 +4853,7 @@ type InterfaceTemplate implements BaseNode & BaseTemplate & Named & NamedNode & 
 Participant of a a IntraComponentDependencySpecification
     Consists of an Interface it refers to, and optionally a subset of its active InterfaceParts.
     READ is granted if READ is granted on the associated ComponentVersion
-    
+
 """
 type IntraComponentDependencyParticipant implements BaseNode & Node {
   "Checks if the current user has a specific permission on this Node"
@@ -4914,7 +4867,7 @@ type IntraComponentDependencyParticipant implements BaseNode & Node {
   If not empty, the InterfaceParts this IntraComponentDependencyParticipant refers to
           Otherwise, it refers to the referenced `interface` in general.
           Must all be active on `interface`.
-          
+
   """
   includedParts(
     "Get only items after the cursor"
@@ -4928,7 +4881,7 @@ type IntraComponentDependencyParticipant implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfacePartOrder,
+    orderBy: [InterfacePartOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfacePartConnection!
@@ -4963,11 +4916,11 @@ type IntraComponentDependencyParticipantEdge {
 """
 Describes a dependency between Interfaces of a Component.
     Both ends can optionally affected InterfaceParts.
-    Semantically, any InterfaceSpecification(Version) in `outgoing` depends on any InterfaceSpecification(Version) in 
+    Semantically, any InterfaceSpecification(Version) in `outgoing` depends on any InterfaceSpecification(Version) in
     `incoming`.
     This can result in a propagation of Issues, if any location in `in` is in some regard affected by an Issue,
     all locations in `out` are affected by this Issue, too.
-    
+
 """
 type IntraComponentDependencySpecification implements BaseNode & Named & NamedNode & Node {
   "The ComponentVersion this is part of"
@@ -4994,7 +4947,7 @@ type IntraComponentDependencySpecification implements BaseNode & Named & NamedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IntraComponentDependencyParticipantOrder,
+    orderBy: [IntraComponentDependencyParticipantOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IntraComponentDependencyParticipantConnection!
@@ -5013,7 +4966,7 @@ type IntraComponentDependencySpecification implements BaseNode & Named & NamedNo
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IntraComponentDependencyParticipantOrder,
+    orderBy: [IntraComponentDependencyParticipantOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IntraComponentDependencyParticipantConnection!
@@ -5048,7 +5001,7 @@ An Issue in the Gropius system.
     Caution: due to confidentiality reasons, updates to `incomingRelations` do not cause updates on `lastModifiedBy`
     and `participants`, however, `lastModifiedAt` and `lastUpdatedAt` is still changed.
     The same applies to RelatedByIssueEvent, RemovedIncomingRelationEvent and IncomingRelationTypeChangedEvent.
-    
+
 """
 type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & TemplatedNode {
   "Entities which are in some regard affected by this Issue."
@@ -5064,7 +5017,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AffectedByIssueOrder,
+    orderBy: [AffectedByIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AffectedByIssueConnection!
@@ -5081,7 +5034,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueOrder,
+    orderBy: [AggregatedIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueConnection!
@@ -5098,7 +5051,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -5115,7 +5068,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentOrder,
+    orderBy: [AssignmentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentConnection!
@@ -5138,7 +5091,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
   id: ID!
   """
   Descriptions of each IMSProject this issue is synced to containing information specified by the sync
-          
+
   """
   imsIssues(
     "Get only items after the cursor"
@@ -5152,7 +5105,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSIssueOrder,
+    orderBy: [IMSIssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSIssueConnection!
@@ -5169,7 +5122,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueRelationOrder,
+    orderBy: [IssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueRelationConnection!
@@ -5186,7 +5139,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueCommentOrder,
+    orderBy: [IssueCommentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueCommentConnection!
@@ -5203,7 +5156,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: LabelOrder,
+    orderBy: [LabelOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): LabelConnection!
@@ -5226,7 +5179,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueRelationOrder,
+    orderBy: [IssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueRelationConnection!
@@ -5243,7 +5196,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: UserOrder,
+    orderBy: [UserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): UserConnection!
@@ -5260,7 +5213,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TrackableOrder,
+    orderBy: [TrackableOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TrackableConnection!
@@ -5273,7 +5226,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
   """
   The state of the Issue, e.g. OPEN. Allowed IssueStates are defined by the template.
           The state also defines if this Issue is considered open or closed.
-          
+
   """
   state: IssueState!
   "The Template of this Issue."
@@ -5287,7 +5240,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -5295,7 +5248,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -5312,7 +5265,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TimelineItemOrder,
+    orderBy: [TimelineItemOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TimelineItemConnection!
@@ -5331,7 +5284,7 @@ type Issue implements AuditedNode & BaseNode & MutableTemplatedNode & Node & Tem
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TrackableOrder,
+    orderBy: [TrackableOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TrackableConnection!
@@ -5345,7 +5298,7 @@ Comment on an Issue.
     Can be deleted, if deleted, the body is set to an empty String and the referencedComments are cleared.
     Keeps track when it was last edited and by who, but does not keep track of the change history.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type IssueComment implements AuditedNode & BaseNode & Comment & Node & TimelineItem {
   "IssueComments which answer this Comment."
@@ -5361,7 +5314,7 @@ type IssueComment implements AuditedNode & BaseNode & Comment & Node & TimelineI
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueCommentOrder,
+    orderBy: [IssueCommentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueCommentConnection!
@@ -5372,19 +5325,19 @@ type IssueComment implements AuditedNode & BaseNode & Comment & Node & TimelineI
                   Supports GFM (GitHub Flavored Markdown).
                   Updates cause lastEditedAt and lastEditedBy to change.
                   Empty String if IssueComment is deleted.
-                  
+
   """
   body: String!
   """
   Keep track when the body of the Comment was last updated.
           If not updated yet, the DateTime of creation.
-          
+
   """
   bodyLastEditedAt: DateTime!
   """
   The User who last edited the body of this Comment.
           If not edited yet, the creator of the Comment.
-          
+
   """
   bodyLastEditedBy: User!
   "The DateTime this entity was created at."
@@ -5421,7 +5374,7 @@ type IssueComment implements AuditedNode & BaseNode & Comment & Node & TimelineI
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -5470,7 +5423,7 @@ type IssueEdge {
 """
 Priority of an Issue like HIGH or LOW. Part of an IssueTemplate.
     READ is always granted.
-    
+
 """
 type IssuePriority implements BaseNode & Named & NamedNode & Node {
   "The description of this entity."
@@ -5496,7 +5449,7 @@ type IssuePriority implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -5512,7 +5465,7 @@ type IssuePriority implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -5546,7 +5499,7 @@ Event representing that a relation between two Issues has been created.
     respectively in incomingRelations on the `relatedIssue`.
     Caution: This is **not** a subtype of Relation.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type IssueRelation implements AuditedNode & BaseNode & Node & TimelineItem {
   "The AggregatedIssueRelations this IssueRelation is aggregated by."
@@ -5562,7 +5515,7 @@ type IssueRelation implements AuditedNode & BaseNode & Node & TimelineItem {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AggregatedIssueRelationOrder,
+    orderBy: [AggregatedIssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AggregatedIssueRelationConnection!
@@ -5577,6 +5530,8 @@ type IssueRelation implements AuditedNode & BaseNode & Node & TimelineItem {
   ): Boolean!
   "The unique id of this node"
   id: ID!
+  "The initial type of the relation, e.g. DUPLICATES. Allowed types are defined by the IssueTemplate."
+  initialType: IssueRelationType
   "The Issue this TimelineItem is part of."
   issue: Issue
   "The DateTime this entity was last modified at."
@@ -5614,7 +5569,7 @@ type IssueRelationEdge {
 """
 Type for an IssueRelation, like DUPLICATES or DEPENDS_ON. Part of an IssueTemplate.
     READ is always granted.
-    
+
 """
 type IssueRelationType implements BaseNode & Named & NamedNode & Node {
   "The description of this entity."
@@ -5643,7 +5598,7 @@ type IssueRelationType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -5660,7 +5615,7 @@ type IssueRelationType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueRelationOrder,
+    orderBy: [IssueRelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueRelationConnection!
@@ -5689,7 +5644,7 @@ type IssueRelationTypeEdge {
 """
 State of an Issue like BUG or FEATURE_REQUEST. Part of an IssueTemplate.
     READ is always granted.
-    
+
 """
 type IssueState implements BaseNode & Named & NamedNode & Node {
   "The description of this entity."
@@ -5716,7 +5671,7 @@ type IssueState implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -5735,7 +5690,7 @@ type IssueState implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -5765,10 +5720,10 @@ type IssueStateEdge {
 Template for Issues.
     Defines templated fields with specific types (defined using JSON schema).
     Defines possible IssueTypes, IssueStates and IssuePriorities for Issues with this Template,
-    possible AssignmentTypes for Assignments to Issues with this template, and possible 
+    possible AssignmentTypes for Assignments to Issues with this template, and possible
     RelationTypes for outgoing IssueRelations for Issues with this template.
     All those are derived, if this Template extends another IssueTemplate.
-    
+
 """
 type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & Template {
   "Set of all types Assignments to Issues with this Template can have."
@@ -5784,7 +5739,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: AssignmentTypeOrder,
+    orderBy: [AssignmentTypeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): AssignmentTypeConnection!
@@ -5803,7 +5758,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -5820,7 +5775,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -5846,7 +5801,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssuePriorityOrder,
+    orderBy: [IssuePriorityOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssuePriorityConnection!
@@ -5863,7 +5818,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueStateOrder,
+    orderBy: [IssueStateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueStateConnection!
@@ -5880,7 +5835,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTypeOrder,
+    orderBy: [IssueTypeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTypeConnection!
@@ -5899,7 +5854,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueRelationTypeOrder,
+    orderBy: [IssueRelationTypeOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueRelationTypeConnection!
@@ -5921,7 +5876,7 @@ type IssueTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -5950,7 +5905,7 @@ type IssueTemplateEdge {
 """
 Type of an Issue like BUG or FEATURE_REQUEST. Part of an IssueTemplate.
     READ is always granted.
-    
+
 """
 type IssueType implements BaseNode & Named & NamedNode & Node {
   "The description of this entity."
@@ -5977,7 +5932,7 @@ type IssueType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -5996,7 +5951,7 @@ type IssueType implements BaseNode & Named & NamedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -6035,7 +5990,7 @@ Label used to mark Issues with.
     A Label consists of a name, a description and a color.
     Issues may be synced to all IMSProjects of Trackables they are part of.
     READ is granted if READ is granted on any Trackable in `trackables`.
-    
+
 """
 type Label implements AuditedNode & BaseNode & Named & NamedAuditedNode & Node {
   "The color of the Label, used to display the Label."
@@ -6066,7 +6021,7 @@ type Label implements AuditedNode & BaseNode & Named & NamedAuditedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -6089,7 +6044,7 @@ type Label implements AuditedNode & BaseNode & Named & NamedAuditedNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TrackableOrder,
+    orderBy: [TrackableOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TrackableConnection!
@@ -6120,7 +6075,7 @@ type Mutation {
   Adds an AffectedByIssue to an Issue, requires MANAGE_ISSUES on any of the Trackables the Issue is on,
           and AFFECT_ENTITIES_WITH_ISSUES on the Trackable associated with the AffectedByIssue.
           If the Issue already affects the AffectedByIssue, no event is created.
-          
+
   """
   addAffectedEntityToIssue(
     "Defines the Issue and Trackable"
@@ -6130,7 +6085,7 @@ type Mutation {
   Adds a Artefact to an Issue, requires MANAGE_ISSUES on any Trackable the issue is on and READ on the Artefact.
           Additionally, the Artefact must be part of a Trackable the Issue is on.
           If the Artefact is already on the Issue, no event is created.
-          
+
   """
   addArtefactToIssue(
     "Defines the Artefact and Issue"
@@ -6140,16 +6095,16 @@ type Mutation {
   Adds a ComponentVersion to a Project,
           requires MANAGE_COMPONENTS on the Project and ADD_TO_PROJECTS on the Component associated
           with the ComponentVersion
-          
+
   """
   addComponentVersionToProject(
     "Defines which ComponentVersion to add to which Project"
     input: AddComponentVersionToProjectInput!
   ): AddComponentVersionToProjectPayload!
   """
-  Adds an InterfaceSpecificationVersion (in)visible to ComponentVersions, 
+  Adds an InterfaceSpecificationVersion (in)visible to ComponentVersions,
           requires ADMIN on the Component of the ComponentVersion to update
-          
+
   """
   addInterfaceSpecificationVersionToComponentVersion(
     "Defines the InterfaceSpecificationVersion and ComponentVersion"
@@ -6159,7 +6114,7 @@ type Mutation {
   Pins an Issue on a Trackable, requires MANAGE_ISSUES on the Trackable the Issue should be pinned on.
           Additionally, the Issue must already be on the Trackable.
           If the Issue is already pinned on the Trackable, no event is created.
-          
+
   """
   addIssueToPinnedIssues(
     "Defines the Issue and Trackable"
@@ -6169,7 +6124,7 @@ type Mutation {
   Adds an Issue to a Trackable, requires MANAGE_ISSUES on the Trackable the Issue should be added to,
           and EXPORT_ISSUES on any Trackable the Issue currently is on.
           If the Issue is already on the Trackable, no event is created.
-          
+
   """
   addIssueToTrackable(
     "Defines the Issue and Trackable"
@@ -6179,7 +6134,7 @@ type Mutation {
   Adds a Label to an Issue, requires MANAGE_ISSUES on any Trackable the issue is on and READ on the Label.
           Additionally, the Label must be on at least on Trackable the Issue is on.
           If the Label is already on the Issue, no event is created.
-          
+
   """
   addLabelToIssue(
     "Defines the Label and Issue"
@@ -6187,86 +6142,67 @@ type Mutation {
   ): AddLabelToIssuePayload!
   """
   Adds a Label to a Trackable, requires MANAGE_LABELS on the Trackable and EXPORT_LABEL on any Trackable
-          the Label is on        
-          
+          the Label is on
+
   """
   addLabelToTrackable(
     "Defines the Label and Trackable"
     input: AddLabelToTrackableInput!
   ): AddLabelToTrackablePayload!
   """
+  Creates multiple Components, requires CAN_CREATE_COMPONENTS.
+          Automatically generates a default ComponentPermission which grants the authenticated user READ and ADMIN
+
+  """
+  bulkCreateComponent(
+    "Defines the created Components"
+    input: BulkCreateComponentInput!
+  ): BulkCreateComponentPayload!
+  """
+  Creates multiple Relations, requires RELATE_FROM_COMPONENT on the Component associated with start.
+
+  """
+  bulkCreateRelation(
+    "Defines the created Relations"
+    input: BulkCreateRelationInput!
+  ): BulkCreateRelationPayload!
+  """
   Changes the type of an Assignment, requires MANAGE_ISSUES on any of the Trackables the Issue the Assignment
           is part of is on.
           Additionally, if present, the new type must be compatible with the template of the Issue.
           If the current type of the Assignment is equal to the new one, no event is created.
-          
+
   """
   changeAssignmentType(
     "Defines the Assignment to update and its new AssignmentType"
     input: ChangeAssignmentTypeInput!
   ): ChangeAssignmentTypePayload!
   """
-  Changes the `dueDate` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
-          If the `dueDate` is equal to the already existing `dueDate`, no event is created.
-          
-  """
-  changeIssueDueDate(
-    "Defines the Issue and new `dueDate`"
-    input: ChangeIssueDueDateInput!
-  ): ChangeIssueDueDatePayload!
-  """
-  Changes the `estimatedTime` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
-          If the `estimatedTime` is equal to the already existing `estimatedTime`, no event is created.
-          
-  """
-  changeIssueEstimatedTime(
-    "Defines the Issue and new `estimatedTime`"
-    input: ChangeIssueEstimatedTimeInput!
-  ): ChangeIssueEstimatedTimePayload!
-  """
   Changes the `priority` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
           Additionally, the IssuePriority must be defined by the Template of the Issue.
           If the `priority` is equal to the already existing `priority`, no event is created.
-          
+
   """
   changeIssuePriority(
     "Defines the Issue and new `priority`"
     input: ChangeIssuePriorityInput!
   ): ChangeIssuePriorityPayload!
   """
-  Changes the type of an IssueRelation, requires MANAGE_ISSUES on any of the Trackables the Issue the 
+  Changes the type of an IssueRelation, requires MANAGE_ISSUES on any of the Trackables the Issue the
           IssueRelation is part of is on.
           Additionally, if present, the new type must be compatible with the template of the Issue.
           If the current type of the IssueRelation is equal to the new one, no event is created.
-          
+
   """
   changeIssueRelationType(
     "Defines the IssueRelation to update and its new IssueRelationType"
     input: ChangeIssueRelationTypeInput!
   ): ChangeIssueRelationTypePayload!
   """
-  Changes the `spentTime` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
-          If the `spentTime` is equal to the already existing `spentTime`, no event is created.
-          
-  """
-  changeIssueSpentTime(
-    "Defines the Issue and new `spentTime`"
-    input: ChangeIssueSpentTimeInput!
-  ): ChangeIssueSpentTimePayload!
-  """
-  Changes the `startDate` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
-          If the `startDate` is equal to the already existing `startDate`, no event is created.
-          
-  """
-  changeIssueStartDate(
-    "Defines the Issue and new `startDate`"
-    input: ChangeIssueStartDateInput!
-  ): ChangeIssueStartDatePayload!
-  """
   Changes the `state` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
           Additionally, the IssueState must be defined by the Template of the Issue.
           If the `state` is equal to the already existing `state`, no event is created.
-          
+
   """
   changeIssueState(
     "Defines the Issue and new `state`"
@@ -6281,19 +6217,19 @@ type Mutation {
           no new value was provided, the old value is removed.
           Only creates an event if the new template is not equal to the current template.
           Events for other changes can be found in the childItems of the returned event.
-          
+
   """
   changeIssueTemplate(
     "Defines the new IssueTemplate, the Issue and other fields to update"
     input: ChangeIssueTemplateInput!
   ): ChangeIssueTemplatePayload!
   """
-  Changes the value of a templated field on an Issue, requires MANAGE_ISSUES on any of the Trackables 
+  Changes the value of a templated field on an Issue, requires MANAGE_ISSUES on any of the Trackables
           the Issue is on.
           Additionally, the field with the name must be defined by the template of the Issue, and the provided new value
           must be compatible.
           If the new value is equal to the current value of the templated field, no event is created.
-          
+
   """
   changeIssueTemplatedField(
     "Defines the Issue, the templated field and its new value"
@@ -6302,7 +6238,7 @@ type Mutation {
   """
   Changes the `title` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
           If the `title` is equal to the already existing `title`, no event is created.
-          
+
   """
   changeIssueTitle(
     "Defines the Issue and new `title`"
@@ -6312,7 +6248,7 @@ type Mutation {
   Changes the `type` of an Issue requires MANAGE_ISSUES on any of the Trackables the Issue is on.
           Additionally, the IssueType must be defined by the Template of the Issue.
           If the `type` is equal to the already existing `type`, no event is created.
-          
+
   """
   changeIssueType(
     "Defines the Issue and new `type`"
@@ -6331,8 +6267,8 @@ type Mutation {
   """
   Assigns a User to an Issue by creating an Assignment, requires MANAGE_ISSUES on any of the Trackables the
           Issue is on.
-          Additionally, if present, the type must be compatible with the template of the Issue.            
-          
+          Additionally, if present, the type must be compatible with the template of the Issue.
+
   """
   createAssignment(
     "Defines the Issue, User, and optional AssignmentType"
@@ -6341,7 +6277,7 @@ type Mutation {
   """
   Creates a new Component, requires CAN_CREATE_COMPONENTS.
           Automatically generates a default ComponentPermission which grants the authenticated user READ and ADMIN
-          
+
   """
   createComponent(
     "Defines the created Component"
@@ -6350,7 +6286,7 @@ type Mutation {
   """
   Creates a new ComponentPermission, requires ADMIN on all Components which should be added to the created
           permission.
-          
+
   """
   createComponentPermission(
     "Defines the created ComponentPermission"
@@ -6374,7 +6310,7 @@ type Mutation {
   """
   Creates a new IMS, requires CAN_CREATE_IMSS.
           Automatically generates a default IMSPermission which grants the authorized user READ and ADMIN
-          
+
   """
   createIMS(
     "Defines the created IMS"
@@ -6383,7 +6319,7 @@ type Mutation {
   """
   Creates a new IMSPermission, requires ADMIN on all IMSs which should be added to the created
           permission.
-          
+
   """
   createIMSPermission(
     "Defines the created IMSPermission"
@@ -6392,7 +6328,7 @@ type Mutation {
   """
   Creates a new IMSProject, requirse SYNC_TRACKABLES on the specified IMS
           AND MANAGE_IMS on the specified Trackable
-          
+
   """
   createIMSProject(
     "Defines the created IMSProject"
@@ -6419,9 +6355,9 @@ type Mutation {
     input: CreateInterfaceSpecificationVersionInput!
   ): CreateInterfaceSpecificationVersionPayload!
   """
-  Creates a new IntraComponentDependencySpecification, requires ADMIN on the Component associated with the 
+  Creates a new IntraComponentDependencySpecification, requires ADMIN on the Component associated with the
           specified ComponentVersion.
-          
+
   """
   createIntraComponentDependencySpecification(
     "Defines the created IntraComponentDependencySpecification"
@@ -6430,7 +6366,7 @@ type Mutation {
   """
   Creates a new Issue on at least one Trackable, requires CREATE_ISSUES on all Trackables it should be created on.
           Additionally, checks that the `type`, `state` and `templatedFields` are compatible with the `template`.
-          
+
   """
   createIssue(
     "Defines the created Issue"
@@ -6440,7 +6376,7 @@ type Mutation {
   Creates an IssueComment, requires COMMENT on any of the Trackables the Issue is on.
           Requires READ on referenced Artefacts, additionally, those must be part of a Trackable the Issue is on.
           If present, the Comment it answers must be on the same Issue.
-          
+
   """
   createIssueComment(
     "Defines the IssueComment"
@@ -6448,8 +6384,8 @@ type Mutation {
   ): CreateIssueCommentPayload!
   """
   Creates an IssueRelation, requires MANAGE_ISSUES on any of the Trackables the Issue is on.
-          Additionally, if present, the type must be compatible with the template of the Issue.            
-          
+          Additionally, if present, the type must be compatible with the template of the Issue.
+
   """
   createIssueRelation(
     "Defines the Issue, related Issue, and optional IssueRelationType"
@@ -6462,7 +6398,7 @@ type Mutation {
   ): CreateIssueTemplatePayload!
   """
   Creates a new Label on at least one Trackable. Requires MANAGE_LABELS on all provided Trackables.
-          
+
   """
   createLabel(
     "Defines the created Label"
@@ -6471,7 +6407,7 @@ type Mutation {
   """
   Creates a new Project, requires CAN_CREATE_PROJECTS.
           Automatically generates a default ProjectPermission which grants the authorized user READ and ADMIN
-          
+
   """
   createProject(
     "Defines the created Project"
@@ -6480,7 +6416,7 @@ type Mutation {
   """
   Creates a new ProjectPermission, requires ADMIN on all Projects which should be added to the created
           permission.
-          
+
   """
   createProjectPermission(
     "Defines the created ProjectPermission"
@@ -6488,7 +6424,7 @@ type Mutation {
   ): CreateProjectPermissionPayload!
   """
   Creates a new Relation, requires RELATE_FROM_COMPONENT on the Component associated with start.
-          
+
   """
   createRelation(
     "Defines the created Relation"
@@ -6501,7 +6437,7 @@ type Mutation {
   ): CreateRelationTemplatePayload!
   """
   Deletes the Artefact, requires MANAGE_ARTEFACTS on the Trackable it is part of. Removes it from all Issues.
-          
+
   """
   deleteArtefact(
     "Defines which Artefact to delete"
@@ -6514,9 +6450,9 @@ type Mutation {
   ): DeleteNodePayload!
   """
   Deletes a ComponentPermission, requires ADMIN on all Components the permission currently affects.
-          Ensures that after the permission is deleted, all previously affected Components still have a permission which 
+          Ensures that after the permission is deleted, all previously affected Components still have a permission which
           grants ADMIN to at least one user.
-          
+
   """
   deleteComponentPermission(
     "Defines which ComponentPermission to delete"
@@ -6533,9 +6469,9 @@ type Mutation {
     input: DeleteNodeInput!
   ): DeleteNodePayload!
   """
-  Deletes the specified IMS, requires ADMIN on the IMS to delete. 
+  Deletes the specified IMS, requires ADMIN on the IMS to delete.
           Also deletes all associated IMSProjects
-          
+
   """
   deleteIMS(
     "Defines which IMS to delete"
@@ -6543,9 +6479,9 @@ type Mutation {
   ): DeleteNodePayload!
   """
   Deletes a IMSPermission, requires ADMIN on all IMSs the permission currently affects.
-          Ensures that after the permission is deleted, all previously affected IMSs still have a permission which 
+          Ensures that after the permission is deleted, all previously affected IMSs still have a permission which
           grants ADMIN to at least one user.
-          
+
   """
   deleteIMSPermission(
     "Defines which IMSPermission to delete"
@@ -6555,7 +6491,7 @@ type Mutation {
   Deletes the specified IMSProject, requirse ADMIN on the IMS associted with the
           specified IMSProject OR MANAGE_IMS on the Trackable associated with the specified
           IMSProject.
-          
+
   """
   deleteIMSProject(
     "Defines which IMSProject to delete"
@@ -6577,14 +6513,14 @@ type Mutation {
   """
   Deletes the specified InterfaceSpecificationVersion,
           requires ADMIN on the Component of the InterfaceSpecification of the InterfaceSpecificationVersion to delete
-          
+
   """
   deleteInterfaceSpecificationVersion(
     "Defines which InterfaceSpecificationVersion to delete"
     input: DeleteNodeInput!
   ): DeleteNodePayload!
   """
-  Deletes the specified IntraComponentDependencySpecification, requires ADMIN on the Component associated with the 
+  Deletes the specified IntraComponentDependencySpecification, requires ADMIN on the Component associated with the
           IntraComponentDependencySpecification to delete.
   """
   deleteIntraComponentDependencySpecification(
@@ -6601,7 +6537,7 @@ type Mutation {
           Issue is on. Otherwise, requires MODERATOR on any of the Trackables the Issue is on.
           The IssueComment then is marked as deleted, its body set to "", and the referenced Artefacts are cleared.
           It is no longer possible to update the IssueComment.
-          
+
   """
   deleteIssueComment(
     "Defines how to update which IssueComment"
@@ -6610,7 +6546,7 @@ type Mutation {
   """
   Deletes the Label, requires MANAGE_LABELS on all Trackables it is on.
           Removes it from all Issues. Note that the Label will still be visible in the timeline of Issues.
-          
+
   """
   deleteLabel(
     "Defines which Label to delete"
@@ -6623,9 +6559,9 @@ type Mutation {
   ): DeleteNodePayload!
   """
   Deletes a ProjectPermission, requires ADMIN on all Projects the permission currently affects.
-          Ensures that after the permission is deleted, all previously affected Projects still have a permission which 
+          Ensures that after the permission is deleted, all previously affected Projects still have a permission which
           grants ADMIN to at least one user.
-          
+
   """
   deleteProjectPermission(
     "Defines which ProjectPermission to delete"
@@ -6633,7 +6569,7 @@ type Mutation {
   ): DeleteNodePayload!
   """
   Deletes the specified Relation, requires RELATE_FROM_COMPONENT on the Component associated with start.
-          
+
   """
   deleteRelation(
     "Defines which Relation to delete"
@@ -6643,7 +6579,7 @@ type Mutation {
   Removes an AffectedByIssue from an Issue, requires MANAGE_ISSUES on any of the Trackables the Issue is on,
           or AFFECT_ENTITIES_WITH_ISSUES on the Trackable associated with the AffectedByIssue.
           If the Issue does not affect the AffectedByIssue, no event is created.
-          
+
   """
   removeAffectedEntityFromIssue(
     "Defines the Issue and Trackable"
@@ -6652,7 +6588,7 @@ type Mutation {
   """
   Removes a Artefact from an Issue, requires MANAGE_ISSUES on any Trackable the issue is on.
           If the Artefact is not on the Issue, no event is created.
-          
+
   """
   removeArtefactFromIssue(
     "Defines the Artefact and Issue"
@@ -6662,7 +6598,7 @@ type Mutation {
   Removes an Assignment from an Issue, require MANAGE_ISSUES on any of the Trackables the Issue the Assignment
           is part of is on.
           If the Assignment was already removed, no event is created.
-          
+
   """
   removeAssignment(
     "Defines the Assignment to remove"
@@ -6671,16 +6607,16 @@ type Mutation {
   """
   Removes a ComponentVersion from a Project,
           requires MANAGE_COMPONENTS on the Project
-          
+
   """
   removeComponentVersionFromProject(
     "Defines which ComponentVersion to remove from which Project"
     input: RemoveComponentVersionFromProjectInput!
   ): RemoveComponentVersionFromProjectPayload!
   """
-  Removes an InterfaceSpecificationVersion (in)visible from ComponentVersions, 
+  Removes an InterfaceSpecificationVersion (in)visible from ComponentVersions,
           requires ADMIN on the Component of the ComponentVersion to update
-          
+
   """
   removeInterfaceSpecificationVersionFromComponentVersion(
     "Defines the InterfaceSpecificationVersion and ComponentVersion"
@@ -6690,7 +6626,7 @@ type Mutation {
   Unpins the Issue on a Trackable, requires MANAGE_ISSUES on the Trackable where the Issue should
           be unpinned.
           If the Issue is not pinned on the Trackable, no event is created.
-          
+
   """
   removeIssueFromPinnedIssues(
     "Defines the Issue and Trackable"
@@ -6701,10 +6637,10 @@ type Mutation {
           be removed from.
           Additionally requires that the Issue is on at least one Trackable afterwards.
           If the Issue is not on the Trackable, no event is created.
-          Also removes any Artefacts, Labels and AffectedByIssue which cannot be any more on the Issue, 
+          Also removes any Artefacts, Labels and AffectedByIssue which cannot be any more on the Issue,
           and unpins the issue on the defined Trackable if it was pinned.
           The created events can be found in the childItems of the returned RemovedFromTrackableEvent.
-          
+
   """
   removeIssueFromTrackable(
     "Defines the Issue and Trackable"
@@ -6714,7 +6650,7 @@ type Mutation {
   Removes an IssueRelation from an Issue, require MANAGE_ISSUES on any of the Trackables the Issue the
           IssueRelation starts at is on.
           If the IssueRelation was already removed, no event is created.
-          
+
   """
   removeIssueRelation(
     "Defines the IssueRelation to remove"
@@ -6723,7 +6659,7 @@ type Mutation {
   """
   Removes a Label from an Issue, requires MANAGE_ISSUES on any Trackable the issue is on.
           If the Label is not on the Issue, no event is created.
-          
+
   """
   removeLabelFromIssue(
     "Defines the Label and Issue"
@@ -6733,7 +6669,7 @@ type Mutation {
   Removes a Label from a Trackable, requires MANAGE_LABELS on the Trackable.
           Removes the Label from all Issues where the Label cannot be anymore, as the Trackable of the Label and the Issue
           are now disjoint.
-          
+
   """
   removeLabelFromTrackable(
     "Defines the Label and Trackable"
@@ -6741,7 +6677,7 @@ type Mutation {
   ): RemoveLabelFromTrackablePayload!
   """
   Updates the specified Artefact, requires MANAGE_ARTEFACTS on the Trackable the Artefact is part of
-          
+
   """
   updateArtefact(
     "Defines which Artefact to update and how to update it"
@@ -6750,7 +6686,7 @@ type Mutation {
   """
   Updates an IssueComment. If the user created the IssueComment, requires READ on any of the Trackables the
           Issue is on. Otherwise, requires MODERATOR on any of the Trackables the Issue is on.
-          
+
   """
   updateBody(
     "Defines how to update which Body"
@@ -6765,7 +6701,7 @@ type Mutation {
   Updates a ComponentPermission, requires ADMIN on all Components the permission currently affects.
           Ensures that after the update, all affected Components still have a permission which grants ADMIN to at least
           one user.
-          
+
   """
   updateComponentPermission(
     "Defines which ComponentPermission to update and how to update it"
@@ -6784,7 +6720,7 @@ type Mutation {
   """
   Updates a GropiusUser. Only the same user and admin users can update a GropiusUser.
           Only admin users can update isAdmin
-          
+
   """
   updateGropiusUser(
     "Defines which GropiusUser to update and how to update it"
@@ -6799,7 +6735,7 @@ type Mutation {
   Updates a IMSPermission, requires ADMIN on all IMSs the permission currently affects.
           Ensures that after the update, all affected IMSs still have a permission which grants ADMIN to at least
           one user.
-          
+
   """
   updateIMSPermission(
     "Defines which IMSPermission to update and how to update it"
@@ -6809,7 +6745,7 @@ type Mutation {
   Updates the specified IMSProject, requirse SYNC_TRACKABLES on the IMS associted with the
           specified IMSProject AND MANAGE_IMS on the Trackable associated with the specified
           IMSProject.
-          
+
   """
   updateIMSProject(
     "Defines which IMSProject to update and how to update it"
@@ -6818,7 +6754,7 @@ type Mutation {
   """
   Updates the specified Interface,
           requires ADMIN on the Component of the ComponentVersion of the InterfaceDefinition of the Interface  to update
-          
+
   """
   updateInterface(
     "Defines which Interface to update and how to update it"
@@ -6827,7 +6763,7 @@ type Mutation {
   """
   Updates the specified InterfaceDefinition,
           requires ADMIN on the Component of the ComponentVersion of the InterfaceDefinition to update
-          
+
   """
   updateInterfaceDefinition(
     "Defines which InterfaceDefinition to update and how to update it"
@@ -6836,7 +6772,7 @@ type Mutation {
   """
   Updates the specified InterfacePart,
           requires ADMIN on the Component of the InterfaceSpecification of the InterfacePart to update
-          
+
   """
   updateInterfacePart(
     "Defines which InterfacePart to update and how to update it"
@@ -6850,14 +6786,14 @@ type Mutation {
   """
   Updates the specified InterfaceSpecificationVersion,
           requires ADMIN on the Component of the InterfaceSpecification of the InterfaceSpecificationVersion to update
-          
+
   """
   updateInterfaceSpecificationVersion(
     "Defines which InterfaceSpecificationVersion to update and how to update it"
     input: UpdateInterfaceSpecificationVersionInput!
   ): UpdateInterfaceSpecificationVersionPayload!
   """
-  Updates the specified IntraComponentDependencySpecification, requires ADMIN on the Component associated with the 
+  Updates the specified IntraComponentDependencySpecification, requires ADMIN on the Component associated with the
           IntraComponentDependencySpecification to update.
   """
   updateIntraComponentDependencySpecification(
@@ -6868,7 +6804,7 @@ type Mutation {
   Updates an IssueComment. If the user created the IssueComment, requires READ on any of the Trackables the
           Issue is on. Otherwise, requires MODERATOR on any of the Trackables the Issue is on.
           Requires READ on referenced Artefacts, additionally, added ones must be part of a Trackable the Issue is on.
-          
+
   """
   updateIssueComment(
     "Defines how to update which IssueComment"
@@ -6888,7 +6824,7 @@ type Mutation {
   Updates a ProjectPermission, requires ADMIN on all Projects the permission currently affects.
           Ensures that after the update, all affected Projects still have a permission which grants ADMIN to at least
           one user.
-          
+
   """
   updateProjectPermission(
     "Defines which ProjectPermission to update and how to update it"
@@ -6896,7 +6832,7 @@ type Mutation {
   ): UpdateProjectPermissionPayload!
   """
   Updates the specified Relation, requires RELATE_FROM_COMPONENT on the Component associated with start.
-          
+
   """
   updateRelation(
     "Defines which Relation to update and how to update it"
@@ -6917,7 +6853,7 @@ type Mutation {
 """
 Event representing that the type of an incoming IssueRelation changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type OutgoingRelationTypeChangedEvent implements AuditedNode & BaseNode & Node & RelationTypeChangedEvent & TimelineItem {
   "The DateTime this entity was created at."
@@ -6962,7 +6898,7 @@ type PageInfo {
 """
 Event representing that the priority of an Issue changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type PriorityChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -6996,7 +6932,7 @@ A project of the Gropius system.
     Can be affected by issues.
     Can have issues, labels and artefacts as this is a Trackable.
     READ is granted via an associated ProjectPermission.
-    
+
 """
 type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & Trackable {
   "The issues which affect this entity"
@@ -7012,7 +6948,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -7029,7 +6965,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactOrder,
+    orderBy: [ArtefactOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactConnection!
@@ -7046,7 +6982,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentVersionOrder,
+    orderBy: [ComponentVersionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentVersionConnection!
@@ -7062,7 +6998,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
   """
   The set of Issues which are part of this Trackable.
           An Issue has to be part of a Trackable to use the Labels and Artefacts defined by the Trackable.
-          
+
   """
   issues(
     "Get only items after the cursor"
@@ -7076,7 +7012,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -7093,7 +7029,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: LabelOrder,
+    orderBy: [LabelOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): LabelConnection!
@@ -7112,7 +7048,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ProjectPermissionOrder,
+    orderBy: [ProjectPermissionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ProjectPermissionConnection!
@@ -7129,7 +7065,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueOrder,
+    orderBy: [IssueOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueConnection!
@@ -7148,7 +7084,7 @@ type Project implements AffectedByIssue & BaseNode & Named & NamedNode & Node & 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSProjectOrder,
+    orderBy: [IMSProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSProjectConnection!
@@ -7204,7 +7140,7 @@ type ProjectPermission implements BaseNode & BasePermission & Named & NamedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ProjectOrder,
+    orderBy: [ProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ProjectConnection!
@@ -7221,7 +7157,7 @@ type ProjectPermission implements BaseNode & BasePermission & Named & NamedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: GropiusUserOrder,
+    orderBy: [GropiusUserOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): GropiusUserConnection!
@@ -7261,7 +7197,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ArtefactTemplateOrder,
+    orderBy: [ArtefactTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ArtefactTemplateConnection!
@@ -7278,7 +7214,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentTemplateOrder,
+    orderBy: [ComponentTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentTemplateConnection!
@@ -7295,12 +7231,29 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ComponentOrder,
+    orderBy: [ComponentOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ComponentConnection!
   "The current authenticated user"
   currentUser: GropiusUser
+  "Query for nodes of type GlobalPermission"
+  globalPermissions(
+    "Get only items after the cursor"
+    after: String,
+    "Get only items before the cursor"
+    before: String,
+    "Filter for specific items in the connection"
+    filter: GlobalPermissionFilterInput,
+    "Get the first n items. Must not be used if before is specified"
+    first: Int,
+    "Get the last n items. Must not be used if after is specified"
+    last: Int,
+    "Order in which the items are sorted"
+    orderBy: [GlobalPermissionOrder!],
+    "Skips n items. First or last MUST be specified, is otherwise ignored"
+    skip: Int
+  ): GlobalPermissionConnection!
   "Checks if the current user has a specific global permission"
   hasGlobalPermission(
     "The permission to check for"
@@ -7319,7 +7272,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSTemplateOrder,
+    orderBy: [IMSTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSTemplateConnection!
@@ -7336,7 +7289,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IMSOrder,
+    orderBy: [IMSOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IMSConnection!
@@ -7353,7 +7306,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationTemplateOrder,
+    orderBy: [InterfaceSpecificationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationTemplateConnection!
@@ -7370,7 +7323,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: IssueTemplateOrder,
+    orderBy: [IssueTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): IssueTemplateConnection!
@@ -7392,7 +7345,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: ProjectOrder,
+    orderBy: [ProjectOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): ProjectConnection!
@@ -7409,7 +7362,7 @@ type Query {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationTemplateOrder,
+    orderBy: [RelationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationTemplateConnection!
@@ -7650,7 +7603,7 @@ type Query {
 Event representing that the Issue was used in an IssueRelation as related issue.
     The IssueRelation may not be active any more.
     READ is granted if READ is granted on `relation`.
-    
+
 """
 type RelatedByIssueEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -7685,7 +7638,7 @@ A relation between RelationPartners (ComponentVersions and Interfaces).
     For both start and end, if it is an Interface, it is possible to define the InterfaceParts this includes.
     Caution: This is **not** a supertype of IssueRelation.
     READ is granted if READ is granted on `start`.
-    
+
 """
 type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode {
   "InterfaceDefinition this Relation derives invisible"
@@ -7701,7 +7654,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceDefinitionOrder,
+    orderBy: [InterfaceDefinitionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceDefinitionConnection!
@@ -7718,7 +7671,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceDefinitionOrder,
+    orderBy: [InterfaceDefinitionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceDefinitionConnection!
@@ -7737,7 +7690,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfacePartOrder,
+    orderBy: [InterfacePartOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfacePartConnection!
@@ -7763,7 +7716,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfacePartOrder,
+    orderBy: [InterfacePartOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfacePartConnection!
@@ -7778,7 +7731,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
   All templatedFields
           If `names` is provided, only those matching the name. If `prefixMatching` is true, matching is done by
           prefix, otherwise by full name.
-          
+
   """
   templatedFields(
     "Names of the templated fields. If not provided, all templatedFields."
@@ -7786,7 +7739,7 @@ type Relation implements BaseNode & MutableTemplatedNode & Node & TemplatedNode 
     """
     If true, name matching is performed as prefix matching, otherwise as absolute match.
                 Defaults to absolute matching
-                
+
     """
     prefixMatching: Boolean
   ): [JSONField!]!
@@ -7799,7 +7752,7 @@ Condition which defines if a Relation can use a RelationTemplate.
     Also defines which InterfaceSpecifications are derived via the Relation.
     Part of a RelationTemplate.
     READ is always granted.
-    
+
 """
 type RelationCondition implements BaseNode & Node {
   "Templates of allowed start RelationPartners"
@@ -7815,7 +7768,7 @@ type RelationCondition implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationPartnerTemplateOrder,
+    orderBy: [RelationPartnerTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationPartnerTemplateConnection!
@@ -7839,7 +7792,7 @@ type RelationCondition implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: InterfaceSpecificationDerivationConditionOrder,
+    orderBy: [InterfaceSpecificationDerivationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): InterfaceSpecificationDerivationConditionConnection!
@@ -7856,7 +7809,7 @@ type RelationCondition implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationTemplateOrder,
+    orderBy: [RelationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationTemplateConnection!
@@ -7873,7 +7826,7 @@ type RelationCondition implements BaseNode & Node {
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationPartnerTemplateOrder,
+    orderBy: [RelationPartnerTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationPartnerTemplateConnection!
@@ -7944,7 +7897,7 @@ Template for Relations.
     Defines templated fields with specific types (defined using JSON schema).
     Defines which Relations can use this Template.
     At least one RelationCondition has to match.
-    
+
 """
 type RelationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & Node & Template {
   "The description of this entity."
@@ -7962,7 +7915,7 @@ type RelationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationTemplateOrder,
+    orderBy: [RelationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationTemplateConnection!
@@ -7979,7 +7932,7 @@ type RelationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationTemplateOrder,
+    orderBy: [RelationTemplateOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationTemplateConnection!
@@ -8009,7 +7962,7 @@ type RelationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationConditionOrder,
+    orderBy: [RelationConditionOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConditionConnection!
@@ -8033,7 +7986,7 @@ type RelationTemplate implements BaseNode & BaseTemplate & Named & NamedNode & N
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: RelationOrder,
+    orderBy: [RelationOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): RelationConnection!
@@ -8112,7 +8065,7 @@ type RemoveLabelFromTrackablePayload {
 """
 Event representing that an entity is no longer affected by an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedAffectedEntityEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8141,7 +8094,7 @@ type RemovedAffectedEntityEvent implements AuditedNode & BaseNode & Node & Timel
 """
 Event representing that an Artefact was removed from an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedArtefactEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8168,10 +8121,10 @@ type RemovedArtefactEvent implements AuditedNode & BaseNode & Node & TimelineIte
 }
 
 """
-Event representing that a User was unassigned from an Issue, 
+Event representing that a User was unassigned from an Issue,
     meaning an Assignment was removed from an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedAssignmentEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8200,7 +8153,7 @@ type RemovedAssignmentEvent implements AuditedNode & BaseNode & Node & TimelineI
 """
 Event representing that an Issue was unpinned on a Trackable.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedFromPinnedIssuesEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8229,7 +8182,7 @@ type RemovedFromPinnedIssuesEvent implements AuditedNode & BaseNode & Node & Tim
 """
 Event representing that an Issue was removed from a Trackable.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedFromTrackableEvent implements AuditedNode & BaseNode & Node & ParentTimelineItem & TimelineItem {
   "Child TimelineItems. These are still part of the main timeline."
@@ -8245,7 +8198,7 @@ type RemovedFromTrackableEvent implements AuditedNode & BaseNode & Node & Parent
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TimelineItemOrder,
+    orderBy: [TimelineItemOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TimelineItemConnection!
@@ -8275,7 +8228,7 @@ type RemovedFromTrackableEvent implements AuditedNode & BaseNode & Node & Parent
 """
 Event representing that an incoming IssueRelation was removed.
     READ is granted if READ is granted on `removedRelation`.
-    
+
 """
 type RemovedIncomingRelationEvent implements AuditedNode & BaseNode & Node & RemovedRelationEvent & TimelineItem {
   "The DateTime this entity was created at."
@@ -8304,7 +8257,7 @@ type RemovedIncomingRelationEvent implements AuditedNode & BaseNode & Node & Rem
 """
 Event representing that a Label was removed from an Issue.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedLabelEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8333,7 +8286,7 @@ type RemovedLabelEvent implements AuditedNode & BaseNode & Node & TimelineItem {
 """
 Event representing that an outgoing IssueRelation was removed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedOutgoingRelationEvent implements AuditedNode & BaseNode & Node & RemovedRelationEvent & TimelineItem {
   "The DateTime this entity was created at."
@@ -8362,7 +8315,7 @@ type RemovedOutgoingRelationEvent implements AuditedNode & BaseNode & Node & Rem
 """
 Event representing that a templated field was removed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type RemovedTemplatedFieldEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8391,71 +8344,9 @@ type RemovedTemplatedFieldEvent implements AuditedNode & BaseNode & Node & Timel
 }
 
 """
-Event representing that the spent time of an Issue changed.
-    READ is granted if READ is granted on `issue`.
-    
-"""
-type SpentTimeChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
-  "The DateTime this entity was created at."
-  createdAt: DateTime!
-  "The User who created this entity."
-  createdBy: User!
-  "Checks if the current user has a specific permission on this Node"
-  hasPermission(
-    "The permission to check for"
-    permission: AllPermissionEntry
-  ): Boolean!
-  "The unique id of this node"
-  id: ID!
-  "The Issue this TimelineItem is part of."
-  issue: Issue
-  "The DateTime this entity was last modified at."
-  lastModifiedAt: DateTime!
-  "The User who last modified this entity."
-  lastModifiedBy: User!
-  "The mew spent time."
-  newSpentTime: Duration
-  "The old spent time."
-  oldSpentTime: Duration
-  "If existing, the parent TimelineItem"
-  parentItem: ParentTimelineItem
-}
-
-"""
-Event representing that the start date of an Issue changed.
-    READ is granted if READ is granted on `issue`.
-    
-"""
-type StartDateChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
-  "The DateTime this entity was created at."
-  createdAt: DateTime!
-  "The User who created this entity."
-  createdBy: User!
-  "Checks if the current user has a specific permission on this Node"
-  hasPermission(
-    "The permission to check for"
-    permission: AllPermissionEntry
-  ): Boolean!
-  "The unique id of this node"
-  id: ID!
-  "The Issue this TimelineItem is part of."
-  issue: Issue
-  "The DateTime this entity was last modified at."
-  lastModifiedAt: DateTime!
-  "The User who last modified this entity."
-  lastModifiedBy: User!
-  "The new start date."
-  newStartDate: DateTime
-  "The old start date."
-  oldStartDate: DateTime
-  "If existing, the parent TimelineItem"
-  parentItem: ParentTimelineItem
-}
-
-"""
 Event representing that the state of an Issue changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type StateChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8521,7 +8412,7 @@ type SyncPermissionTargetEdge {
 """
 Event representing the template of an Issue changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type TemplateChangedEvent implements AuditedNode & BaseNode & Node & ParentTimelineItem & TimelineItem {
   "Child TimelineItems. These are still part of the main timeline."
@@ -8537,7 +8428,7 @@ type TemplateChangedEvent implements AuditedNode & BaseNode & Node & ParentTimel
     "Get the last n items. Must not be used if after is specified"
     last: Int,
     "Order in which the items are sorted"
-    orderBy: TimelineItemOrder,
+    orderBy: [TimelineItemOrder!],
     "Skips n items. First or last MUST be specified, is otherwise ignored"
     skip: Int
   ): TimelineItemConnection!
@@ -8569,7 +8460,7 @@ type TemplateChangedEvent implements AuditedNode & BaseNode & Node & ParentTimel
 """
 Event representing that the value of a templated field changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type TemplatedFieldChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8622,7 +8513,7 @@ type TimelineItemEdge {
 """
 Event representing that the title of an Issue changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type TitleChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -8673,7 +8564,7 @@ type TrackableEdge {
 """
 Event representing that the type of an Issue changed.
     READ is granted if READ is granted on `issue`.
-    
+
 """
 type TypeChangedEvent implements AuditedNode & BaseNode & Node & TimelineItem {
   "The DateTime this entity was created at."
@@ -9011,6 +8902,10 @@ enum ComponentOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "ComponentPermission entry enum type."
@@ -9116,8 +9011,22 @@ enum ComponentVersionOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
   "Order by version"
   VERSION
+}
+
+"Fields a list of GlobalPermission can be sorted by"
+enum GlobalPermissionOrderField {
+  "Order by allUsers"
+  ALL_USERS
+  "Order by id"
+  ID
+  "Order by name"
+  NAME
 }
 
 "Fields a list of GropiusUser can be sorted by"
@@ -9136,6 +9045,10 @@ enum GropiusUserOrderField {
 enum IMSIssueOrderField {
   "Order by id"
   ID
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of IMS can be sorted by"
@@ -9144,6 +9057,10 @@ enum IMSOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "IMSPermission entry enum type."
@@ -9175,6 +9092,10 @@ enum IMSProjectOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of IMSTemplate can be sorted by"
@@ -9203,6 +9124,10 @@ enum InterfaceDefinitionOrderField {
   ID
   "Order by invisibleSelfDefined"
   INVISIBLE_SELF_DEFINED
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
   "Order by visibleSelfDefined"
   VISIBLE_SELF_DEFINED
 }
@@ -9213,6 +9138,10 @@ enum InterfaceOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of InterfacePart can be sorted by"
@@ -9221,6 +9150,10 @@ enum InterfacePartOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of InterfaceSpecificationDerivationCondition can be sorted by"
@@ -9235,6 +9168,10 @@ enum InterfaceSpecificationOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of InterfaceSpecificationTemplate can be sorted by"
@@ -9251,6 +9188,10 @@ enum InterfaceSpecificationVersionOrderField {
   ID
   "Order by name"
   NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
   "Order by version"
   VERSION
 }
@@ -9295,12 +9236,32 @@ enum IssueOrderField {
   LAST_MODIFIED_AT
   "Order by lastUpdatedAt"
   LAST_UPDATED_AT
+  "Order by priority_id"
+  PRIORITY_ID
+  "Order by priority_name"
+  PRIORITY_NAME
+  "Order by priority_value"
+  PRIORITY_VALUE
   "Order by spentTime"
   SPENT_TIME
   "Order by startDate"
   START_DATE
+  "Order by state_id"
+  STATE_ID
+  "Order by state_isOpen"
+  STATE_IS_OPEN
+  "Order by state_name"
+  STATE_NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
   "Order by title"
   TITLE
+  "Order by type_id"
+  TYPE_ID
+  "Order by type_name"
+  TYPE_NAME
 }
 
 "Fields a list of IssuePriority can be sorted by"
@@ -9505,8 +9466,20 @@ enum RelationConditionOrderField {
 
 "Fields a list of Relation can be sorted by"
 enum RelationOrderField {
+  "Order by end_id"
+  END_ID
+  "Order by end_name"
+  END_NAME
   "Order by id"
   ID
+  "Order by start_id"
+  START_ID
+  "Order by start_name"
+  START_NAME
+  "Order by template_id"
+  TEMPLATE_ID
+  "Order by template_name"
+  TEMPLATE_NAME
 }
 
 "Fields a list of RelationPartnerTemplate can be sorted by"
@@ -9579,10 +9552,6 @@ enum TimelineItemType {
   BODY
   "Comment timeline item"
   COMMENT
-  "DueDateChangedEvent timeline item"
-  DUE_DATE_CHANGED_EVENT
-  "EstimatedTimeChangedEvent timeline item"
-  ESTIMATED_TIME_CHANGED_EVENT
   "IncomingRelationTypeChangedEvent timeline item"
   INCOMING_RELATION_TYPE_CHANGED_EVENT
   "IssueComment timeline item"
@@ -9621,10 +9590,6 @@ enum TimelineItemType {
   REMOVED_RELATION_EVENT
   "RemovedTemplatedFieldEvent timeline item"
   REMOVED_TEMPLATED_FIELD_EVENT
-  "SpentTimeChangedEvent timeline item"
-  SPENT_TIME_CHANGED_EVENT
-  "StartDateChangedEvent timeline item"
-  START_DATE_CHANGED_EVENT
   "StateChangedEvent timeline item"
   STATE_CHANGED_EVENT
   "TemplatedFieldChangedEvent timeline item"
@@ -9966,6 +9931,8 @@ input AssignmentFilterInput {
   "Filter by id"
   id: IDFilterInput
   "Filters for nodes where the related node match this filter"
+  initialType: AssignmentTypeFilterInput
+  "Filters for nodes where the related node match this filter"
   issue: IssueFilterInput
   "Filter by lastModifiedAt"
   lastModifiedAt: DateTimeFilterInput
@@ -10165,28 +10132,24 @@ input BooleanFilterInput {
   in: [Boolean!]
 }
 
+"Input for the bulkCreateComponent mutation"
+input BulkCreateComponentInput {
+  "The input for the createComponent mutation"
+  components: [CreateComponentInput!]!
+}
+
+"Input to create multiple Components"
+input BulkCreateRelationInput {
+  "The input for the createRelation mutation"
+  relations: [CreateRelationInput!]!
+}
+
 "Input for the changeAssignmentType mutation"
 input ChangeAssignmentTypeInput {
   "The id of the Assignment of which the type is updated"
   assignment: ID!
   "The id of the new type, must be defined by the template of the Issue"
   type: ID
-}
-
-"Input for the changeIssueDueDate mutation"
-input ChangeIssueDueDateInput {
-  "The new dueDate"
-  dueDate: DateTime
-  "The id of the Issue of which the dueDate is updated"
-  issue: ID!
-}
-
-"Input for the changeIssueEstimatedTime mutation"
-input ChangeIssueEstimatedTimeInput {
-  "The new estimatedTime"
-  estimatedTime: Duration
-  "The id of the Issue of which the estimatedTime is updated"
-  issue: ID!
 }
 
 "Input for the changeIssuePriority mutation"
@@ -10203,22 +10166,6 @@ input ChangeIssueRelationTypeInput {
   issueRelation: ID!
   "The id of the new type, must be defined by the template of the Issue"
   type: ID
-}
-
-"Input for the changeIssueSpentTime mutation"
-input ChangeIssueSpentTimeInput {
-  "The id of the Issue of which the spentTime is updated"
-  issue: ID!
-  "The new spentTime"
-  spentTime: Duration
-}
-
-"Input for the changeIssueStartDate mutation"
-input ChangeIssueStartDateInput {
-  "The id of the Issue of which the startDate is updated"
-  issue: ID!
-  "The new startDate"
-  startDate: DateTime
 }
 
 "Input for the changeIssueState mutation"
@@ -10572,7 +10519,7 @@ input CreateArtefactTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -10642,7 +10589,7 @@ input CreateComponentTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -10776,7 +10723,7 @@ input CreateInterfaceSpecificationTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -10872,7 +10819,7 @@ input CreateIssueTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -10948,7 +10895,7 @@ input CreateRelationTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -11015,6 +10962,14 @@ input GlobalPermissionFilterInput {
   or: [GlobalPermissionFilterInput!]
   "Filter by users"
   users: GropiusUserListFilterInput
+}
+
+"Defines the order of a GlobalPermission list"
+input GlobalPermissionOrder {
+  "The direction to order by, defaults to ASC"
+  direction: OrderDirection = ASC
+  "The field to order by, defaults to ID"
+  field: GlobalPermissionOrderField = ID
 }
 
 "Filter used to filter GropiusUser"
@@ -11886,7 +11841,7 @@ input IntraComponentDependencyParticipantInput {
   """
   The id of the Interface, must be an Interface on the ComponentVersion the
           IntraComponentDependencySpecification this is part of refers to
-          
+
   """
   interface: ID!
 }
@@ -12155,6 +12110,8 @@ input IssueRelationFilterInput {
   createdBy: UserFilterInput
   "Filter by id"
   id: IDFilterInput
+  "Filters for nodes where the related node match this filter"
+  initialType: IssueRelationTypeFilterInput
   "Filters for nodes where the related node match this filter"
   issue: IssueFilterInput
   "Filter by lastModifiedAt"
@@ -12543,7 +12500,7 @@ input NullableSubTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -12997,7 +12954,7 @@ input SubTemplateInput {
   """
   Additional initial templateFieldSpecifications, should be a JSON schema JSON.
           Must be disjoint with templateFieldSpecifications of templates this template extends.
-          
+
   """
   templateFieldSpecifications: [JSONFieldInput!]
 }
@@ -13154,7 +13111,7 @@ input UpdateArtefactInput {
   If provided, the id of the new template for the Artefact
           Use `templatedFields` to update fields so that they conform with the new specifications.
           No longer needed fields are automatically removed.
-          
+
   """
   template: ID
   "Values for templatedFields to update"
@@ -13181,7 +13138,7 @@ input UpdateComponentInput {
   Values for templatedFields of ComponentVersions to update.
           Only evaluated if `template` is provided!
           Affect all ComponentVersions of the updated Component
-          
+
   """
   componentVersionTemplatedFields: [JSONFieldInput!]
   "The description of the NamedNode"
@@ -13193,7 +13150,7 @@ input UpdateComponentInput {
   """
   Ids of permissions to remove, must be disjoint with addedPermissions.
           There must always be at least one permissions granting ADMIN to some GropiusUser left.
-          
+
   """
   removedPermissions: [ID!]
   "The repositoryURL of the named node"
@@ -13203,7 +13160,7 @@ input UpdateComponentInput {
           Use `templatedFields` to update fields so that they conform with the new specifications.
           Use `componentVersionTemplatedFields` to update the `templatedFields` of ALL ComponentVersions
           No longer needed fields are automatically removed.
-          
+
   """
   template: ID
   "Values for templatedFields to update"
@@ -13291,7 +13248,7 @@ input UpdateIMSInput {
   """
   Ids of permissions to remove, must be disjoint with addedPermissions.
           There must always be at least one permissions granting ADMIN to some GropiusUser left.
-          
+
   """
   removedPermissions: [ID!]
   "Values for templatedFields to update"
@@ -13372,28 +13329,28 @@ input UpdateInterfaceSpecificationInput {
   Values for templatedFields of InterfaceDefinitions to update.
           Only evaluated if `template` is provided!
           Affect all InterfaceDefinitions of the updated InterfaceSpecification
-          
+
   """
   interfaceDefinitionTemplatedFields: [JSONFieldInput!]
   """
   Values for templatedFields of InterfaceParts to update.
           Only evaluated if `template` is provided!
           Affect all InterfaceParts of the updated InterfaceSpecification
-          
+
   """
   interfacePartTemplatedFields: [JSONFieldInput!]
   """
   Values for templatedFields of InterfaceSpecificationVersions to update.
           Only evaluated if `template` is provided!
           Affect all InterfaceSpecificationVersions of the updated InterfaceSpecification
-          
+
   """
   interfaceSpecificationVersionTemplatedFields: [JSONFieldInput!]
   """
   Values for templatedFields of Interfaces to update.
           Only evaluated if `template` is provided!
           Affect all Interfaces of the updated InterfaceSpecification
-          
+
   """
   interfaceTemplatedFields: [JSONFieldInput!]
   "The new name of the NamedNode, must not be empty"
@@ -13402,7 +13359,7 @@ input UpdateInterfaceSpecificationInput {
   If provided, the id of the new template for the Component
           Use `templatedFields` to update fields so that they conform with the new specifications.
           No longer needed fields are automatically removed.
-          
+
   """
   template: ID
   "Values for templatedFields to update"
@@ -13478,7 +13435,7 @@ input UpdateProjectInput {
   """
   Ids of permissions to remove, must be disjoint with addedPermissions.
           There must always be at least one permissions granting ADMIN to some GropiusUser left.
-          
+
   """
   removedPermissions: [ID!]
   "The repositoryURL of the named node"
@@ -13522,7 +13479,7 @@ input UpdateRelationInput {
           Use `templatedFields` to update fields so that they conform with the new specifications.
           No longer needed fields are automatically removed.
           Caution: the chosen Template must be compatible with the Templates of the start and end of the Relation.
-          
+
   """
   template: ID
   "Values for templatedFields to update"

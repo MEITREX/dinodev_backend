@@ -18,6 +18,10 @@ import java.util.function.*;
 @Configuration
 public class GropiusConfiguration {
 
+    // Maximum size of the in-memory buffer for the WebClient.
+    // This is necessary to prevent the application from running out of memory when receiving
+    // large responses from the Gropius server.
+    // Observed responses did not exceed 1 MB, so 16 MB should be a safe value.
     private static final int MAX_IN_MEMORY_SIZE = 16 * 1024 * 1024;
 
     @Bean
