@@ -25,9 +25,10 @@ public class ReminderService {
     private final DefaultEventPublisher eventPublisher;
     private final SprintStatsService    sprintStatsService;
 
-    // run every day at 8:00
-    @Scheduled(cron = "0 0 8 * * *")
+    // run every day at 9:00
+    @Scheduled(cron = "0 0 9 * * *")
     public void publishReminders() {
+        log.info("Checking for reminders to publish...");
         List<Project> projects = projectService.getAllProjects();
 
         projects.forEach(this::publishRemindersForProject);
