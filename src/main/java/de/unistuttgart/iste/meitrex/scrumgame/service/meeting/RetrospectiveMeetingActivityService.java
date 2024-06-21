@@ -22,6 +22,7 @@ public class RetrospectiveMeetingActivityService
     private final RetrospectiveColumnRepository  retrospectiveColumnRepository;
     private final RetrospectiveCommentRepository retrospectiveCommentRepository;
     private final MeetingService                 meetingService;
+    private final RetrospectiveMeetingRepository repository;
 
     public RetrospectiveMeetingActivityService(
             RetrospectiveMeetingRepository repository,
@@ -36,6 +37,7 @@ public class RetrospectiveMeetingActivityService
         this.auth = auth;
         this.retrospectiveCommentRepository = retrospectiveCommentRepository;
         this.meetingService = meetingService;
+        this.repository = repository;
     }
 
     public RetrospectiveMeeting addComment(UUID id, UUID columnId, String content) {
@@ -46,9 +48,10 @@ public class RetrospectiveMeetingActivityService
 
         RetrospectiveColumnEntity column = retrospectiveColumnRepository.findByIdOrThrow(columnId);
         column.getComments().add(comment);
+        comment.setColumn(column);
         retrospectiveColumnRepository.save(column);
 
-        var result = getOrThrow(id);
+        var result = convertToDto(repository.findFirstByProjectIdAndActive(id, true).orElseThrow());
         meetingService.publishMeetingUpdated(result);
         return result;
     }
@@ -58,7 +61,7 @@ public class RetrospectiveMeetingActivityService
         comment.setContent(content);
         retrospectiveCommentRepository.save(comment);
 
-        var result = getOrThrow(id);
+        var result = convertToDto(repository.findFirstByProjectIdAndActive(id, true).orElseThrow());
         meetingService.publishMeetingUpdated(result);
         return result;
     }
@@ -68,7 +71,7 @@ public class RetrospectiveMeetingActivityService
         comment.getThumbsUpBy().add(auth.getCurrentUserId());
         retrospectiveCommentRepository.save(comment);
 
-        var result = getOrThrow(id);
+        var result = convertToDto(repository.findFirstByProjectIdAndActive(id, true).orElseThrow());
         meetingService.publishMeetingUpdated(result);
         return result;
     }
@@ -76,7 +79,7 @@ public class RetrospectiveMeetingActivityService
     public RetrospectiveMeeting deleteComment(UUID id, UUID commentId) {
         retrospectiveCommentRepository.deleteById(commentId);
 
-        var result = getOrThrow(id);
+        var result = convertToDto(repository.findFirstByProjectIdAndActive(id, true).orElseThrow());
         meetingService.publishMeetingUpdated(result);
         return result;
     }

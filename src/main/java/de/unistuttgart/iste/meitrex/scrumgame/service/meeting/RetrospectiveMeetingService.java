@@ -13,6 +13,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintStatsService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.user.UserInProjectService;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -21,6 +22,7 @@ import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.*;
 
+@Slf4j
 @Service
 public class RetrospectiveMeetingService
         extends AbstractCrudService<UUID, RetrospectiveMeetingEntity, RetrospectiveMeeting> {
@@ -99,25 +101,33 @@ public class RetrospectiveMeetingService
 
     @Transactional
     public RetrospectiveMeeting finishMeeting(UUID id) {
-        return updateRetrospectiveMeeting(id, retrospectiveMeetingEntity -> {
-            retrospectiveMeetingEntity.setActive(false);
+        // set end date so that the sprint is not active anymore
+        // update sprint number
 
-            ProjectEntity projectEntity = retrospectiveMeetingEntity.getProject();
+        RetrospectiveMeetingEntity retrospectiveMeetingEntity = repository.findFirstByProjectIdAndActive(id, true)
+                .orElseThrow(() -> new MeitrexNotFoundException("No active retrospective meeting found"));
+        retrospectiveMeetingEntity.setActive(false);
 
-            // set end date so that the sprint is not active anymore
-            sprintService.updateSprintEntity(projectEntity.getId(),
-                    projectEntity.getCurrentSprintNumber(),
-                    sprintEntity -> {
-                        sprintEntity.setEndDate(OffsetDateTime.now());
-                    });
+        ProjectEntity projectEntity = retrospectiveMeetingEntity.getProject();
 
-            // update sprint number
-            int newSprintNumber = Optional.ofNullable(projectEntity.getCurrentSprintNumber()).orElse(0) + 1;
-            projectEntity.setCurrentSprintNumber(newSprintNumber + 1);
-            projectRepository.save(projectEntity);
+        // set end date so that the sprint is not active anymore
+        sprintService.updateSprintEntity(projectEntity.getId(),
+                projectEntity.getCurrentSprintNumber(),
+                sprintEntity -> {
+                    sprintEntity.setEndDate(OffsetDateTime.now());
+                });
 
-            // TODO unlocks
-        });
+        // update sprint number
+        int newSprintNumber = Optional.ofNullable(projectEntity.getCurrentSprintNumber()).orElse(0) + 1;
+        projectEntity.setCurrentSprintNumber(newSprintNumber + 1);
+        projectRepository.save(projectEntity);
+
+        // TODO unlocks
+
+        RetrospectiveMeeting result = convertToDto(repository.save(retrospectiveMeetingEntity));
+        meetingService.publishMeetingUpdated(result);
+        meetingService.publishMeetingFinishedEvents(result);
+        return result;
     }
 
 
@@ -150,9 +160,11 @@ public class RetrospectiveMeetingService
     }
 
     private void initActivities(RetrospectiveMeetingEntity entity, List<RetrospectiveActivityInput> activities) {
+        log.info("initActivities: " + activities);
         entity.setActivities(activities.stream()
                 .map(activityInput -> getModelMapper()
                         .map(activityInput, RetrospectiveActivityEntity.class))
+                .peek(activity -> log.info("activity: " + activity))
                 .toList());
     }
 

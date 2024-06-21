@@ -217,13 +217,14 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
         PlanningMeeting planningMeeting = updatePlanningMeeting(projectId, meetingEntity ->
                 meetingEntity.setActive(false));
 
-        setStateAndSprintNumberForPlannedIssues(projectId, planningMeeting);
-
         CreateSprintInput input = getCreateSprintInputFromMeeting(projectId, planningMeeting);
+        Sprint result = sprintService.createNewSprint(projectId, input);
+
+        setStateAndSprintNumberForPlannedIssues(projectId, planningMeeting);
 
         meetingService.publishMeetingFinishedEvents(planningMeeting);
 
-        return sprintService.createNewSprint(projectId, input);
+        return result;
     }
 
     private CreateSprintInput getCreateSprintInputFromMeeting(UUID projectId, PlanningMeeting planningMeeting) {

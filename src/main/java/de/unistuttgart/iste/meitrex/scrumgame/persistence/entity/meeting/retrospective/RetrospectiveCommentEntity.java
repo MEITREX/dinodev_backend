@@ -18,12 +18,24 @@ public class RetrospectiveCommentEntity implements IWithId<UUID> {
     @Id
     private UUID   id;
     @Setter
+    @Column(length = 2000)
     private String content;
+    @Setter
     private UUID   authorId;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
     private Set<UUID> thumbsUpBy = new HashSet<>();
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Setter
+    private RetrospectiveColumnEntity column;
+
+    @PreRemove
+    private void preRemove() {
+        if (column != null) {
+            column.getComments().remove(this);
+        }
+    }
 
 }
