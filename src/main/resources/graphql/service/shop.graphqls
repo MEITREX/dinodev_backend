@@ -7,7 +7,8 @@ type ShopItem {
 
 enum KnownAsset {
     WATER_PUDDLE
-    CAVE
+    CAVE,
+    CAVE_2,
     TREES
     TREE_WITH_ROCKS
     BUSHES_1
@@ -16,7 +17,8 @@ enum KnownAsset {
     ROCK_1
     ROCK_2
     FEEDING_TROUGH
-    FLOWERS
+    FLOWERS,
+    FOUNTAIN
 }
 
 enum Animal {

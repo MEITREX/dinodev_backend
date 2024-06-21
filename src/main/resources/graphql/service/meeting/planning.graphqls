@@ -129,7 +129,6 @@ type PlanningMeetingMutation {
 }
 
 input PlanningMeetingInput {
-    title: String!
     meetingLeaderId: UUID!
     planningSettings: PlanningSettingsInput!
 }

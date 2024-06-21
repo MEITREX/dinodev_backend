@@ -1,13 +1,12 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -55,6 +54,6 @@ public class GlobalUserEntity implements IWithId<UUID> {
     }
 
     public void setRoles(List<GlobalUserRoleEntity> roles) {
-        this.roles = replaceContent(this.roles, roles);
+        this.roles = MeitrexCollectionUtils.replaceContent(this.roles, roles);
     }
 }

@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.generated.dto.EventType;
 import de.unistuttgart.iste.meitrex.generated.dto.EventVisibility;
@@ -14,8 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Slf4j
 @Entity
@@ -136,26 +135,14 @@ public class EventEntity implements Event, IWithId<UUID> {
     }
 
     public void setVisibleToUserIds(List<UUID> visibleToUserIds) {
-        this.visibleToUserIds = replaceContent(this.visibleToUserIds, visibleToUserIds);
+        this.visibleToUserIds = MeitrexCollectionUtils.replaceContent(this.visibleToUserIds, visibleToUserIds);
     }
 
     public void setChildren(List<EventEntity> children) {
-        this.children = replaceContent(this.children, children);
+        this.children = MeitrexCollectionUtils.replaceContent(this.children, children);
     }
 
     public void setEventData(List<TemplateFieldEmbeddable> eventData) {
-        this.eventData = replaceContent(this.eventData, eventData);
-    }
-
-    public Optional<Event> getOptionalParent() {
-        return Optional.ofNullable(parent);
-    }
-
-    public Optional<UUID> getOptionalProjectId() {
-        return Optional.ofNullable(projectId);
-    }
-
-    public Optional<UUID> getOptionalUserId() {
-        return Optional.ofNullable(userId);
+        this.eventData = MeitrexCollectionUtils.replaceContent(this.eventData, eventData);
     }
 }

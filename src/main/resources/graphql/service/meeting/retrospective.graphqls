@@ -1,5 +1,26 @@
 type RetrospectiveMeeting implements Meeting {
 
+    currentPage: RetrospectiveMeetingPage!
+
+    goldMedalUserId: UUID
+    silverMedalUserId: UUID
+    bronzeMedalUserId: UUID
+
+    goldMedalUser: GlobalUser @OnDemand
+    silverMedalUser: GlobalUser @OnDemand
+    bronzeMedalUser: GlobalUser @OnDemand
+
+    goldMedalPoints: Float
+    silverMedalPoints: Float
+    bronzeMedalPoints: Float
+
+    goldChallengeReward: Animal
+    baseRewards: [KnownAsset!]!
+    successRewards: [KnownAsset!]!
+    streakRewards: [KnownAsset!]!
+
+    activities: [RetrospectiveActivity!]!
+
     # inherited from Meeting:
     meetingType: MeetingType!
     active: Boolean!
@@ -8,11 +29,56 @@ type RetrospectiveMeeting implements Meeting {
     projectId: UUID!
 }
 
+type RetrospectiveActivity {
+    id: UUID!
+    name: String!
+    columns: [RetrospectiveColumn!]!
+}
+
+type RetrospectiveColumn {
+    id: UUID!
+    title: String!
+    description: String!
+    comments: [RetrospectiveComment!]!
+}
+
+type RetrospectiveComment {
+    id: UUID!
+    content: String!
+    authorId: UUID!
+    thumbsUpBy: [UUID!]!
+}
+
+enum RetrospectiveMeetingPage {
+    INFORMATION
+    SPRINT_RESULT
+    MEDAL_CEREMONY
+    GAMES
+}
+
 input RetrospectiveMeetingInput {
-    title: String! @NotBlank
-    projectId: UUID! @NotBlank
+    meetingLeaderId: UUID!
+    activities: [RetrospectiveActivityInput!]!
+}
+
+input RetrospectiveActivityInput {
+    name: String!
+    columns: [RetrospectiveColumnInput!]!
+}
+
+input RetrospectiveColumnInput {
+    title: String!
+    description: String!
 }
 
 type RetrospectiveMeetingMutation {
-    meeting: RetrospectiveMeeting!
+    project: Project!
+
+    updatePage(page: RetrospectiveMeetingPage!): RetrospectiveMeeting! @OnDemand
+    awardMedals: RetrospectiveMeeting! @OnDemand
+    addComment(columnId: UUID!, content: String!): RetrospectiveMeeting! @OnDemand
+    editComment(commentId: UUID!, content: String!): RetrospectiveMeeting! @OnDemand
+    deleteComment(commentId: UUID!): RetrospectiveMeeting! @OnDemand
+    thumbsUpComment(commentId: UUID!): RetrospectiveMeeting! @OnDemand
+    finishMeeting: RetrospectiveMeeting! @OnDemand
 }

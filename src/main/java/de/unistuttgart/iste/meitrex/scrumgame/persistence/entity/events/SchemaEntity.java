@@ -1,13 +1,12 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.SchemaDefinition;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "schema")
@@ -28,6 +27,6 @@ public class SchemaEntity implements SchemaDefinition {
     private List<FieldSchemaEntity> fields;
 
     public void setFields(List<FieldSchemaEntity> fields) {
-        this.fields = replaceContent(this.fields, fields);
+        this.fields = MeitrexCollectionUtils.replaceContent(this.fields, fields);
     }
 }

@@ -51,7 +51,7 @@ type Subscription {
     meeting(projectId: UUID!, meetingType: MeetingType!): Meeting
     planningMeeting(projectId: UUID!): PlanningMeeting
     standupMeeting(projectId: UUID!): StandupMeeting!
+    retrospectiveMeeting(projectId: UUID!): RetrospectiveMeeting!
     event(projectId: UUID!, userId: UUID!): Event!
-    #    retrospectiveMeetingUpdated(projectId: UUID!): RetrospectiveMeeting!
 
 }

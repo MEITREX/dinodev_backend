@@ -20,7 +20,7 @@ public class ShopService {
     private final AuthService      authService;
 
     public List<ShopItem> getShopItems() {
-        return DefaultShopItems.SHOP_ITEMS.stream()
+        return ShopItems.DEFAULT_SHOP_ITEMS.stream()
                 .sorted(Comparator.comparing(ShopItem::getPrice))
                 .toList();
     }
@@ -42,7 +42,7 @@ public class ShopService {
     }
 
     public ShopItem getShopItemByKnownAsset(KnownAsset knownAsset) {
-        return DefaultShopItems.SHOP_ITEMS.stream()
+        return ShopItems.DEFAULT_SHOP_ITEMS.stream()
                 .filter(shopItem -> shopItem.getImage() == knownAsset)
                 .findFirst()
                 .orElseThrow();

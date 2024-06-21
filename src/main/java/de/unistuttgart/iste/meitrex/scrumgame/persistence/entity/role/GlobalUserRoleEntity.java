@@ -1,14 +1,13 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -44,6 +43,6 @@ public class GlobalUserRoleEntity implements IWithId<String> {
     }
 
     public void setGlobalPrivileges(List<GlobalPrivilege> globalPrivileges) {
-        this.globalPrivileges = replaceContent(this.globalPrivileges, globalPrivileges);
+        this.globalPrivileges = MeitrexCollectionUtils.replaceContent(this.globalPrivileges, globalPrivileges);
     }
 }

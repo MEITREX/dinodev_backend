@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.KnownAsset;
 import de.unistuttgart.iste.meitrex.generated.dto.ShopItem;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,9 @@ import lombok.NoArgsConstructor;
 import java.util.*;
 
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class DefaultShopItems {
+public class ShopItems {
 
-    public static final List<ShopItem> SHOP_ITEMS = List.of(
+    public static final List<ShopItem> DEFAULT_SHOP_ITEMS = List.of(
             ShopItem.builder()
                     .setImage(KnownAsset.BUSHES_1)
                     .setName("Fern")
@@ -82,4 +83,27 @@ public class DefaultShopItems {
                     .setPrice(350)
                     .setId(UUID.randomUUID())
                     .build());
+
+    public static final List<ShopItem> ALL_SHOP_ITEMS = MeitrexCollectionUtils.concat(
+            DEFAULT_SHOP_ITEMS,
+            ShopItem.builder()
+                    .setImage(KnownAsset.ROCK_1)
+                    .setName("Rock")
+                    .setPrice(100)
+                    .setId(UUID.nameUUIDFromBytes("ROCK_1".getBytes()))
+                    .build(),
+            ShopItem.builder()
+                    .setImage(KnownAsset.CAVE_2)
+                    .setName("Cave")
+                    .setPrice(400)
+                    .setId(UUID.nameUUIDFromBytes("CAVE_2".getBytes()))
+                    .build(),
+            ShopItem.builder()
+                    .setImage(KnownAsset.FOUNTAIN)
+                    .setName("Fountain")
+                    .setPrice(300)
+                    .setId(UUID.nameUUIDFromBytes("FOUNTAIN".getBytes()))
+                    .build()
+
+    );
 }

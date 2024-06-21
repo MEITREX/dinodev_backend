@@ -3,8 +3,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.meeting;
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.DefaultAnimals;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningSettingsEmbeddable;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.PlanningMeetingRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.ims.ImsService;
@@ -64,19 +66,20 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
     }
 
     public PlanningMeeting createPlanningMeeting(Project project, PlanningMeetingInput input) {
+        ProjectEntity projectEntity = projectService.getProjectEntity(project.getId());
         PlanningMeetingEntity planningMeeting = new PlanningMeetingEntity();
 
         planningMeeting.setPlanningSettings(
                 getModelMapper().map(input.getPlanningSettings(), PlanningSettingsEmbeddable.class));
         planningMeeting.setMeetingType(MeetingType.PLANNING);
-        planningMeeting.setProject(projectService.getProjectEntity(project.getId()));
+        planningMeeting.setProject(projectEntity);
         planningMeeting.setAttendees(meetingService.initMeetingAttendees(input.getMeetingLeaderId()));
         planningMeeting.setCurrentPage(PlanningMeetingPage.INFORMATION);
         planningMeeting.setActive(true);
-        planningMeeting.getAnimalVoting()
-                .setVotableAnimals(new ArrayList<>(
-                        List.of(Animal.DODO, Animal.TREX)
-                )); // TODO only unlocked animals
+
+        // set animals to vote
+        planningMeeting.getAnimalVoting().setVotableAnimals(EnumSet.copyOf(DefaultAnimals.DEFAULT_ANIMALS));
+        planningMeeting.getAnimalVoting().getVotableAnimals().addAll(projectEntity.getAdditionalUnlockedAnimals());
 
         initSprintGoalVoting(planningMeeting, project);
 
@@ -89,11 +92,6 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
 
     private void initSprintGoalVoting(PlanningMeetingEntity planningMeeting, Project project) {
         List<Issue> issuesOfProject = imsService.getIssues(project);
-        planningMeeting.getSprintGoalVoting().getNonSprintIssueIds().addAll(
-                issuesOfProject.stream()
-                        .filter(issue -> issue.getState().getType() == IssueStateType.BACKLOG)
-                        .map(Issue::getId)
-                        .toList());
         planningMeeting.getSprintGoalVoting().getSprintIssueIds().addAll(
                 issuesOfProject.stream()
                         .filter(issue -> issue.getState().getType() == IssueStateType.SPRINT_BACKLOG)

@@ -60,6 +60,10 @@ type SprintStats {
     """
     successState: SprintSuccessState!
     """
+    The sprint streak is the number of consecutive sprints that have been successfully completed.
+    """
+    streak: Int!
+    """
     The number of story points that have been completed.
     """
     totalStoryPoints: Int!
@@ -108,6 +112,26 @@ type SprintStats {
     This is null if the sprint was not created using DinoDev.
     """
     burnDown: [Int!]
+
+    """
+    Stats for each user in this sprint.
+    """
+    userStats: [SprintUserStats!]!
+    """
+    Stats for a specific user in this sprint.
+    """
+    userStatsByUserId(userId: UUID!): SprintUserStats! @OnDemand
+}
+
+"""
+Stats for a user in a sprint.
+"""
+type SprintUserStats {
+    userId: UUID!
+    """
+    The number of story points that have been completed by this user.
+    """
+    storyPointsCompleted: Float!
 }
 
 """

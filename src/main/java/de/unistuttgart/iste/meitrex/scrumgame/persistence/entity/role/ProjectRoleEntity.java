@@ -1,14 +1,13 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -42,6 +41,6 @@ public class ProjectRoleEntity implements IWithId<ProjectRoleId> {
     }
 
     public void setProjectPrivileges(List<ProjectPrivilege> projectPrivileges) {
-        this.projectPrivileges = replaceContent(this.projectPrivileges, projectPrivileges);
+        this.projectPrivileges = MeitrexCollectionUtils.replaceContent(this.projectPrivileges, projectPrivileges);
     }
 }

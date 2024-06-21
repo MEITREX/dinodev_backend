@@ -34,7 +34,7 @@ public class SprintStatsService {
 
         calculateDateRelatedStats(sprintStats);
         calculateIssueStatistics(sprintStats);
-        calculateSprintSuccessState(sprintStats);
+        calculateSprintSuccessStateAndStreak(sprintStats);
 
         if (canCache(sprintStats)) {
             sprintStatsCache.put(sprint, sprintStats);
@@ -43,37 +43,49 @@ public class SprintStatsService {
         return sprintStats;
     }
 
+    public SprintUserStats getUserStatsByUserId(SprintStats stats, UUID userId) {
+        return stats.getUserStats().stream()
+                .filter(userStats -> userStats.getUserId().equals(userId))
+                .findFirst()
+                .orElse(new SprintUserStats(userId, 0));
+    }
+
     private boolean canCache(SprintStats sprintStats) {
         return sprintStats.getSuccessState() != SprintSuccessState.IN_PROGRESS
                && (sprintStats.getSprint().getEndDate() == null
-                   || OffsetDateTime.now().isBefore(sprintStats.getSprint().getEndDate()));
+                   || OffsetDateTime.now().isAfter(sprintStats.getSprint().getEndDate()));
     }
 
-    private void calculateSprintSuccessState(SprintStats sprintStats) {
+    private void calculateSprintSuccessStateAndStreak(SprintStats sprintStats) {
+        Optional<SprintStats> previousSprintStats = sprintService.findSprint(
+                        sprintStats.getSprint().getProject().getId(),
+                        sprintStats.getSprint().getNumber() - 1)
+                .map(this::getSprintStats);
+
+        calculateSprintSuccessState(sprintStats, previousSprintStats);
+        calculateSprintStreak(sprintStats, previousSprintStats);
+    }
+
+    private void calculateSprintSuccessState(SprintStats sprintStats, Optional<SprintStats> previousSprintStats) {
         Optional<Integer> storyPointsPlanned = Optional.ofNullable(sprintStats.getSprint().getStoryPointsPlanned());
 
         if (storyPointsPlanned.isEmpty()) {
-            // for sprints without planned story points, we cannot determine the success state
+            // for sprints without planned story points, we cannot determine the success state and streak
             sprintStats.setSuccessState(SprintSuccessState.UNKNOWN);
             return;
         }
 
         if (sprintStats.getTotalStoryPoints() >= storyPointsPlanned.get()) {
-            Optional<Sprint> previousSprint = sprintService.findSprint(
-                    sprintStats.getSprint().getProject().getId(),
-                    sprintStats.getSprint().getNumber() - 1);
-
-            if (previousSprint.isEmpty()) {
+            if (previousSprintStats.isEmpty()) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS);
                 return;
             }
 
-            SprintStats previousSprintStats = getSprintStats(previousSprint.get());
-            Integer previousStoryPointsPlanned = previousSprintStats.getSprint().getStoryPointsPlanned();
+            Integer previousStoryPointsPlanned = previousSprintStats.get().getSprint().getStoryPointsPlanned();
 
             if ((previousStoryPointsPlanned != null &&
                  sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned)
-                || sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints()
+                || sprintStats.getTotalStoryPoints() > previousSprintStats.get().getTotalStoryPoints()
             ) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE);
                 return;
@@ -88,6 +100,16 @@ public class SprintStatsService {
         }
     }
 
+    private void calculateSprintStreak(SprintStats sprintStats, Optional<SprintStats> previousSprintStats) {
+        int previousStreak = previousSprintStats.map(SprintStats::getStreak).orElse(0);
+
+        switch (sprintStats.getSuccessState()) {
+            case SUCCESS, SUCCESS_WITH_GOLD_CHALLENGE -> sprintStats.setStreak(previousStreak + 1);
+            case FAILED -> sprintStats.setStreak(0);
+            default -> sprintStats.setStreak(previousStreak);
+        }
+    }
+
     private void calculateIssueStatistics(SprintStats sprintStats) {
         List<Issue> issues = imsServiceExtension.getIssuesBySprints(List.of(sprintStats.getSprint()))
                 .get(sprintStats.getSprint());
@@ -97,6 +119,7 @@ public class SprintStatsService {
         sprintStats.setAverageStoryPoints(getAverageSpPerIssue(issues));
 
         calculatePercentages(issues, sprintStats);
+        calculateUserStats(sprintStats, issues);
 
         calculateStoryPointsByDay(sprintStats, issues);
         calculateBurnDown(sprintStats);
@@ -245,5 +268,25 @@ public class SprintStatsService {
                         .equals(ImsEventTypes.ISSUE_COMPLETED.getIdentifier()))
                 .map(Event::getTimestamp)
                 .min(Comparator.naturalOrder());
+    }
+
+    private void calculateUserStats(SprintStats sprintStats, List<Issue> issues) {
+        Map<UUID, Double> storyPointsByUser = new HashMap<>();
+
+        for (Issue issue : issues) {
+            if (issue.getStoryPoints() == null
+                || (issue.getState().getType() != IssueStateType.DONE
+                    && issue.getState().getType() != IssueStateType.DONE_SPRINT)) {
+                continue;
+            }
+
+            List<UUID> assignees = issue.getAssigneeIds();
+            double storyPointsToAdd = (double) issue.getStoryPoints() / (double) assignees.size();
+            assignees.forEach(assignee -> storyPointsByUser.merge(assignee, storyPointsToAdd, Double::sum));
+        }
+
+        sprintStats.setUserStats(storyPointsByUser.entrySet().stream()
+                .map(entry -> new SprintUserStats(entry.getKey(), entry.getValue()))
+                .toList());
     }
 }

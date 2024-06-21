@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.MeetingType;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import jakarta.persistence.*;
@@ -8,8 +9,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Getter
 @Entity
@@ -43,6 +42,6 @@ public class MeetingEntity implements IWithId<UUID> {
     private ProjectEntity project;
 
     public void setAttendees(List<MeetingAttendeeEmbeddable> attendees) {
-        this.attendees = replaceContent(this.attendees, attendees);
+        this.attendees = MeitrexCollectionUtils.replaceContent(this.attendees, attendees);
     }
 }

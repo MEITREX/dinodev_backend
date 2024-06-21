@@ -1,12 +1,11 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "project_settings")
@@ -38,6 +37,6 @@ public class ProjectSettingsEntity {
     private List<DefinitionOfDoneItemEntity> definitionOfDone = new ArrayList<>();
 
     public void setDefinitionOfDone(List<DefinitionOfDoneItemEntity> definitionOfDone) {
-        this.definitionOfDone = replaceContent(this.definitionOfDone, definitionOfDone);
+        this.definitionOfDone = MeitrexCollectionUtils.replaceContent(this.definitionOfDone, definitionOfDone);
     }
 }

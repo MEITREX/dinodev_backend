@@ -94,9 +94,10 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
                 return meetingUpdatesFlux.startWith(activeMeeting.get());
             }
 
-            return meetingUpdatesFlux;
+            return meetingUpdatesFlux
+                    .doOnError(e -> log.error("Error while getting meeting updates", e));
         } catch (Exception e) {
-            log.error("Error while getting standup meeting updates", e);
+            log.error("Error while getting meeting updates", e);
             return Flux.empty();
         }
     }

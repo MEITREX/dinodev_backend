@@ -1,12 +1,11 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "ims_settings")
@@ -70,14 +69,14 @@ public class ImsSettingsEntity {
     private List<IssueTypeEmbeddable> issueTypes = new ArrayList<>();
 
     public void setIssueStates(List<IssueStateEmbeddable> issueStates) {
-        this.issueStates = replaceContent(this.issueStates, issueStates);
+        this.issueStates = MeitrexCollectionUtils.replaceContent(this.issueStates, issueStates);
     }
 
     public void setIssuePriorities(List<IssuePriorityEmbeddable> issuePriorities) {
-        this.issuePriorities = replaceContent(this.issuePriorities, issuePriorities);
+        this.issuePriorities = MeitrexCollectionUtils.replaceContent(this.issuePriorities, issuePriorities);
     }
 
     public void setIssueTypes(List<IssueTypeEmbeddable> issueTypes) {
-        this.issueTypes = replaceContent(this.issueTypes, issueTypes);
+        this.issueTypes = MeitrexCollectionUtils.replaceContent(this.issueTypes, issueTypes);
     }
 }

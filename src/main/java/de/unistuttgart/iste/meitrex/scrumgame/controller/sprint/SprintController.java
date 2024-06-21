@@ -56,4 +56,9 @@ public class SprintController {
     public SprintStats stats(Sprint sprint) {
         return sprintStatsService.getSprintStats(sprint);
     }
+
+    @SchemaMapping
+    public SprintUserStats userStatsByUserId(SprintStats stats, @Argument UUID userId) {
+        return sprintStatsService.getUserStatsByUserId(stats, userId);
+    }
 }

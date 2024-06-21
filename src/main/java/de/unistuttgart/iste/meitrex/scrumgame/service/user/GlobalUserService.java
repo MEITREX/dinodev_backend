@@ -1,14 +1,12 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.BasicUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
 import de.unistuttgart.iste.meitrex.generated.dto.UpdateGlobalUserInput;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.role.GlobalUserRoleService;
 import jakarta.transaction.Transactional;
@@ -25,20 +23,17 @@ public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntit
     private final AuthService          auth;
     private final GlobalUserRepository globalUserRepository;
     private final GlobalUserRoleService globalUserRoleService;
-    private final AuthConnector        authConnector;
 
     public GlobalUserService(
             ModelMapper modelMapper,
             AuthService auth,
             GlobalUserRepository globalUserRepository,
-            GlobalUserRoleService globalUserRoleService,
-            AuthConnector authConnector
+            GlobalUserRoleService globalUserRoleService
     ) {
         super(globalUserRepository, modelMapper, GlobalUserEntity.class, GlobalUser.class);
         this.auth = auth;
         this.globalUserRepository = globalUserRepository;
         this.globalUserRoleService = globalUserRoleService;
-        this.authConnector = authConnector;
     }
 
     public List<GlobalUser> getAllGlobalUsers() {
@@ -112,7 +107,7 @@ public class GlobalUserService extends AbstractCrudService<UUID, GlobalUserEntit
     }
 
     private boolean isAdminInIms() {
-        return authConnector.getUser().map(BasicUserInfo::getIsAdmin).orElse(false);
+        return auth.isAdmin();
     }
 
 }

@@ -3,6 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.user;
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
 import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.UserInProject;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
@@ -15,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.*;
 
 @Service
 @Transactional
@@ -49,6 +51,7 @@ public class UserInProjectService
     public Optional<UserInProject> findUserInProject(UUID userId, UUID projectId) {
         return find(new UserProjectId(userId, projectId));
     }
+
 
     /**
      * Finds all {@link UserInProject}s in a project.
@@ -107,6 +110,40 @@ public class UserInProjectService
     public List<UserInProject> getUsers(UUID projectId, List<UUID> userIds) {
         List<UserInProject> allUsers = getUsersInProjectByProjectId(projectId);
         return MeitrexCollectionUtils.sortByKeys(allUsers, userIds, UserInProject::getUserId);
+    }
+
+    public void addGoldMedalIfPresent(UUID userId, UUID projectId) {
+        updateIfPresent(new UserProjectId(userId, projectId), user ->
+                user.setCurrentBadge(IconEmbeddable.builder().setEmoji("🥇").build()));
+    }
+
+    public void addSilverMedalIfPresent(UUID userId, UUID projectId) {
+        updateIfPresent(new UserProjectId(userId, projectId), user ->
+                user.setCurrentBadge(IconEmbeddable.builder().setEmoji("🥈").build()));
+    }
+
+    public void addBronzeMedalIfPresent(UUID userId, UUID projectId) {
+        updateIfPresent(new UserProjectId(userId, projectId), user ->
+                user.setCurrentBadge(IconEmbeddable.builder().setEmoji("🥉").build()));
+    }
+
+    public void removeBadges(UUID projectId) {
+        for (UserInProjectEntity user : repository.findAllByProjectId(projectId)) {
+            user.setCurrentBadge(null);
+            repository.save(user);
+        }
+    }
+
+
+    private Optional<UserInProjectEntity> updateIfPresent(UserProjectId id, Consumer<UserInProjectEntity> updater) {
+        if (id == null || id.getUserId() == null || id.getProjectId() == null) {
+            return Optional.empty();
+        }
+        return repository.findById(id)
+                .map(userInProjectEntity -> {
+                    updater.accept(userInProjectEntity);
+                    return repository.save(userInProjectEntity);
+                });
     }
 
 }

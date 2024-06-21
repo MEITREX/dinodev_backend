@@ -1,12 +1,11 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "dod_item")
@@ -34,6 +33,6 @@ public class DefinitionOfDoneItemEntity {
     private List<DefinitionOfDoneItemEntity> implies = new ArrayList<>();
 
     public void setImplies(List<DefinitionOfDoneItemEntity> implies) {
-        this.implies = replaceContent(this.implies, implies);
+        this.implies = MeitrexCollectionUtils.replaceContent(this.implies, implies);
     }
 }

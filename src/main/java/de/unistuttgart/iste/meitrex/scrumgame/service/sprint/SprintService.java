@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.*;
 
 @Service
 public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprint> {
@@ -31,8 +32,8 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
     }
 
     /**
-     * Creates a new sprint for the specified project with the given input. Increments the current sprint number of the
-     * project.
+     * Creates a new sprint for the specified project with the given input.
+     * Sets the current sprint number of the project to the new sprint number.
      *
      * @param projectId the ID of the project
      * @param input     the input for creating the sprint
@@ -121,6 +122,15 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
         getModelMapper().map(input, sprintEntity);
 
         return convertToDto(repository.save(sprintEntity));
+    }
+
+    public void updateSprintEntity(UUID projectId, Integer sprintNumber, Consumer<SprintEntity> update) {
+        SprintEntity sprintEntity = findSprintEntity(projectId, sprintNumber)
+                .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
+
+        update.accept(sprintEntity);
+
+        repository.save(sprintEntity);
     }
 
     private Optional<Sprint> findMostRecentSprint(UUID projectId) {

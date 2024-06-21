@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
@@ -9,8 +10,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "user_in_project")
@@ -49,6 +48,6 @@ public class UserInProjectEntity implements IWithId<UserProjectId> {
     }
 
     public void setRoles(List<ProjectRoleEntity> roles) {
-        this.roles = replaceContent(this.roles, roles);
+        this.roles = MeitrexCollectionUtils.replaceContent(this.roles, roles);
     }
 }

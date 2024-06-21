@@ -60,6 +60,21 @@ public class GlobalUserController {
         return userService.findGlobalUser(reaction.getUserId()).orElse(null);
     }
 
+    @SchemaMapping(typeName = "RetrospectiveMeeting", field = "goldMedalUser")
+    public GlobalUser userOfGoldMedalUser(RetrospectiveMeeting retrospectiveMeeting) {
+        return userService.findGlobalUser(retrospectiveMeeting.getGoldMedalUserId()).orElse(null);
+    }
+
+    @SchemaMapping(typeName = "RetrospectiveMeeting", field = "silverMedalUser")
+    public GlobalUser userOfSilverMedalUser(RetrospectiveMeeting retrospectiveMeeting) {
+        return userService.findGlobalUser(retrospectiveMeeting.getSilverMedalUserId()).orElse(null);
+    }
+
+    @SchemaMapping(typeName = "RetrospectiveMeeting", field = "bronzeMedalUser")
+    public GlobalUser userOfBronzeMedalUser(RetrospectiveMeeting retrospectiveMeeting) {
+        return userService.findGlobalUser(retrospectiveMeeting.getBronzeMedalUserId()).orElse(null);
+    }
+
     @MutationMapping
     public GlobalUser grantRole(@Argument UUID userId, @Argument String roleName) {
         return userService.grantRole(userId, roleName);

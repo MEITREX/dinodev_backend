@@ -24,6 +24,7 @@ public class SprintGoalVotingEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
+    // HINT no longer used, can be removed
     private Set<String> nonSprintIssueIds = new HashSet<>();
 
     @Column

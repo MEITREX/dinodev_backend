@@ -1,5 +1,6 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning;
 
+import de.unistuttgart.iste.meitrex.common.util.MeitrexCollectionUtils;
 import de.unistuttgart.iste.meitrex.generated.dto.TShirtSizeEstimation;
 import de.unistuttgart.iste.meitrex.scrumgame.util.VotingStateHolder;
 import jakarta.annotation.Nullable;
@@ -8,8 +9,6 @@ import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.*;
-
-import static de.unistuttgart.iste.meitrex.scrumgame.util.PersistenceUtils.replaceContent;
 
 @Entity
 @Table(name = "issue_estimation")
@@ -67,7 +66,7 @@ public class IssueEstimationEntity implements VotingStateHolder<TShirtSizeEstima
     }
 
     public void setVotes(List<EstimationVoteEntity> votes) {
-        this.votes = replaceContent(this.votes, votes);
+        this.votes = MeitrexCollectionUtils.replaceContent(this.votes, votes);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.auth;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
+import de.unistuttgart.iste.meitrex.generated.dto.BasicUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.ProjectPrivilege;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
@@ -36,6 +37,7 @@ public class AuthService {
     private final UserInProjectRepository  userInProjectRepository;
     private final GlobalUserRoleRepository globalUserRoleRepository;
     private final ProjectRoleRepository    userRoleInProjectRepository;
+    private final AuthConnector authConnector;
 
     /**
      * Retrieves the user ID of the currently authenticated user. This is read from the JWT token.
@@ -117,6 +119,13 @@ public class AuthService {
 
         return getProjectPrivileges(userId, projectId)
                 .containsAll(role.getProjectPrivileges());
+    }
+
+    /**
+     * Checks if the currently authenticated user is an admin in the authentication system.
+     */
+    public boolean isAdmin() {
+        return authConnector.getUser().map(BasicUserInfo::getIsAdmin).orElse(false);
     }
 
     private Set<ProjectPrivilege> getProjectPrivileges(UUID userId, UUID projectId) {

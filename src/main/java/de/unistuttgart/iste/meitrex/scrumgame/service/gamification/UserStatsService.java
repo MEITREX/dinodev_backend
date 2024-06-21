@@ -41,6 +41,10 @@ public class UserStatsService extends AbstractCrudService<UserProjectId, UserSta
             UUID projectId,
             Consumer<UserStatsEntity> userStatsUpdater
     ) {
+        Objects.requireNonNull(userStatsUpdater, "userStatsUpdater must not be null");
+        Objects.requireNonNull(userId, "userId must not be null");
+        Objects.requireNonNull(projectId, "projectId must not be null");
+
         UserStatsEntity userStats = findOrInitUserStatsEntity(userId, projectId);
         userStatsUpdater.accept(userStats);
         return convertToDto(userStatsRepository.save(userStats));

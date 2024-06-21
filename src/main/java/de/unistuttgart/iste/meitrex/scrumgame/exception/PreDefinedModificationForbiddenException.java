@@ -4,6 +4,9 @@ import de.unistuttgart.iste.meitrex.common.exception.ExceptionWithGraphQlErrorTy
 import graphql.ErrorType;
 import lombok.experimental.StandardException;
 
+/**
+ * Exception that is thrown when a predefined entity is tried to be modified.
+ */
 @StandardException
 public class PreDefinedModificationForbiddenException extends RuntimeException
         implements ExceptionWithGraphQlErrorType {

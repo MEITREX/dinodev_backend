@@ -1,6 +1,8 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project;
 
 import de.unistuttgart.iste.meitrex.common.persistence.IWithId;
+import de.unistuttgart.iste.meitrex.generated.dto.Animal;
+import de.unistuttgart.iste.meitrex.generated.dto.KnownAsset;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.ProjectRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.sprint.SprintEntity;
@@ -65,5 +67,13 @@ public class ProjectEntity implements IWithId<UUID> {
     @JoinColumn(name = "project_settings_id")
     @Setter
     private ProjectSettingsEntity projectSettings;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<KnownAsset> additionalUnlockedAssets = EnumSet.noneOf(KnownAsset.class);
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
+    private Set<Animal> additionalUnlockedAnimals = EnumSet.noneOf(Animal.class);
 
 }

@@ -2,11 +2,11 @@ package de.unistuttgart.iste.meitrex.scrumgame.persistence.mapper;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.RetrospectiveMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.AnimalVotingStateEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.EstimationVoteEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.NameVotingStateEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningMeetingEntity;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.retrospective.RetrospectiveMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.standup.StandupMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.util.MeitrexConverters;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +25,7 @@ public class MeetingMapping implements Module {
 
         setupPlanningMeetingMapping(modelMapper);
         setupStandupMeetingMapping(modelMapper);
+        setupRetrospectiveMeetingMapping(modelMapper);
 
         modelMapper.emptyTypeMap(MeetingEntity.class, Meeting.class)
                 .setProvider(getMeetingProvider(modelMapper));
@@ -34,6 +35,11 @@ public class MeetingMapping implements Module {
                 .setProvider(getMeetingProvider(modelMapper));
         modelMapper.emptyTypeMap(StandupMeetingEntity.class, Meeting.class)
                 .setProvider(getMeetingProvider(modelMapper));
+    }
+
+    private void setupRetrospectiveMeetingMapping(ModelMapper modelMapper) {
+        modelMapper.createTypeMap(RetrospectiveMeetingEntity.class, RetrospectiveMeeting.class)
+                .addMapping(entity -> entity.getProject().getId(), RetrospectiveMeeting::setProjectId);
     }
 
     private void setupPlanningMeetingMapping(ModelMapper modelMapper) {
@@ -109,17 +115,22 @@ public class MeetingMapping implements Module {
 
     // provider that maps the MeetingEntity to the correct Meeting subclass
     private static Provider<Meeting> getMeetingProvider(ModelMapper modelMapper) {
-        return request -> {
-            Object source = request.getSource();
-            return switch (source) {
-                case PlanningMeetingEntity planningMeetingEntity ->
-                        modelMapper.map(planningMeetingEntity, PlanningMeeting.class);
-                case RetrospectiveMeetingEntity retrospectiveMeetingEntity ->
-                        modelMapper.map(retrospectiveMeetingEntity, RetrospectiveMeeting.class);
-                case StandupMeetingEntity standupMeetingEntity ->
-                        modelMapper.map(standupMeetingEntity, StandupMeeting.class);
-                default -> throw new IllegalArgumentException("Unknown meeting type");
+        try {
+            return request -> {
+                Object source = request.getSource();
+                return switch (source) {
+                    case PlanningMeetingEntity planningMeetingEntity ->
+                            modelMapper.map(planningMeetingEntity, PlanningMeeting.class);
+                    case RetrospectiveMeetingEntity retrospectiveMeetingEntity ->
+                            modelMapper.map(retrospectiveMeetingEntity, RetrospectiveMeeting.class);
+                    case StandupMeetingEntity standupMeetingEntity ->
+                            modelMapper.map(standupMeetingEntity, StandupMeeting.class);
+                    default -> throw new IllegalArgumentException("Unknown meeting type");
+                };
             };
-        };
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            throw e;
+        }
     }
 }
