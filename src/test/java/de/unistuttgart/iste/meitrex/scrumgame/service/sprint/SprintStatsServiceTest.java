@@ -39,6 +39,7 @@ class SprintStatsServiceTest {
         Sprint sprint = Sprint.builder()
                 .setStartDate(OffsetDateTime.now().minusDays(10))
                 .setEndDate(OffsetDateTime.now().plusDays(10))
+                .setProject(Project.builder().setId(UUID.randomUUID()).build())
                 .build();
 
         when(imsServiceExtension.getIssuesBySprints(any())).thenReturn(Map.of(sprint, List.of()));
@@ -58,6 +59,7 @@ class SprintStatsServiceTest {
         Sprint sprint = Sprint.builder()
                 .setStartDate(null)
                 .setEndDate(null)
+                .setProject(Project.builder().setId(UUID.randomUUID()).build())
                 .build();
 
         when(imsServiceExtension.getIssuesBySprints(any())).thenReturn(Map.of(sprint, List.of()));
@@ -74,7 +76,9 @@ class SprintStatsServiceTest {
     @Test
     void testCaching() {
         // Arrange
-        Sprint sprint = Sprint.builder().build();
+        Sprint sprint = Sprint.builder()
+                .setProject(Project.builder().setId(UUID.randomUUID()).build())
+                .build();
 
         when(imsServiceExtension.getIssuesBySprints(any())).thenReturn(Map.of(sprint, List.of()));
 
@@ -136,6 +140,7 @@ class SprintStatsServiceTest {
                 .setStoryPoints(sp)
                 .setId(UUID.randomUUID().toString())
                 .setState(IssueState.builder().setType(stateType).build())
+                .setAssigneeIds(List.of(UUID.randomUUID()))
                 .build();
     }
 

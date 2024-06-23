@@ -2,14 +2,12 @@ package de.unistuttgart.iste.meitrex.scrumgame.api.user;
 
 import de.unistuttgart.iste.meitrex.common.exception.ResourceAlreadyExistsException;
 import de.unistuttgart.iste.meitrex.common.testutil.GraphQlApiTest;
-import de.unistuttgart.iste.meitrex.generated.dto.BasicUserInfo;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateGlobalUserInput;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalPrivilege;
 import de.unistuttgart.iste.meitrex.generated.dto.GlobalUser;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.role.GlobalUserRoleEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.GlobalUserEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.GlobalUserRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,15 +35,12 @@ public class MutationRegisterUserTest {
 
     @MockBean
     private AuthService   authService;
-    @MockBean
-    private AuthConnector authConnector;
 
     @Test
     void testRegisterUser(GraphQlTester graphQlTester) {
         UUID userId = UUID.randomUUID();
         when(authService.getCurrentUserId()).thenReturn(userId);
-        BasicUserInfo basicUserInfo = BasicUserInfo.builder().setId("test").setIsAdmin(false).build();
-        when(authConnector.getUser()).thenReturn(Optional.of(basicUserInfo));
+        when(authService.isAdmin()).thenReturn(false);
 
         CreateGlobalUserInput input = getSampleCreateGlobalUserInput();
 
@@ -71,15 +66,14 @@ public class MutationRegisterUserTest {
 
         // verify
         verify(authService, atLeastOnce()).getCurrentUserId();
-        verify(authConnector, atLeastOnce()).getUser();
+        verify(authService, atLeastOnce()).isAdmin();
     }
 
     @Test
     void testRegisterAdminUser(GraphQlTester graphQlTester) {
         UUID userId = UUID.randomUUID();
         when(authService.getCurrentUserId()).thenReturn(userId);
-        BasicUserInfo basicUserInfo = BasicUserInfo.builder().setId("test").setIsAdmin(true).build();
-        when(authConnector.getUser()).thenReturn(Optional.of(basicUserInfo));
+        when(authService.isAdmin()).thenReturn(true);
 
         GlobalUserRoleEntity expectedRole = GlobalUserRoleEntity.builder()
                 .name("ADMIN")
@@ -110,7 +104,7 @@ public class MutationRegisterUserTest {
 
         // verify
         verify(authService, atLeastOnce()).getCurrentUserId();
-        verify(authConnector, atLeastOnce()).getUser();
+        verify(authService, atLeastOnce()).isAdmin();
     }
 
     @Test
