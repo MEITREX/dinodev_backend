@@ -169,16 +169,26 @@ public class PlanningMeetingService extends AbstractCrudService<UUID, PlanningMe
                 planningMeeting.getIssueEstimation().finishVoting());
     }
 
-    public PlanningMeeting setFinalResult(Project project, TShirtSizeEstimation estimation) {
+    public PlanningMeeting setFinalResult(
+            Project project,
+            TShirtSizeEstimation estimation,
+            List<UUID> assignedUserIds
+    ) {
         return updatePlanningMeeting(project.getId(), planningMeeting -> {
-            IssueMutation issueMutation = imsService.mutateIssue(project,
-                    planningMeeting.getIssueEstimation().getIssueId());
+            String issueId = Objects.requireNonNull(planningMeeting.getIssueEstimation().getIssueId());
+            IssueMutation issueMutation = imsService.mutateIssue(project, issueId);
             imsService.changeIssueEstimation(issueMutation, estimation);
 
             planningMeeting.getIssueEstimation().finishVoting();
             planningMeeting.getIssueEstimation().setFinalResult(estimation);
             planningMeeting.getIssueEstimation().getVotes().clear();
             planningMeeting.getIssueEstimation().setIssueId(null);
+
+            // add issue to sprint goal
+            planningMeeting.getSprintGoalVoting().getSprintIssueIds().add(issueId);
+
+            // assign users
+            assignedUserIds.forEach(userId -> imsService.assignIssue(issueMutation, userId));
         });
     }
 

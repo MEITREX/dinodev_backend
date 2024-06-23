@@ -116,13 +116,13 @@ type PlanningMeetingMutation {
 
     voteEstimation(estimation: TShirtSizeEstimation!): PlanningMeeting!
     restartEstimation: PlanningMeeting! @OnDemand
-    nextIssue(issueId: ID): PlanningMeeting! # todo rename setIssueId or something
+    nextIssue(issueId: String): PlanningMeeting! # todo rename setIssueId or something
     startCountdown(seconds: Int! @Positive): PlanningMeeting! @OnDemand
     endEstimation: PlanningMeeting! @OnDemand
-    setFinalResult(estimation: TShirtSizeEstimation!): PlanningMeeting!
+    setFinalResult(estimation: TShirtSizeEstimation!, assignUserIds: [UUID!]! = []): PlanningMeeting!
 
-    addSprintIssue(issueId: ID!): PlanningMeeting!
-    removeSprintIssue(issueId: ID!): PlanningMeeting!
+    addSprintIssue(issueId: String!): PlanningMeeting!
+    removeSprintIssue(issueId: String!): PlanningMeeting!
     finishSprintGoalVoting: PlanningMeeting! @OnDemand
 
     finishMeeting: Sprint!

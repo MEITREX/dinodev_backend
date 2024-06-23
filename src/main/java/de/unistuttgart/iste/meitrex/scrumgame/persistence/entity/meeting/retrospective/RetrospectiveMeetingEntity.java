@@ -41,11 +41,15 @@ public class RetrospectiveMeetingEntity extends MeetingEntity {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private Set<KnownAsset> baseRewards = new HashSet<>();
+    private Set<KnownAsset> baseRewards = EnumSet.noneOf(KnownAsset.class);
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private Set<KnownAsset> streakRewards = new HashSet<>();
+    private Set<KnownAsset> successRewards = EnumSet.noneOf(KnownAsset.class);
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private Set<KnownAsset> streakRewards = EnumSet.noneOf(KnownAsset.class);
 
     public void setActivities(List<RetrospectiveActivityEntity> activities) {
         this.activities = replaceContent(this.activities, activities);
@@ -53,6 +57,10 @@ public class RetrospectiveMeetingEntity extends MeetingEntity {
 
     public void setBaseRewards(Set<KnownAsset> baseRewards) {
         this.baseRewards = replaceContent(this.baseRewards, baseRewards);
+    }
+
+    public void setSuccessRewards(Set<KnownAsset> successRewards) {
+        this.successRewards = replaceContent(this.successRewards, successRewards);
     }
 
     public void setStreakRewards(Set<KnownAsset> streakRewards) {

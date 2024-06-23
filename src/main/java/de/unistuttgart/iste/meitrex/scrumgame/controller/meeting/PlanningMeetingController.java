@@ -105,9 +105,12 @@ public class PlanningMeetingController {
     }
 
     @SchemaMapping
-    public PlanningMeeting setFinalResult(PlanningMeetingMutation planningMeetingMutation,
-            @Argument TShirtSizeEstimation estimation) {
-        return planningMeetingService.setFinalResult(planningMeetingMutation.getProject(), estimation);
+    public PlanningMeeting setFinalResult(
+            PlanningMeetingMutation planningMeetingMutation,
+            @Argument TShirtSizeEstimation estimation,
+            @Argument List<UUID> assignUserIds
+    ) {
+        return planningMeetingService.setFinalResult(planningMeetingMutation.getProject(), estimation, assignUserIds);
     }
 
     @SchemaMapping
