@@ -167,7 +167,7 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
         meetingSubscriptionPublisher.publishEvent(meeting);
     }
 
-    private Meeting updateMeeting(UUID projectId, MeetingType type, Consumer<MeetingEntity> modifier) {
+    private synchronized Meeting updateMeeting(UUID projectId, MeetingType type, Consumer<MeetingEntity> modifier) {
         MeetingEntity meeting = repository.findTopByProjectIdAndMeetingTypeAndActive(projectId, type, true)
                 .orElseThrow(() -> new MeitrexNotFoundException("No active meeting found"));
 

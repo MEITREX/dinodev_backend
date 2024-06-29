@@ -3,6 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.util.DefaultEventPublisher;
+import de.unistuttgart.iste.meitrex.scrumgame.controller.event.EventController;
 import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintStatsService;
@@ -14,7 +15,15 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.OffsetDateTime;
 import java.util.*;
+import java.util.concurrent.atomic.*;
 
+/**
+ * Service that publishes reminders for sprints that are behind schedule.
+ * <p>
+ * Note that reminders are only published when a user acesses the event list, see
+ * {@link EventController#events(Project, int, int)}. This is due to the fact that
+ * an auth token is needed to fetch the issue data from Gropius.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,13 +34,23 @@ public class ReminderService {
     private final DefaultEventPublisher eventPublisher;
     private final SprintStatsService    sprintStatsService;
 
-    // run every day at 9:00
-    @Scheduled(cron = "0 0 9 * * *")
-    public void publishReminders() {
+    private final AtomicBoolean reminderScheduled = new AtomicBoolean(true);
+
+    public synchronized void publishRemindersIfScheduled() {
+        if (!reminderScheduled.get()) {
+            return;
+        }
         log.info("Checking for reminders to publish...");
         List<Project> projects = projectService.getAllProjects();
 
         projects.forEach(this::publishRemindersForProject);
+
+        reminderScheduled.set(false);
+    }
+
+    @Scheduled(cron = "0 0 7 * * *") // every day at 7am
+    public void scheduleReminders() {
+        reminderScheduled.set(true);
     }
 
     private void publishRemindersForProject(Project project) {
@@ -51,8 +70,8 @@ public class ReminderService {
             return;
         }
 
-        // otherwise: publish a reminder to catch up every 3 days
-        if (timeLeft.toDays() % 3 == 0) {
+        // otherwise: publish a reminder to catch up every 2 days
+        if (timeLeft.toDays() % 2 == 0) {
             publishCatchUpReminder(project, currentSprint.get(), stats, (int) timeLeft.toDays());
         }
 

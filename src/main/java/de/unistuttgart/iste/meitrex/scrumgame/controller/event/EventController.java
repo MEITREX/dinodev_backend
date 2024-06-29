@@ -2,6 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.controller.event;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.ReminderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import java.util.*;
 public class EventController {
 
     private final EventService eventService;
+    private final ReminderService reminderService;
 
     @SchemaMapping
     public Page<Event> events(
@@ -28,6 +30,7 @@ public class EventController {
             @Argument int page,
             @Argument int size
     ) {
+        reminderService.publishRemindersIfScheduled();
         Pageable pageable = PageRequest.of(page, size);
         return eventService.getAndSyncEvents(project, pageable);
     }
