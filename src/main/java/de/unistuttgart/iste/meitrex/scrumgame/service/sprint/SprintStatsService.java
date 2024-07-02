@@ -118,7 +118,7 @@ public class SprintStatsService {
         sprintStats.setTotalStoryPoints(getTotalSpCompleted(issues));
         sprintStats.setAverageStoryPoints(getAverageSpPerIssue(issues));
 
-        calculatePercentages(issues, sprintStats);
+        calculatePercentages(sprintStats, issues);
         calculateUserStats(sprintStats, issues);
 
         calculateStoryPointsByDay(sprintStats, issues);
@@ -134,14 +134,14 @@ public class SprintStatsService {
                 .sum();
     }
 
-    private static int getAverageSpPerIssue(List<Issue> issues) {
+    private static double getAverageSpPerIssue(List<Issue> issues) {
         if (issues.isEmpty()) {
             return 0;
         }
-        return issues.stream()
-                       .filter(issue -> issue.getStoryPoints() != null)
-                       .mapToInt(Issue::getStoryPoints)
-                       .sum() / issues.size();
+        return (double) issues.stream()
+                .filter(issue -> issue.getStoryPoints() != null)
+                .mapToInt(Issue::getStoryPoints)
+                .sum() / issues.size();
     }
 
     private void calculateDateRelatedStats(SprintStats sprintStats) {
@@ -151,7 +151,7 @@ public class SprintStatsService {
         sprintStats.setPercentageTimeElapsed(calculatePercentageTimeElapsed(sprint));
     }
 
-    private void calculatePercentages(List<Issue> issues, SprintStats sprintStats) {
+    private void calculatePercentages(SprintStats sprintStats, List<Issue> issues) {
         Map<IssueStateType, Integer> storyPointsByState = issues.stream()
                 .filter(issue -> issue.getStoryPoints() != null && issue.getState() != null)
                 .collect(Collectors.groupingBy(issue -> issue.getState().getType(),

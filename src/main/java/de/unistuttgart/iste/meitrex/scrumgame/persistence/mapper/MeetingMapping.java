@@ -101,9 +101,12 @@ public class MeetingMapping implements Module {
                                     .findFirst()
                                     .orElse(null));
 
-                    result.setOrder(new ArrayList<>(result.getAttendees()));
-                    result.getOrder().sort(Comparator.comparingInt(attendee
-                            -> source.getUserIdsOrdered().indexOf(attendee.getUserId())));
+                    result.setOrder(source.getOrder().stream()
+                            .map(userId -> result.getAttendees().stream()
+                                    .filter(attendee -> attendee.getUserId().equals(userId))
+                                    .findFirst()
+                                    .orElseThrow())
+                            .toList());
 
                     return result;
                 });

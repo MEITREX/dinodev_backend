@@ -14,7 +14,7 @@ import java.util.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@SuperBuilder(setterPrefix = "set")
 public class StandupMeetingEntity extends MeetingEntity {
 
     @Embedded

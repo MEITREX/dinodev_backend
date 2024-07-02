@@ -32,7 +32,7 @@ public class ScrumGameEventTypes {
             .setIdentifier("USER_JOINED")
             .setDescription("A user joined the project.")
             .setDefaultVisibility(EventVisibility.PUBLIC)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
+            .setEventSchema(DefaultSchemaDefinition.builder().setFields(List.of()).build())
             .setMessageTemplate("joined the project! Welcome!")
             .build();
 
@@ -57,7 +57,7 @@ public class ScrumGameEventTypes {
             .setIdentifier("SPRINT_STARTED")
             .setDescription("A sprint was started.")
             .setDefaultVisibility(EventVisibility.PUBLIC)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
+            .setEventSchema(DefaultSchemaDefinition.builder().setFields(List.of()).build())
             .setMessageTemplate("The sprint was started.")
             .build();
 
@@ -65,7 +65,7 @@ public class ScrumGameEventTypes {
             .setIdentifier("SPRINT_ENDED")
             .setDescription("A sprint was ended.")
             .setDefaultVisibility(EventVisibility.PUBLIC)
-            .setEventSchema(DefaultSchemaDefinition.builder().build())
+            .setEventSchema(DefaultSchemaDefinition.builder().setFields(List.of()).build())
             .setMessageTemplate("The sprint was ended.")
             .build();
 

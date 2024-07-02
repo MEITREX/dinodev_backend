@@ -15,7 +15,7 @@ public class EventTypeMatcher {
 
     public static Matcher<EventType> matchingEventType(EventType eventType) {
         return allOf(
-                hasProperty("name", is(eventType.getIdentifier())),
+                hasProperty("identifier", is(eventType.getIdentifier())),
                 hasProperty("description", is(eventType.getDescription())),
                 hasProperty("messageTemplate", is(eventType.getMessageTemplate())),
                 hasProperty("eventSchema", matchingSchema(eventType.getEventSchema())),
@@ -37,7 +37,10 @@ public class EventTypeMatcher {
                 hasProperty("type", is(fieldSchema.getType())),
                 hasProperty("required", is(fieldSchema.getRequired())),
                 hasProperty("description", is(fieldSchema.getDescription())),
-                hasProperty("allowedValues", containsInAnyOrder(fieldSchema.getAllowedValues().toArray()))
+                hasProperty("allowedValues",
+                        fieldSchema.getAllowedValues() == null
+                        ? nullValue()
+                        : containsInAnyOrder(fieldSchema.getAllowedValues().toArray()))
         );
     }
 }

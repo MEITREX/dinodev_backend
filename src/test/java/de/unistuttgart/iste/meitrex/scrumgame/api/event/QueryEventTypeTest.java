@@ -8,7 +8,6 @@ import de.unistuttgart.iste.meitrex.scrumgame.data.SampleEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.matchers.EventTypeMatcher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserDefinedEventTypeRepository;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.test.tester.GraphQlTester;
@@ -24,7 +23,6 @@ import static org.hamcrest.Matchers.hasSize;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-@Disabled // TODO fix this test (mapping issue)
 class QueryEventTypeTest {
 
     @Autowired
@@ -36,14 +34,11 @@ class QueryEventTypeTest {
     @Test
     void testGetEventTypes(GraphQlTester graphQlTester) {
 
-        Collection<EventType> expectedEventTypes = new ArrayList<>();
-        expectedEventTypes.addAll(eventTypeRegistry.getAll());
-        expectedEventTypes.addAll(List.of(
-                userDefinedEventTypeRepository.save(
-                        SampleEventTypes.sampleUserDefinedEventTypeEntity().build()),
+        Collection<EventType> expectedEventTypes = new ArrayList<>(eventTypeRegistry.getAll());
+        expectedEventTypes.add(
                 userDefinedEventTypeRepository.save(
                         SampleEventTypes.sampleUserDefinedEventTypeEntity().build())
-        ));
+        );
 
         String query = getQueryForAllEventTypes();
 

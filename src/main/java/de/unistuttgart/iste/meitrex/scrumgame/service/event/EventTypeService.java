@@ -6,6 +6,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.CreateEventTypeInput;
 import de.unistuttgart.iste.meitrex.generated.dto.DefaultEventType;
 import de.unistuttgart.iste.meitrex.generated.dto.EventType;
 import de.unistuttgart.iste.meitrex.generated.dto.UpdateEventTypeInput;
+import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.EventTypeRegistry;
 import de.unistuttgart.iste.meitrex.scrumgame.exception.PreDefinedModificationForbiddenException;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.UserDefinedEventTypeEntity;
@@ -20,6 +21,11 @@ import java.util.stream.*;
 public class EventTypeService extends AbstractCrudService<String, UserDefinedEventTypeEntity, DefaultEventType> {
 
     private final EventTypeRegistry eventTypeRegistry;
+
+    {
+        // TODO fix in repo
+        DefaultEventTypes.UNKNOWN.getEventSchema().setFields(List.of());
+    }
 
     public EventTypeService(
             ModelMapper modelMapper,

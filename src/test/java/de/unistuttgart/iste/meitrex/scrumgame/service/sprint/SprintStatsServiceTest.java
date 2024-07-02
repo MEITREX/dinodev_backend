@@ -134,6 +134,32 @@ class SprintStatsServiceTest {
                 0));
     }
 
+    @Test
+    void testBasicIssueStats() {
+        // Arrange
+        Sprint sprint = Sprint.builder()
+                .setProject(Project.builder().setId(UUID.randomUUID()).build())
+                .setStoryPointsPlanned(10)
+                .setStartDate(OffsetDateTime.now().minusDays(10))
+                .setEndDate(OffsetDateTime.now())
+                .build();
+
+        Issue issue1 = createIssue(3, IssueStateType.DONE);
+        Issue issue2 = createIssue(5, IssueStateType.DONE_SPRINT);
+        Issue issue3 = createIssue(2, IssueStateType.DONE);
+
+        when(imsServiceExtension.getIssuesBySprints(any()))
+                .thenReturn(Map.of(sprint, List.of(issue1, issue2, issue3)));
+        when(sprintService.findSprint(any(), any())).thenReturn(Optional.empty());
+
+        // Act
+        SprintStats sprintStats = sprintStatsService.getSprintStats(sprint);
+
+        // Assert
+        assertThat(sprintStats.getAverageStoryPoints(), closeTo(3.3, 0.1));
+        assertThat(sprintStats.getTotalStoryPoints(), is(10));
+    }
+
 
     private Issue createIssue(int sp, IssueStateType stateType) {
         return Issue.builder()

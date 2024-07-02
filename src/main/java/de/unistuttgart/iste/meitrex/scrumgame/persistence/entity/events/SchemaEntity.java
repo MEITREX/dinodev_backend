@@ -24,7 +24,8 @@ public class SchemaEntity implements SchemaDefinition {
     private UUID id;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<FieldSchemaEntity> fields;
+    @Builder.Default
+    private List<FieldSchemaEntity> fields = new ArrayList<>();
 
     public void setFields(List<FieldSchemaEntity> fields) {
         this.fields = MeitrexCollectionUtils.replaceContent(this.fields, fields);

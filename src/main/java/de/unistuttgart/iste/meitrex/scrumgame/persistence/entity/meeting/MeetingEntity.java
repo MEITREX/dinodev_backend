@@ -16,7 +16,7 @@ import java.util.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 @AllArgsConstructor
 @NoArgsConstructor
-@SuperBuilder
+@SuperBuilder(setterPrefix = "set")
 public class MeetingEntity implements IWithId<UUID> {
 
     @Id
