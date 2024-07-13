@@ -11,6 +11,6 @@ import java.util.*;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class DefaultAnimals {
 
-    public static final Set<Animal> DEFAULT_ANIMALS = EnumSet.of(Animal.DODO, Animal.TREX);
+    public static final Set<Animal> DEFAULT_ANIMALS = EnumSet.of(Animal.DODO, Animal.TREX, Animal.TRICERATOPS);
 
 }
