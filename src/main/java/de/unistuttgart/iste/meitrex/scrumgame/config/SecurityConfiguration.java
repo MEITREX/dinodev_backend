@@ -50,9 +50,10 @@ public class SecurityConfiguration {
     DefaultSecurityFilterChain springDevWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/graphql**")
+                        /*.ignoringRequestMatchers("/graphql**")
                         .ignoringRequestMatchers("/webhook**")
-                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())*/
+                        .disable()
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
