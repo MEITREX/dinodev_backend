@@ -1,8 +1,11 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
 import de.unistuttgart.iste.meitrex.common.service.AbstractCrudService;
-import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
+import de.unistuttgart.iste.meitrex.generated.dto.AchievementProgress;
+import de.unistuttgart.iste.meitrex.generated.dto.AllowedDataType;
+import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
+import de.unistuttgart.iste.meitrex.generated.dto.DataFieldInput;
+import de.unistuttgart.iste.meitrex.rulesengine.util.DefaultEventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementProgressEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementProgressEntity.AchievementProgressId;
@@ -18,18 +21,21 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service for managing achievements and their progress.
+ */
 @Service
 public class AchievementService
         extends AbstractCrudService<AchievementProgressId, AchievementProgressEntity, AchievementProgress> {
 
-    private final AchievementProgressRepository           achievementProgressRepository;
-    private final AchievementRepository                   achievementRepository;
-    private final EventPublisher<Event, CreateEventInput> eventPublisher;
+    private final AchievementProgressRepository achievementProgressRepository;
+    private final AchievementRepository         achievementRepository;
+    private final DefaultEventPublisher         eventPublisher;
 
     public AchievementService(
             AchievementProgressRepository repository,
             AchievementRepository achievementRepository,
-            EventPublisher<Event, CreateEventInput> eventPublisher,
+            DefaultEventPublisher eventPublisher,
             ModelMapper modelMapper
     ) {
         super(repository, modelMapper, AchievementProgressEntity.class, AchievementProgress.class);
@@ -80,15 +86,17 @@ public class AchievementService
         achievementRepository.saveAll(DefaultAchievements.DEFAULT_ACHIEVEMENTS);
     }
 
-    private AchievementProgressEntity findOrInitAchievementProgressEntity(UserProjectId userProjectId,
+    private AchievementProgressEntity findOrInitAchievementProgressEntity(
+            UserProjectId userProjectId,
             AchievementEntity achievement) {
+
         AchievementProgressId achievementProgressId = new AchievementProgressId(achievement.getIdentifier(),
                 userProjectId.getProjectId(), userProjectId.getUserId());
+
         return achievementProgressRepository
                 .findById(achievementProgressId)
                 .orElseGet(() -> AchievementProgressEntity.builder()
-                        .setId(new AchievementProgressId(achievement.getIdentifier(),
-                                userProjectId.getProjectId(), userProjectId.getUserId()))
+                        .setId(achievementProgressId)
                         .setAchievement(achievement)
                         .setProgress(0)
                         .build());
@@ -99,7 +107,7 @@ public class AchievementService
                 CreateEventInput.builder()
                         .setUserId(userProjectId.getUserId())
                         .setProjectId(userProjectId.getProjectId())
-                        .setEventData(List.of(TemplateFieldInput.builder()
+                        .setEventData(List.of(DataFieldInput.builder()
                                 .setKey("achievementName")
                                 .setType(AllowedDataType.STRING)
                                 .setValue(achievement.getName())

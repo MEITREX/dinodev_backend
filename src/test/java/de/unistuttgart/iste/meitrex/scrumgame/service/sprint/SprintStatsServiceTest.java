@@ -175,7 +175,7 @@ class SprintStatsServiceTest {
                 .setTimestamp(timestamp)
                 .setEventType((DefaultEventType) ImsEventTypes.ISSUE_COMPLETED)
                 .setEventData(List.of(
-                        DefaultTemplateField.builder()
+                        DefaultDataField.builder()
                                 .setKey("issueId")
                                 .setValue(issue.getId())
                                 .setType(AllowedDataType.STRING)

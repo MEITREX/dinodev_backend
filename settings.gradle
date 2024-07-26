@@ -7,10 +7,16 @@ sourceControl {
     gitRepository(uri('https://github.com/MEITREX/common_test')) {
         producesModule('de.unistuttgart.iste.meitrex:meitrex-common-test')
     }
-    gitRepository(uri('https://github.com/MEITREX/scrum-game-ims-api')) {
-        producesModule('de.unistuttgart.iste.meitrex:scrum-game-ims-api')
+    gitRepository(uri('https://github.com/MEITREX/dinodev_common')) {
+        producesModule('de.unistuttgart.iste.meitrex:dinodev_common')
     }
-    gitRepository(uri('https://github.com/MEITREX/gamification_engine')) {
+    gitRepository(uri('https://github.com/MEITREX/dinodev_gamification_engine')) {
         producesModule('de.unistuttgart.iste.meitrex:gamification_engine')
+    }
+    gitRepository(uri('https://github.com/MEITREX/dinodev_gropius_adapter')) {
+        producesModule('de.unistuttgart.iste.meitrex:gropius_adapter')
+    }
+    gitRepository(uri('https://github.com/MEITREX/dinodev_github_adapter')) {
+        producesModule('de.unistuttgart.iste.meitrex:github_adapter')
     }
 }

@@ -1,19 +1,56 @@
+"""
+The PlanningMeeting represents the SCRUM planning meeting.
+"""
 type PlanningMeeting implements Meeting {
+    """
+    The settings of the planning meeting.
+    """
     planningSettings: PlanningSettings!
+    """
+    The current page.
+    """
     currentPage: PlanningMeetingPage!
+    """
+    Details about the animal voting.
+    """
     animalVoting: AnimalVoting!
+    """
+    Details about the name voting.
+    """
     nameVoting: NameVoting!
+    """
+    Details about the current issue estimation.
+    """
     issueEstimation: IssueEstimation!
+    """
+    Details about the sprint goal voting.
+    """
     sprintGoalVoting: SprintGoalVoting!
 
     # inherited from Meeting:
+    """
+    The type of the meeting, must be PLANNING.
+    """
     meetingType: MeetingType!
+    """
+    If the meeting is currently active.
+    """
     active: Boolean!
+    """
+    The attendees of the meeting.
+    Contains at most one meeting leader.
+    """
     attendees: [MeetingAttendee!]!
 
+    """
+    The id of the project that the meeting is associated with.
+    """
     projectId: UUID!
 }
 
+"""
+The pages of the planning meeting.
+"""
 enum PlanningMeetingPage {
     INFORMATION
     CHOOSE_ANIMAL
@@ -22,42 +59,117 @@ enum PlanningMeetingPage {
     SPRINT_GOAL
 }
 
+"""
+The settings of the planning meeting.
+"""
 type PlanningSettings {
-    sprintDurationDays: Int!
+    """
+    The duration of the sprint in days.
+    """
+    sprintDurationDays: Int
+    """
+    The start date of the sprint.
+    """
     sprintStartDate: DateTime!
+    """
+    A custom reward for the gold challenge. (currently not used)
+    """
     customGoldChallengeReward: String
 }
 
+"""
+Details about the animal voting.
+"""
 type AnimalVoting {
+    """
+    The animals that can be voted for.
+    """
     votableAnimals: [Animal!]!
+    """
+    The voting states for each animal, containing the votes of the users.
+    """
     animalVotingStates: [AnimalVotingState!]!
 
+    """
+    If the animal voting is finished.
+    """
     finished: Boolean!
+    """
+    If the animal voting is finished, the result of the voting.
+    """
     votingResult: Animal
 }
 
+"""
+Holds the votes for an animal.
+"""
 type AnimalVotingState {
+    """
+    The animal that is voted for.
+    """
     votedFor: Animal!
+    """
+    The votes for the animal.
+    """
     userVotes: [Vote!]!
+    """
+    The total number of votes for the animal.
+    """
     totalVotes: Int!
 }
 
+"""
+Holds the votes for a name.
+"""
 type NameVotingState {
+    """
+    The name that is voted for.
+    """
     votedFor: String!
+    """
+    The votes for the name.
+    """
     userVotes: [Vote!]!
+    """
+    The total number of votes for the name.
+    """
     totalVotes: Int!
 }
 
+"""
+Represents a vote for a name or animal.
+"""
 type Vote {
+    """
+    The id of the user who voted.
+    """
     userId: UUID!
+    """
+    The user who voted.
+    """
     user: GlobalUser!
 }
 
+"""
+Details about the name voting.
+"""
 type NameVoting {
+    """
+    The names that can be voted for.
+    """
     votableNames: [String!]!
+    """
+    The voting states for each name, containing the votes of the users.
+    """
     nameVotingStates: [NameVotingState!]!
 
+    """
+    If the name voting is finished.
+    """
     finished: Boolean!
+    """
+    If the name voting is finished, the result of the voting.
+    """
     votingResult: String
 }
 

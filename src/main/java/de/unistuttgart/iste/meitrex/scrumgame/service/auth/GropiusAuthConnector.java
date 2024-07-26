@@ -1,12 +1,10 @@
-package de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius;
+package de.unistuttgart.iste.meitrex.scrumgame.service.auth;
 
 import de.unistuttgart.iste.gropius.generated.dto.CurrentUserQueryRequest;
 import de.unistuttgart.iste.gropius.generated.dto.GropiusGropiusUser;
 import de.unistuttgart.iste.gropius.generated.dto.GropiusUserResponseProjection;
 import de.unistuttgart.iste.meitrex.common.graphqlclient.GraphQlRequestExecutor;
 import de.unistuttgart.iste.meitrex.generated.dto.BasicUserInfo;
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AudienceValidator;
-import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;

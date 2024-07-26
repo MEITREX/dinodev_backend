@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.event;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.DataFieldEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.EventEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events.TemplateFieldEmbeddable;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.EventRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -56,7 +56,7 @@ public class EventFactory {
         eventEntity.setParent(parentEvent.orElse(null));
         eventEntity.setEventData(input.getEventData()
                 .stream()
-                .map(field -> new TemplateFieldEmbeddable(field.getKey(), field.getType(), field.getValue()))
+                .map(field -> new DataFieldEmbeddable(field.getKey(), field.getType(), field.getValue()))
                 .toList());
         eventEntity.setVisibleToUserIds(Optional.ofNullable(input.getVisibleToUserIds()).orElseGet(ArrayList::new));
 
@@ -67,7 +67,7 @@ public class EventFactory {
         Map<String, String> eventData = input.getEventData()
                 .stream()
                 .filter(field -> field.getKey() != null && field.getValue() != null)
-                .collect(Collectors.toMap(TemplateFieldInput::getKey, TemplateFieldInput::getValue));
+                .collect(Collectors.toMap(DataFieldInput::getKey, DataFieldInput::getValue));
 
         StringSubstitutor substitutor = new StringSubstitutor(eventData)
                 .setEscapeChar('\\')

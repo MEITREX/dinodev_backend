@@ -65,7 +65,7 @@ public class EventController {
     }
 
     @SchemaMapping
-    public TemplateField field(DefaultEvent event, @Argument String name) {
+    public DataField field(DefaultEvent event, @Argument String name) {
         return eventService.findField(event, name).orElse(null);
     }
 

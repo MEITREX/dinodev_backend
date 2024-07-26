@@ -7,6 +7,9 @@ import org.modelmapper.spi.MappingContext;
 import java.util.*;
 import java.util.function.*;
 
+/**
+ * Converter for model mapper to convert a list of elements from one type to another.
+ */
 @RequiredArgsConstructor
 public class ListConverter<I, O> implements Converter<List<I>, List<O>> {
 

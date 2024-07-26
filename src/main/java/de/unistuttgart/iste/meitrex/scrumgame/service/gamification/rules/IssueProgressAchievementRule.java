@@ -1,8 +1,8 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification.rules;
 
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
+import de.unistuttgart.iste.meitrex.generated.dto.DataField;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
-import de.unistuttgart.iste.meitrex.generated.dto.TemplateField;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.AchievementEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
@@ -47,7 +47,7 @@ public class IssueProgressAchievementRule extends AchievementRule {
     public Optional<CreateEventInput> executeAction(Event triggerEvent) {
         var assigneeIds = triggerEvent.getEventData().stream()
                 .filter(eventData -> "assigneeIds".equals(eventData.getKey()))
-                .map(TemplateField::getValue)
+                .map(DataField::getValue)
                 .findFirst()
                 .map(assigneeIdString -> assigneeIdString.split(","))
                 .map(Arrays::asList)

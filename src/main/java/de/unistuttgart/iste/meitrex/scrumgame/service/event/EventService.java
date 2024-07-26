@@ -106,7 +106,7 @@ public class EventService {
                 .setUserId(authService.getCurrentUserId())
                 .setParentId(eventId)
                 .setEventData(List.of(
-                        TemplateFieldInput.builder()
+                        DataFieldInput.builder()
                                 .setType(AllowedDataType.STRING)
                                 .setKey("reaction")
                                 .setValue(reaction)
@@ -124,7 +124,7 @@ public class EventService {
                 .setUserId(authService.getCurrentUserId())
                 .setParentId(optionalParentId)
                 .setEventData(List.of(
-                        TemplateFieldInput.builder()
+                        DataFieldInput.builder()
                                 .setType(AllowedDataType.STRING)
                                 .setKey("message")
                                 .setValue(message)
@@ -136,7 +136,7 @@ public class EventService {
         return eventPublisher.publishEvent(input);
     }
 
-    public Optional<? extends TemplateField> findField(Event event, String name) {
+    public Optional<? extends DataField> findField(Event event, String name) {
         return TemplateDataUtils.findField(event, name);
     }
 

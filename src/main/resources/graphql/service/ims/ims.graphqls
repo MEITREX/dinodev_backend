@@ -1,33 +1,105 @@
+"""
+Mutation type to change issues.
+"""
 type IssueMutation {
+    """
+    The project that the issue belongs to.
+    """
     project: Project!
-    issueId: ID!
+    """
+    The id of the issue that is being changed.
+    """
+    issueId: String!
 
+    """
+    Change the title of the issue.
+    """
     changeIssueTitle(title: String!): Issue!
+    """
+    Change the description of the issue.
+    """
     changeIssueDescription(description: String): Issue!
+    """
+    Change the state of the issue.
+    """
     changeIssueState(stateName: String!): Issue!
+    """
+    Change the type of the issue.
+    """
     changeIssueType(typeName: String!): Issue!
+    """
+    Change the sprint of the issue.
+    """
     changeSprint(sprintNumber: Int): Issue!
+    """
+    Add a comment to the issue.
+    """
     commentOnIssue(comment: String!, optionalParentId: String): Issue!
 
+    """
+    Move an issue to the state with the given name and add a comment to the issue,
+    containing the definition of done confirm states.
+    """
     finishIssue(dodConfirmStates: [DefinitionOfDoneConfirmState!]!, doneStateName: String): Issue!
 
+    """
+    Assign the issue to the user with the given id.
+    """
     assignIssue(assigneeId: UUID): Issue!
 }
 
+"""
+Represents an item of the definition of done and with the information if it is checked or not and
+the reason if it is not checked.
+"""
 input DefinitionOfDoneConfirmState {
+    """
+    Text of the definition of done item.
+    """
     dodText: String!
+    """
+    If the item is checked.
+    """
     checked: Boolean!
+    """
+    The reason why the item is not checked.
+    Should be null if the item is checked.
+    """
     reasonIfNotChecked: String
+    """
+    The child confirm states, containing the child items of the definition of done item.
+    """
     children: [DefinitionOfDoneConfirmState!]!
 }
 
+"""
+Represents a Kanban board.
+"""
 type ProjectBoard {
+    """
+    The project that the board belongs to.
+    """
     project: Project!
+    """
+    Ordered list of states in the board.
+    """
     states: [IssueStateInBoard!]! @OnDemand
 }
 
+"""
+Represents a column in a Kanban board.
+"""
 type IssueStateInBoard {
+    """
+    The issue state of the column.
+    """
     state: IssueState!
+    """
+    The project board that the column belongs to.
+    """
     projectBoard: ProjectBoard!
+    """
+    The issues in the column.
+    """
     issues: [Issue!]! @OnDemand
 }

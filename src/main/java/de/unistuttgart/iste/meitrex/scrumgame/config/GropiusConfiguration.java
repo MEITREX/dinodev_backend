@@ -3,7 +3,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.config;
 import de.unistuttgart.iste.meitrex.common.graphqlclient.GraphQlRequestExecutor;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthConnector;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthTokenFromHeaderSupplier;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusAuthConnector;
+import de.unistuttgart.iste.meitrex.scrumgame.service.auth.GropiusAuthConnector;
 import jakarta.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

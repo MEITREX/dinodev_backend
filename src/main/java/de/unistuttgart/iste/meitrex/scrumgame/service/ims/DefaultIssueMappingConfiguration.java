@@ -3,10 +3,10 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 import de.unistuttgart.iste.meitrex.generated.dto.ImsSettings;
 import de.unistuttgart.iste.meitrex.generated.dto.IssuePriorityConfiguration;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusIssueMappingConfiguration;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssuePriorityMapping;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueStateMapping;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.IssueTypeMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.gropius.config.GropiusIssueMappingConfiguration;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.gropius.config.IssuePriorityMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.gropius.config.IssueStateMapping;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.gropius.config.IssueTypeMapping;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -19,7 +19,7 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
     private final String gropiusUrl;
 
     @Override
-    public UUID getScrumGameProjectId() {
+    public UUID getDinoDevProjectId() {
         return project.getId();
     }
 
@@ -62,7 +62,10 @@ public class DefaultIssueMappingConfiguration implements GropiusIssueMappingConf
 
     @Override
     public IssueTypeMapping getIssueTypeMapping() {
-        return new IssueTypeMapping(getImsSettings().getIssueTypes());
+        return new IssueTypeMapping(
+                getImsSettings().getIssueTypes().stream()
+                        .map(type -> new IssueTypeMapping.IssueTypeConfiguration(type.getImsTypeId(), type.getName()))
+                        .toList());
     }
 
     @Override

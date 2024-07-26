@@ -1,29 +1,72 @@
+"""
+Represents a SCRUM meeting.
+"""
 interface Meeting {
+    """
+    The type of the meeting.
+    """
     meetingType: MeetingType!
+    """
+    If the meeting is currently active.
+    """
     active: Boolean!
+    """
+    The attendees of the meeting.
+    Contains at most one meeting leader.
+    """
     attendees: [MeetingAttendee!]!
 
+    """
+    The id of the project that the meeting is associated with.
+    """
     projectId: UUID!
 }
 
+"""
+The type of the meeting, which can be a planning, retrospective or standup meeting.
+"""
 enum MeetingType {
     PLANNING
     RETROSPECTIVE
     STANDUP
 }
 
+"""
+A user that attends a meeting.
+"""
 type MeetingAttendee {
+    """
+    The id of the user.
+    """
     userId: UUID!
+    """
+    The state of the user, e.g. online, offline or away.
+    """
     state: UserState!
+    """
+    The role of the user.
+    """
     role: MeetingRole!
+    """
+    The user who is attending the meeting.
+    """
     user: GlobalUser! @OnDemand
 }
 
+"""
+The role of the user in a meeting.
+Can be an attendee or the meeting leader.
+"""
 enum MeetingRole {
     ATTENDEE
     MEETING_LEADER
 }
 
+"""
+The state of the user in a meeting.
+Can be online, offline or away.
+Away is currently not used.
+"""
 enum UserState {
     ONLINE
     OFFLINE

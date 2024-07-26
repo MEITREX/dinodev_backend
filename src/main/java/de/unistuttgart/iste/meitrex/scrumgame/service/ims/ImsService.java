@@ -2,7 +2,7 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 
 import de.unistuttgart.iste.meitrex.common.exception.MeitrexNotFoundException;
 import de.unistuttgart.iste.meitrex.generated.dto.*;
-import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
+import de.unistuttgart.iste.meitrex.rulesengine.util.DefaultEventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.util.DodConfirmStateFormatter;
 import de.unistuttgart.iste.meitrex.scrumgame.util.StateUtils;
 import jakarta.annotation.Nullable;
@@ -22,26 +22,26 @@ import java.util.*;
 @Slf4j
 public class ImsService {
 
-    private final ImsConnectorFactory                     imsConnectorFactory;
-    private final EventPublisher<Event, CreateEventInput> eventPublisher;
+    private final ImsAdapterFactory     imsAdapterFactory;
+    private final DefaultEventPublisher eventPublisher;
 
     @Cacheable(value = "issues", key = "#project.id", sync = true)
     public synchronized List<Issue> getIssues(Project project) {
-        return imsConnectorFactory.getImsConnectorForProject(project).getIssues(project.getId());
+        return imsAdapterFactory.getImsAdapterForProject(project).getIssues(project.getId());
     }
 
     @Cacheable(value = "issue", key = "#project.id + #id", sync = true)
     public synchronized Optional<Issue> findIssue(Project project, String id) {
-        return imsConnectorFactory.getImsConnectorForProject(project).findIssue(id);
+        return imsAdapterFactory.getImsAdapterForProject(project).findIssue(id);
     }
 
     @Cacheable(value = "issue", key = "#projectId + #issueId", sync = true)
     public synchronized Optional<Issue> findIssue(UUID projectId, String issueId) {
-        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssue(issueId);
+        return imsAdapterFactory.getImsAdapterForProject(projectId).findIssue(issueId);
     }
 
     public List<Issue> getIssuesByIds(UUID projectId, List<String> issueIds) {
-        return imsConnectorFactory.getImsConnectorForProject(projectId).findIssuesBatched(issueIds);
+        return imsAdapterFactory.getImsAdapterForProject(projectId).findIssuesBatched(issueIds);
     }
 
     public ProjectBoard getProjectBoard(Project project) {
@@ -62,12 +62,12 @@ public class ImsService {
     }
 
     public Issue changeIssueTitle(IssueMutation issueMutation, String title) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .changeIssueTitle(issueMutation.getIssueId(), title);
     }
 
     public Issue changeIssueDescription(IssueMutation issueMutation, String description) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .changeIssueDescription(issueMutation.getIssueId(), description);
     }
 
@@ -77,12 +77,8 @@ public class ImsService {
 
     public Issue changeIssueState(IssueMutation issueMutation, IssueState state) {
         Project project = issueMutation.getProject();
-        Issue issue = imsConnectorFactory.getImsConnectorForProject(project)
+        Issue issue = imsAdapterFactory.getImsAdapterForProject(project)
                 .changeIssueState(issueMutation.getIssueId(), state);
-
-        if (issue == null) {
-            return null; // TODO make return optional
-        }
 
         // set sprint if necessary
         if (StateUtils.isMovedOutOfSprint(issue.getState(), state)) {
@@ -116,17 +112,17 @@ public class ImsService {
     }
 
     public Issue changeIssueType(IssueMutation issueMutation, String typeName) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .changeIssueType(issueMutation.getIssueId(), typeName);
     }
 
     public Issue assignIssue(IssueMutation issueMutation, UUID assigneeId) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .assignIssue(issueMutation.getIssueId(), assigneeId);
     }
 
     public Issue changeSprint(IssueMutation issueMutation, Integer sprintNumber) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .changeSprintOfIssue(issueMutation.getIssueId(), sprintNumber);
     }
 
@@ -135,7 +131,7 @@ public class ImsService {
             String doneStateName) {
         String comment = DodConfirmStateFormatter.formatDodConfirmStates(dodConfirmStates);
 
-        imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .addCommentToIssue(issueMutation.getIssueId(), comment, null);
 
         Issue result = changeIssueState(issueMutation, doneStateName);
@@ -146,24 +142,24 @@ public class ImsService {
     }
 
     public void changeIssueEstimation(IssueMutation issueMutation, TShirtSizeEstimation estimation) {
-        imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .changeEstimationOfIssue(issueMutation.getIssueId(), estimation);
     }
 
     public List<CreateEventInput> getEventsForIssue(Issue issue, OffsetDateTime since) {
-        return imsConnectorFactory.getImsConnectorForProject(issue.getProjectId())
+        return imsAdapterFactory.getImsAdapterForProject(issue.getProjectId())
                 .getEventsForIssue(issue.getId(), since);
     }
 
     @CachePut(value = "issue", key = "#projectMutation.getProject().id + #result.getId()")
     @CacheEvict(value = "issues", key = "#projectMutation.getProject().id")
     public Issue createIssue(ProjectMutation projectMutation, CreateIssueInput input) {
-        return imsConnectorFactory.getImsConnectorForProject(projectMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(projectMutation.getProject())
                 .createIssue(input);
     }
 
     public Issue commentOnIssue(IssueMutation issueMutation, String comment, @Nullable String parentId) {
-        return imsConnectorFactory.getImsConnectorForProject(issueMutation.getProject())
+        return imsAdapterFactory.getImsAdapterForProject(issueMutation.getProject())
                 .addCommentToIssue(issueMutation.getIssueId(), comment, parentId);
     }
 
@@ -176,7 +172,7 @@ public class ImsService {
     }
 
     public List<CreateEventInput> getEventsForProject(Project project, OffsetDateTime lastGlobalEventSync) {
-        return imsConnectorFactory.getImsConnectorForProject(project)
+        return imsAdapterFactory.getImsAdapterForProject(project)
                 .getEventsForProject(project.getId(), lastGlobalEventSync);
     }
 

@@ -1,6 +1,21 @@
+"""
+User info from the AuthenticationProvider
+"""
 type BasicUserInfo {
-    id: ID!
+    """
+    The ID of the user.
+    """
+    id: String!
+    """
+    If the user should be treated as an admin.
+    """
     isAdmin: Boolean!
+    """
+    The username of the user.
+    """
     username: String!
+    """
+    The avatar of the user. Should be a URL.
+    """
     avatar: String
 }

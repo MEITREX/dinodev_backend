@@ -4,11 +4,11 @@ import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.rulesengine.DefaultEventTypes;
 import de.unistuttgart.iste.meitrex.rulesengine.Rule;
+import de.unistuttgart.iste.meitrex.scrumgame.crs.CrsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserStatsEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.UserStatsService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VcsEventTypes;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -29,10 +29,10 @@ public class StatCounterRule implements Rule {
                 ImsEventTypes.COMMENT_ON_ISSUE.getIdentifier(),
                 ImsEventTypes.ISSUE_COMPLETED.getIdentifier(),
                 ImsEventTypes.ISSUE_CREATED.getIdentifier(),
-                VcsEventTypes.OPEN_PULL_REQUEST.getIdentifier(),
-                VcsEventTypes.CLOSE_PULL_REQUEST.getIdentifier(),
-                VcsEventTypes.REVIEW_ACCEPT.getIdentifier(),
-                VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier());
+                CrsEventTypes.OPEN_PULL_REQUEST.getIdentifier(),
+                CrsEventTypes.CLOSE_PULL_REQUEST.getIdentifier(),
+                CrsEventTypes.REVIEW_ACCEPT.getIdentifier(),
+                CrsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier());
     }
 
     @Override
@@ -62,16 +62,16 @@ public class StatCounterRule implements Rule {
             userStats.setIssuesCreated(userStats.getIssuesCreated() + 1);
         }
 
-        if (triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.OPEN_PULL_REQUEST.getIdentifier())) {
+        if (triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.OPEN_PULL_REQUEST.getIdentifier())) {
             userStats.setPullRequestsCreated(userStats.getPullRequestsCreated() + 1);
         }
 
-        if (triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.CLOSE_PULL_REQUEST.getIdentifier())) {
+        if (triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.CLOSE_PULL_REQUEST.getIdentifier())) {
             userStats.setPullRequestsClosed(userStats.getPullRequestsClosed() + 1);
         }
 
-        if (triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.REVIEW_ACCEPT.getIdentifier())
-            || triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier())
+        if (triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.REVIEW_ACCEPT.getIdentifier())
+            || triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier())
         ) {
             userStats.setPullRequestsReviewed(userStats.getPullRequestsReviewed() + 1);
         }

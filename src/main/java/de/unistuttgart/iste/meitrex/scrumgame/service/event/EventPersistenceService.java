@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+/**
+ * Service responsible for persisting and retrieving events.
+ */
 @Service
 @Getter(AccessLevel.PROTECTED)
 public class EventPersistenceService
@@ -35,18 +38,8 @@ public class EventPersistenceService
     }
 
     @Override
-    public boolean exists(UUID id) {
-        return id != null && repository.existsById(id);
-    }
-
-    @Override
     public Event getEvent(CreateEventInput event) {
         return getOrThrow(event.getId());
-    }
-
-    @Override
-    public Event getEvent(UUID id) {
-        return getOrThrow(id);
     }
 
     @Override
@@ -56,7 +49,7 @@ public class EventPersistenceService
 
     @Override
     public Event persistEvent(CreateEventInput eventRequest) {
-        if (eventRequest.getId() != null && repository.existsById(eventRequest.getId())) {
+        if (exists(eventRequest)) {
             return getOrThrow(eventRequest.getId());
         }
 

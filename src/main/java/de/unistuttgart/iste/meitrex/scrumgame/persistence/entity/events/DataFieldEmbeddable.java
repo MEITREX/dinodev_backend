@@ -1,7 +1,7 @@
 package de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.events;
 
 import de.unistuttgart.iste.meitrex.generated.dto.AllowedDataType;
-import de.unistuttgart.iste.meitrex.generated.dto.TemplateField;
+import de.unistuttgart.iste.meitrex.generated.dto.DataField;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Enumerated;
@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TemplateFieldEmbeddable implements TemplateField {
+public class DataFieldEmbeddable implements DataField {
 
     @Column
     private String key;

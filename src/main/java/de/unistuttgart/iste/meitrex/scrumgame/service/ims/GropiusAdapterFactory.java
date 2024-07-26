@@ -2,8 +2,8 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.ims;
 
 import de.unistuttgart.iste.meitrex.common.graphqlclient.GraphQlRequestExecutor;
 import de.unistuttgart.iste.meitrex.generated.dto.Project;
-import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsConnector;
-import de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusConnector;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsAdapter;
+import de.unistuttgart.iste.meitrex.scrumgame.ims.gropius.GropiusAdapter;
 import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,7 +13,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class GropiusConnectorFactory implements ImsConnectorFactory {
+public class GropiusAdapterFactory implements ImsAdapterFactory {
 
     private final ProjectService         projectService;
     private final GraphQlRequestExecutor graphQlRequestExecutor;
@@ -22,13 +22,13 @@ public class GropiusConnectorFactory implements ImsConnectorFactory {
     private String gropiusFrontendUrl;
 
     @Override
-    public ImsConnector getImsConnectorForProject(UUID projectId) {
-        return getImsConnectorForProject(projectService.getProjectOrThrow(projectId));
+    public ImsAdapter getImsAdapterForProject(UUID projectId) {
+        return getImsAdapterForProject(projectService.getProjectOrThrow(projectId));
     }
 
     @Override
-    public ImsConnector getImsConnectorForProject(Project project) {
-        return new GropiusConnector(graphQlRequestExecutor, DefaultIssueMappingConfiguration.of(project,
+    public ImsAdapter getImsAdapterForProject(Project project) {
+        return new GropiusAdapter(graphQlRequestExecutor, DefaultIssueMappingConfiguration.of(project,
                 gropiusFrontendUrl));
     }
 

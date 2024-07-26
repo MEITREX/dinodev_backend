@@ -1,13 +1,39 @@
+# This file contains the schema extensions for the Event type.
+
 extend interface Event {
+    """
+    The user who is associated with this event.
+    """
     user: GlobalUser @OnDemand
+    """
+    List of reactions on this event.
+    """
     reactions: [Reaction!]! @OnDemand
-    field(name: String!): TemplateField
+    """
+    Get a field by name.
+    """
+    field(name: String!): DataField
+    """
+    How much XP the current user has earned for this event.
+    """
     xpForCurrentUser: Int @OnDemand
 }
 
 extend type DefaultEvent {
+    """
+    The user who is associated with this event.
+    """
     user: GlobalUser @OnDemand
+    """
+    List of reactions on this event.
+    """
     reactions: [Reaction!]! @OnDemand
-    field(name: String!): TemplateField @OnDemand
+    """
+    Get a field by name.
+    """
+    field(name: String!): DataField @OnDemand
+    """
+    How much XP the current user has earned for this event.
+    """
     xpForCurrentUser: Int @OnDemand
 }

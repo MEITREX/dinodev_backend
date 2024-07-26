@@ -142,13 +142,13 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
                 .findFirst()
                 .map(attendee -> attendee.getUserId().toString());
 
-        Optional<TemplateFieldInput> meetingLeaderField = meetingLeaderId.map(id -> new TemplateFieldInput(
+        Optional<DataFieldInput> meetingLeaderField = meetingLeaderId.map(id -> new DataFieldInput(
                 "meetingLeaderId",
                 AllowedDataType.STRING,
                 id
         ));
 
-        List<TemplateFieldInput> eventData = meetingLeaderField.stream().toList();
+        List<DataFieldInput> eventData = meetingLeaderField.stream().toList();
 
         for (MeetingAttendee attendee : meeting.getAttendees()) {
 

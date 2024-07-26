@@ -75,43 +75,11 @@ tasks.register('generateDtos', GraphQLCodegenGradleTask) {
     fieldsWithResolvers = ["@OnDemand"]
 }
 
-tasks.register('gropiusCodegen', GraphQLCodegenGradleTask) {
-    graphqlSchemas {
-        rootDir = file("src/main/resources/gropius")
-        includePattern = "gropius"
-    }
-    outputDir = new File("$buildDir/generated/gropius")
-    packageName = "de.unistuttgart.iste.gropius.generated.dto"
-    generatedAnnotation = "jakarta.annotation.Generated"
-    modelValidationAnnotation = "jakarta.validation.constraints.NotNull"
-    generateApis = false // set to false as the generator does not support spring boot graphQL
-    customTypesMapping = [
-            "DateTime"                    : "java.time.OffsetDateTime",
-            "Date"                        : "java.time.LocalDate",
-            "Time"                        : "java.time.OffsetTime",
-            "LocalTime"                   : "java.time.LocalTime",
-            "UUID"                        : "java.util.UUID",
-            "Url"                         : "java.net.URL",
-            "JSON"                        : "java.lang.Object",
-            "DateTimeFilterInput.gt"      : "String",
-            "Assignment.user"             : "GropiusGropiusUser", // concrete sub type to allow serialization of the user object
-            "TimelineItemConnection.nodes": "de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusProjections.TimelineItemResponse",
-            "TrackableConnection.nodes"   : "de.unistuttgart.iste.meitrex.scrumgame.service.ims.gropius.GropiusProjections.TrackableResponse",
-    ]
-    modelNamePrefix = "Gropius"
-    generateEqualsAndHashCode = true
-    generateToString = true
-    generateClient = true
-    // add fields that should be generated in the model classes
-    fieldsWithoutResolvers = ["Project", "Issue", "Component"]
-}
 // Automatically generate GraphQL code on project build:
 compileJava.dependsOn 'generateDtos'
-compileJava.dependsOn 'gropiusCodegen'
 
 // Add generated sources to your project source sets:
 sourceSets.main.java.srcDir "$buildDir/generated/scrum-game"
-sourceSets.main.java.srcDir "$buildDir/generated/gropius"
 
 tasks.register('generateApiDocs', Exec) {
     commandLine 'cmd', '/c', 'generate_api_doc.bat'
@@ -119,18 +87,6 @@ tasks.register('generateApiDocs', Exec) {
 
 tasks.named('assemble') {
     finalizedBy('generateApiDocs')
-}
-
-def gropiusUrl = System.properties.getProperty("gropiusUrl") ?: "http://localhost:8080"
-
-// run this task to refresh the Gropius schema
-// it will download the schema from the Gropius server and save it to src/main/resources/graphql/gropius.graphqls
-// this task is not run automatically, you have to run it manually (so you can control when the schema is updated)
-// you can run it from the command line with `./gradlew refreshGropiusSchema`
-tasks.register('refreshGropiusSchema', Exec) {
-    def filePath = 'src/main/resources/gropius/gropius'
-
-    commandLine 'curl', "${gropiusUrl}/sdl", '-o', filePath
 }
 
 configurations {
@@ -144,9 +100,27 @@ repositories {
 }
 
 dependencies {
-    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.0.6'
-    implementation 'de.unistuttgart.iste.meitrex:scrum-game-ims-api:1.0.6'
-    implementation 'de.unistuttgart.iste.meitrex:gamification_engine:1.0.6'
+    implementation 'de.unistuttgart.iste.meitrex:meitrex-common:1.2'
+    implementation('de.unistuttgart.iste.meitrex:dinodev_common') {
+        version {
+            branch = 'main'
+        }
+    }
+    implementation('de.unistuttgart.iste.meitrex:gamification_engine') {
+        version {
+            branch = 'main'
+        }
+    }
+    implementation('de.unistuttgart.iste.meitrex:gropius_adapter') {
+        version {
+            branch = 'main'
+        }
+    }
+    implementation('de.unistuttgart.iste.meitrex:github_adapter') {
+        version {
+            branch = 'main'
+        }
+    }
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-graphql'
     implementation 'org.springframework.boot:spring-boot-starter-validation'
@@ -163,14 +137,13 @@ dependencies {
     implementation 'org.springframework.security:spring-security-oauth2-resource-server'
     implementation 'org.springframework.security:spring-security-oauth2-jose'
     implementation "io.github.kobylynskyi:graphql-java-codegen:5.+"
-    implementation 'org.mvel:mvel2:2.5.2.Final'
     implementation 'org.apache.commons:commons-text:1.12.+'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     annotationProcessor 'org.projectlombok:lombok'
-    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.0.6'
+    testImplementation 'de.unistuttgart.iste.meitrex:meitrex-common-test:1.2'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework:spring-webflux'
     testImplementation 'org.springframework.graphql:spring-graphql-test'

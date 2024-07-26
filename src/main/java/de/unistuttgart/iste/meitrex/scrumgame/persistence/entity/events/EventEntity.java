@@ -95,7 +95,7 @@ public class EventEntity implements Event, IWithId<UUID> {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @Builder.Default
-    private List<TemplateFieldEmbeddable> eventData = new ArrayList<>();
+    private List<DataFieldEmbeddable> eventData = new ArrayList<>();
 
     @PreRemove
     private void preRemove() {
@@ -142,7 +142,7 @@ public class EventEntity implements Event, IWithId<UUID> {
         this.children = MeitrexCollectionUtils.replaceContent(this.children, children);
     }
 
-    public void setEventData(List<TemplateFieldEmbeddable> eventData) {
+    public void setEventData(List<DataFieldEmbeddable> eventData) {
         this.eventData = MeitrexCollectionUtils.replaceContent(this.eventData, eventData);
     }
 }

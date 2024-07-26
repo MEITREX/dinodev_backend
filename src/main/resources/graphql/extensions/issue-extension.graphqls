@@ -1,5 +1,13 @@
+# This file contains the schema extension for the Issue type.
+
 extend type Issue {
+    """
+    The sprint that this issue is in.
+    """
     sprint: Sprint @OnDemand
+    """
+    The assignees of this issue.
+    """
     assignees: [UserInProject]! @OnDemand
 }
 

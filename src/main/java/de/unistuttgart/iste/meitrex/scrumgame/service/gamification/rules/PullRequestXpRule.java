@@ -3,8 +3,8 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.gamification.rules;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
+import de.unistuttgart.iste.meitrex.scrumgame.crs.CrsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.vcs.VcsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +21,9 @@ public class PullRequestXpRule extends XpAndLevelRule {
 
     @Override
     public List<String> getTriggerEventTypeIdentifiers() {
-        return List.of(VcsEventTypes.OPEN_PULL_REQUEST.getIdentifier(),
-                VcsEventTypes.REVIEW_ACCEPT.getIdentifier(),
-                VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier());
+        return List.of(CrsEventTypes.OPEN_PULL_REQUEST.getIdentifier(),
+                CrsEventTypes.REVIEW_ACCEPT.getIdentifier(),
+                CrsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier());
     }
 
     @Override
@@ -35,8 +35,8 @@ public class PullRequestXpRule extends XpAndLevelRule {
         int xp = 100 + (commits - 1) * 5 + (int) Math.sqrt(10.0 * (additions + deletions));
 
         // half xp for reviews
-        if (triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.REVIEW_ACCEPT.getIdentifier()) ||
-            triggerEvent.getEventType().getIdentifier().equals(VcsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier())) {
+        if (triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.REVIEW_ACCEPT.getIdentifier()) ||
+            triggerEvent.getEventType().getIdentifier().equals(CrsEventTypes.REVIEW_CHANGE_REQUEST.getIdentifier())) {
             xp /= 2;
         }
 

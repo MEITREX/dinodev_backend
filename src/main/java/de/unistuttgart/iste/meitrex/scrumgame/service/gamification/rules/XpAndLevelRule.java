@@ -2,8 +2,8 @@ package de.unistuttgart.iste.meitrex.scrumgame.service.gamification.rules;
 
 import de.unistuttgart.iste.meitrex.generated.dto.AllowedDataType;
 import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
+import de.unistuttgart.iste.meitrex.generated.dto.DataFieldInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
-import de.unistuttgart.iste.meitrex.generated.dto.TemplateFieldInput;
 import de.unistuttgart.iste.meitrex.rulesengine.Rule;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
@@ -78,7 +78,7 @@ public abstract class XpAndLevelRule implements Rule {
                 .setProjectId(triggerEvent.getProjectId())
                 .setUserId(triggerEvent.getUserId())
                 .setEventData(List.of(
-                        new TemplateFieldInput("xp", AllowedDataType.INTEGER, Integer.toString(xpToAdd))))
+                        new DataFieldInput("xp", AllowedDataType.INTEGER, Integer.toString(xpToAdd))))
                 .setMessage(getXpMessage(triggerEvent, xpToAdd))
                 .setParentId(triggerEvent.getId())
                 .build();

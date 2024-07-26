@@ -252,11 +252,12 @@ public class SprintStatsService {
 
         getDoneDateOfIssue(issue).ifPresent(date -> {
             int day = (int) Duration.between(startDate, date).toDays();
+            if (totalDays > 0) {
+                // ensure that the day is within the bounds of the sprint
+                day = Math.clamp(day, 0, totalDays - 1);
+                storyPointsByDay.set(day, storyPointsByDay.get(day) + issue.getStoryPoints());
+            }
 
-            // ensure bounds
-            day = Math.clamp(day, 0, totalDays - 1);
-
-            storyPointsByDay.set(day, storyPointsByDay.get(day) + issue.getStoryPoints());
         });
     }
 
