@@ -7,7 +7,6 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.IconEmb
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserInProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserInProjectRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
 import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
@@ -32,7 +31,6 @@ public class UserInProjectService
             UserInProjectRepository repository,
             AuthService authService,
             UserInProjectInitializerService userInProjectInitializerService,
-            UserStatsRepository userStatsRepository,
             ModelMapper modelMapper
     ) {
         super(repository, modelMapper, UserInProjectEntity.class, UserInProject.class);

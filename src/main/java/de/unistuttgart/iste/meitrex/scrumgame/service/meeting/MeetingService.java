@@ -9,7 +9,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.Meeting
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.MeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.MeetingRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -40,9 +40,6 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
         this.eventPublisher = eventPublisher;
         this.authService = authService;
         this.repository = repository;
-
-        // todo: remove this line after updating gamification engine
-        meetingSubscriptionPublisher.getEventStream().subscribe();
     }
 
 
@@ -132,9 +129,9 @@ public class MeetingService extends AbstractCrudService<UUID, MeetingEntity, Mee
      */
     public void publishMeetingFinishedEvents(Meeting meeting) {
         String eventTypeIdentifier = switch (meeting.getMeetingType()) {
-            case PLANNING -> ScrumGameEventTypes.SPRINT_PLANNING_ENDED.getIdentifier();
-            case STANDUP -> ScrumGameEventTypes.STANDUP_ENDED.getIdentifier();
-            case RETROSPECTIVE -> ScrumGameEventTypes.RETROSPECTIVE_ENDED.getIdentifier();
+            case PLANNING -> DinoDevEventTypes.SPRINT_PLANNING_ENDED.getIdentifier();
+            case STANDUP -> DinoDevEventTypes.STANDUP_ENDED.getIdentifier();
+            case RETROSPECTIVE -> DinoDevEventTypes.RETROSPECTIVE_ENDED.getIdentifier();
         };
 
         Optional<String> meetingLeaderId = meeting.getAttendees().stream()

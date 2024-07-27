@@ -9,7 +9,7 @@ import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserStatsEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import lombok.RequiredArgsConstructor;
 
 import java.util.*;
@@ -74,7 +74,7 @@ public abstract class XpAndLevelRule implements Rule {
 
     private CreateEventInput getXpGainEvent(Event triggerEvent, int xpToAdd) {
         return CreateEventInput.builder()
-                .setEventTypeIdentifier(ScrumGameEventTypes.XP_GAIN.getIdentifier())
+                .setEventTypeIdentifier(DinoDevEventTypes.XP_GAIN.getIdentifier())
                 .setProjectId(triggerEvent.getProjectId())
                 .setUserId(triggerEvent.getUserId())
                 .setEventData(List.of(
@@ -105,7 +105,7 @@ public abstract class XpAndLevelRule implements Rule {
 
     private static CreateEventInput getLevelUpEvent(Event triggerEvent, int newLevel, int virtualCurrencyGained) {
         return CreateEventInput.builder()
-                .setEventTypeIdentifier(ScrumGameEventTypes.LEVEL_UP.getIdentifier())
+                .setEventTypeIdentifier(DinoDevEventTypes.LEVEL_UP.getIdentifier())
                 .setProjectId(triggerEvent.getProjectId())
                 .setUserId(triggerEvent.getUserId())
                 .setEventData(List.of(

@@ -12,7 +12,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.gamification.Ac
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserProjectId;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.AchievementProgressRepository;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.AchievementRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
@@ -112,7 +112,7 @@ public class AchievementService
                                 .setType(AllowedDataType.STRING)
                                 .setValue(achievement.getName())
                                 .build()))
-                        .setEventTypeIdentifier(ScrumGameEventTypes.ACHIEVEMENT_UNLOCKED.getIdentifier())
+                        .setEventTypeIdentifier(DinoDevEventTypes.ACHIEVEMENT_UNLOCKED.getIdentifier())
                         .build()
         );
     }

@@ -112,7 +112,7 @@ public class EventService {
                                 .setValue(reaction)
                                 .build()
                 ))
-                .setEventTypeIdentifier(ScrumGameEventTypes.EVENT_REACTION.getIdentifier())
+                .setEventTypeIdentifier(DinoDevEventTypes.EVENT_REACTION.getIdentifier())
                 .build();
 
         return eventPublisher.publishEvent(input);
@@ -136,6 +136,7 @@ public class EventService {
         return eventPublisher.publishEvent(input);
     }
 
+    @SuppressWarnings("java:S1452") // wildcard return type makes sense here
     public Optional<? extends DataField> findField(Event event, String name) {
         return TemplateDataUtils.findField(event, name);
     }
@@ -151,7 +152,7 @@ public class EventService {
         return getChildren(event).stream()
                 .filter(child ->
                         child.getEventType().getIdentifier()
-                                .equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier()))
+                                .equals(DinoDevEventTypes.EVENT_REACTION.getIdentifier()))
                 .map(childEvent -> Reaction.builder()
                         .setReaction(findStringField(childEvent, "reaction").orElse(""))
                         .setUserId(childEvent.getUserId())
@@ -163,7 +164,7 @@ public class EventService {
     public Integer getXpForCurrentUser(DefaultEvent event) {
         return getChildren(event).stream()
                 .filter(child -> child.getEventType().getIdentifier()
-                        .equals(ScrumGameEventTypes.XP_GAIN.getIdentifier()))
+                        .equals(DinoDevEventTypes.XP_GAIN.getIdentifier()))
                 .filter(child -> child.getUserId().equals(authService.getCurrentUserId()))
                 .mapToInt(child -> findIntField(child, "xp").orElse(0))
                 .sum();

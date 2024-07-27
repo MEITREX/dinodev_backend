@@ -34,7 +34,7 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-public class AuthServiceTest {
+class AuthServiceTest {
 
     @Mock
     private GlobalUserRepository globalUserRepository;
@@ -50,7 +50,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testGetCurrentUserId() {
+    void testGetCurrentUserId() {
         UUID expectedUserId = UUID.randomUUID();
         Jwt jwt = injectJwtMockWithUserId(expectedUserId);
 
@@ -62,7 +62,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testGetCurrentUserIdWithInvalidJwt() {
+    void testGetCurrentUserIdWithInvalidJwt() {
         Jwt jwt = mock(Jwt.class);
         when(jwt.getSubject()).thenReturn("not-a-uuid");
         injectJwtMock(jwt);
@@ -73,7 +73,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testHasGlobalPrivilege() {
+    void testHasGlobalPrivilege() {
         UUID userId = UUID.randomUUID();
         injectJwtMockWithUserId(userId);
 
@@ -98,7 +98,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testHasGlobalPrivilegeWithNoUser() {
+    void testHasGlobalPrivilegeWithNoUser() {
         UUID userId = UUID.randomUUID();
         injectJwtMockWithUserId(userId);
 
@@ -113,7 +113,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void testHasProjectPrivilege() {
+    void testHasProjectPrivilege() {
         UUID userId = UUID.randomUUID();
         UUID projectId = UUID.randomUUID();
         injectJwtMockWithUserId(userId);

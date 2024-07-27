@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-public class QueryGlobalUserTest {
+class QueryGlobalUserTest {
 
     @Autowired
     private GlobalUserRepository     globalUserRepository;

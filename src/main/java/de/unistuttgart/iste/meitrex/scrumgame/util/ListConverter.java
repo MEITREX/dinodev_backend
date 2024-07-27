@@ -15,6 +15,8 @@ public class ListConverter<I, O> implements Converter<List<I>, List<O>> {
 
     private final Function<I, O> elementConverter;
 
+    @SuppressWarnings("java:S1168")
+    // for the graphql framework it makes more sense to return null instead of an empty list
     @Override
     public List<O> convert(MappingContext context) {
         @SuppressWarnings("unchecked") Collection<I> source

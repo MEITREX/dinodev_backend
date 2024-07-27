@@ -10,8 +10,8 @@ import de.unistuttgart.iste.meitrex.rulesengine.util.DefaultEventPublisher;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.crs.CrsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.event.EventPersistenceService;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -64,7 +64,7 @@ public class GamificationConfiguration {
 
         ImsEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
         CrsEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
-        ScrumGameEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
+        DinoDevEventTypes.allEventTypes().forEach(eventTypeRegistry::register);
 
         // add other event types as needed
     }

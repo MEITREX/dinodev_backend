@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-public class MutationCreateProjectRoleTest {
+class MutationCreateProjectRoleTest {
 
     @Autowired
     private ProjectRepository projectRepository;

@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 class AuthTokenFromHeaderSupplierTest {
 
     @Test
-    public void test_token_extraction_with_bearer_prefix() {
+    void test_token_extraction_with_bearer_prefix() {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
         ServletRequestAttributes attributes = mock(ServletRequestAttributes.class);
@@ -33,7 +33,7 @@ class AuthTokenFromHeaderSupplierTest {
     }
 
     @Test
-    public void test_token_returned_as_is_without_bearer_prefix() {
+    void test_token_returned_as_is_without_bearer_prefix() {
         // Arrange
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         ServletRequestAttributes attributes = Mockito.mock(ServletRequestAttributes.class);
@@ -50,7 +50,7 @@ class AuthTokenFromHeaderSupplierTest {
     }
 
     @Test
-    public void test_throws_illegal_state_exception_when_no_attributes() {
+    void test_throws_illegal_state_exception_when_no_attributes() {
         // Arrange
         RequestContextHolder.setRequestAttributes(null);
         AuthTokenFromHeaderSupplier supplier = new AuthTokenFromHeaderSupplier();
@@ -60,7 +60,7 @@ class AuthTokenFromHeaderSupplierTest {
     }
 
     @Test
-    public void test_throws_access_denied_exception_when_no_authorization_header() {
+    void test_throws_access_denied_exception_when_no_authorization_header() {
         // Arrange
         HttpServletRequest request = Mockito.mock(HttpServletRequest.class);
         ServletRequestAttributes attributes = Mockito.mock(ServletRequestAttributes.class);

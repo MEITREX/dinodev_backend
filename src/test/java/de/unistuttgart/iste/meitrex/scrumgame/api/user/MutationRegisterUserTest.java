@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-public class MutationRegisterUserTest {
+class MutationRegisterUserTest {
 
     @Autowired
     private GlobalUserRepository globalUserRepository;

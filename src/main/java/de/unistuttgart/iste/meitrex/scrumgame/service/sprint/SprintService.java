@@ -116,17 +116,20 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
     }
 
     public Sprint updateSprint(UUID id, int sprintNumber, UpdateSprintInput input) {
-        SprintEntity sprintEntity = findSprintEntity(id, sprintNumber)
-                .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
+        SprintEntity sprintEntity = getSprintEntity(id, sprintNumber);
 
         getModelMapper().map(input, sprintEntity);
 
         return convertToDto(repository.save(sprintEntity));
     }
 
-    public void updateSprintEntity(UUID projectId, Integer sprintNumber, Consumer<SprintEntity> update) {
-        SprintEntity sprintEntity = findSprintEntity(projectId, sprintNumber)
+    private SprintEntity getSprintEntity(UUID id, int sprintNumber) {
+        return findSprintEntity(id, sprintNumber)
                 .orElseThrow(() -> new MeitrexNotFoundException("Sprint not found"));
+    }
+
+    public void updateSprintEntity(UUID projectId, Integer sprintNumber, Consumer<SprintEntity> update) {
+        SprintEntity sprintEntity = getSprintEntity(projectId, sprintNumber);
 
         update.accept(sprintEntity);
 

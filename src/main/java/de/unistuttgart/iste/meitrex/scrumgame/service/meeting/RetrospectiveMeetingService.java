@@ -85,8 +85,7 @@ public class RetrospectiveMeetingService
 
     @Transactional
     public synchronized RetrospectiveMeeting awardMedals(UUID projectId) {
-        RetrospectiveMeetingEntity entity = repository.findFirstByProjectIdAndActive(projectId, true)
-                .orElseThrow(() -> new MeitrexNotFoundException("No active retrospective meeting found"));
+        RetrospectiveMeetingEntity entity = getActiveRetrospectiveMeetingEntity(projectId);
 
         if (entity.isMedalsAwarded()) {
             return convertToDto(entity);
@@ -99,13 +98,14 @@ public class RetrospectiveMeetingService
         return convertToDto(repository.save(entity));
     }
 
+    private RetrospectiveMeetingEntity getActiveRetrospectiveMeetingEntity(UUID projectId) {
+        return repository.findFirstByProjectIdAndActive(projectId, true)
+                .orElseThrow(() -> new MeitrexNotFoundException("No active retrospective meeting found"));
+    }
+
     @Transactional
     public RetrospectiveMeeting finishMeeting(UUID id) {
-        // set end date so that the sprint is not active anymore
-        // update sprint number
-
-        RetrospectiveMeetingEntity retrospectiveMeetingEntity = repository.findFirstByProjectIdAndActive(id, true)
-                .orElseThrow(() -> new MeitrexNotFoundException("No active retrospective meeting found"));
+        RetrospectiveMeetingEntity retrospectiveMeetingEntity = getActiveRetrospectiveMeetingEntity(id);
         retrospectiveMeetingEntity.setActive(false);
 
         ProjectEntity projectEntity = retrospectiveMeetingEntity.getProject();
@@ -113,9 +113,7 @@ public class RetrospectiveMeetingService
         // set end date so that the sprint is not active anymore
         sprintService.updateSprintEntity(projectEntity.getId(),
                 projectEntity.getCurrentSprintNumber(),
-                sprintEntity -> {
-                    sprintEntity.setEndDate(OffsetDateTime.now());
-                });
+                sprintEntity -> sprintEntity.setEndDate(OffsetDateTime.now()));
 
         // update sprint number
         int newSprintNumber = Optional.ofNullable(projectEntity.getCurrentSprintNumber()).orElse(0) + 1;
@@ -160,11 +158,9 @@ public class RetrospectiveMeetingService
     }
 
     private void initActivities(RetrospectiveMeetingEntity entity, List<RetrospectiveActivityInput> activities) {
-        log.info("initActivities: " + activities);
         entity.setActivities(activities.stream()
                 .map(activityInput -> getModelMapper()
                         .map(activityInput, RetrospectiveActivityEntity.class))
-                .peek(activity -> log.info("activity: " + activity))
                 .toList());
     }
 
@@ -201,8 +197,7 @@ public class RetrospectiveMeetingService
             UUID projectId,
             Consumer<RetrospectiveMeetingEntity> modifier
     ) {
-        RetrospectiveMeetingEntity retrospectiveMeeting = repository.findFirstByProjectIdAndActive(projectId, true)
-                .orElseThrow(() -> new MeitrexNotFoundException("No active retrospective meeting found"));
+        RetrospectiveMeetingEntity retrospectiveMeeting = getActiveRetrospectiveMeetingEntity(projectId);
 
         modifier.accept(retrospectiveMeeting);
 

@@ -25,6 +25,11 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @EnableMethodSecurity
 public class SecurityConfiguration {
 
+    private static final String GRAPHQL_ROUTE    = "/graphql**";
+    private static final String GRAPHQL_WS_ROUTE = "/graphql-ws**";
+    private static final String WEBHOOK_ROUTE    = "/webhook**";
+    private static final String GRAPHIQL_ROUTE   = "/graphiql**";
+
     @Bean
     @Profile("dev")
     @SuppressWarnings({"java:S5122"}) // only dev profile, no security issue
@@ -50,20 +55,20 @@ public class SecurityConfiguration {
     DefaultSecurityFilterChain springDevWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/graphql**")
-                        .ignoringRequestMatchers("/webhook**")
+                        .ignoringRequestMatchers(GRAPHQL_ROUTE)
+                        .ignoringRequestMatchers(WEBHOOK_ROUTE)
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authz -> authz
                         // allow access to the GraphQL endpoint (required for schema introspection)
-                        .requestMatchers("/graphql**").permitAll()
+                        .requestMatchers(GRAPHQL_ROUTE).permitAll()
                         // for now: allow access to the WebSocket endpoint
-                        .requestMatchers("/graphql-ws**").permitAll()
+                        .requestMatchers(GRAPHQL_WS_ROUTE).permitAll()
                         // allow access to the GraphiQL interface
-                        .requestMatchers("/graphiql**").permitAll()
+                        .requestMatchers(GRAPHIQL_ROUTE).permitAll()
                         // allow access to webhooks
-                        .requestMatchers(HttpMethod.POST, "/webhook**").permitAll()
+                        .requestMatchers(HttpMethod.POST, WEBHOOK_ROUTE).permitAll()
                         .anyRequest().authenticated())
                 .formLogin(withDefaults())
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
@@ -80,19 +85,19 @@ public class SecurityConfiguration {
     DefaultSecurityFilterChain prodSpringWebFilterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/webhook**") // allow access to webhooks
+                        .ignoringRequestMatchers(WEBHOOK_ROUTE) // allow access to webhooks
                         .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
                 )
                 .cors(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authz -> authz
                         // allow OPTIONS requests to the GraphQL endpoint
-                        .requestMatchers(HttpMethod.OPTIONS, "/graphql**").permitAll()
+                        .requestMatchers(HttpMethod.OPTIONS, GRAPHQL_ROUTE).permitAll()
                         // for now: allow access to the WebSocket endpoint
-                        .requestMatchers("/graphql-ws**").permitAll()
+                        .requestMatchers(GRAPHQL_WS_ROUTE).permitAll()
                         // allow access to the GraphiQL interface
-                        .requestMatchers("/graphiql**").permitAll()
+                        .requestMatchers(GRAPHIQL_ROUTE).permitAll()
                         // allow access to webhooks
-                        .requestMatchers(HttpMethod.POST, "/webhook**").permitAll()
+                        .requestMatchers(HttpMethod.POST, WEBHOOK_ROUTE).permitAll()
                         .anyRequest().authenticated()) // All requests require authentication
                 .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
                 .build();

@@ -7,7 +7,7 @@ import de.unistuttgart.iste.meitrex.rulesengine.Rule;
 import de.unistuttgart.iste.meitrex.scrumgame.crs.CrsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.ims.ImsEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.user.UserStatsEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.service.gamification.UserStatsService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +24,7 @@ public class StatCounterRule implements Rule {
 
     @Override
     public List<String> getTriggerEventTypeIdentifiers() {
-        return List.of(ScrumGameEventTypes.EVENT_REACTION.getIdentifier(),
+        return List.of(DinoDevEventTypes.EVENT_REACTION.getIdentifier(),
                 DefaultEventTypes.USER_MESSAGE.getIdentifier(),
                 ImsEventTypes.COMMENT_ON_ISSUE.getIdentifier(),
                 ImsEventTypes.ISSUE_COMPLETED.getIdentifier(),
@@ -50,7 +50,7 @@ public class StatCounterRule implements Rule {
     }
 
     private static void incrementUserStatOfEvent(Event triggerEvent, UserStatsEntity userStats) {
-        if (triggerEvent.getEventType().getIdentifier().equals(ScrumGameEventTypes.EVENT_REACTION.getIdentifier())) {
+        if (triggerEvent.getEventType().getIdentifier().equals(DinoDevEventTypes.EVENT_REACTION.getIdentifier())) {
             userStats.setReactionsGiven(userStats.getReactionsGiven() + 1);
         }
 

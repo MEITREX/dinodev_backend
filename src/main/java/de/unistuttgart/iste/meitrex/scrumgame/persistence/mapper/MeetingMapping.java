@@ -8,7 +8,7 @@ import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.plannin
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.planning.PlanningMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.retrospective.RetrospectiveMeetingEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.meeting.standup.StandupMeetingEntity;
-import de.unistuttgart.iste.meitrex.scrumgame.util.MeitrexConverters;
+import de.unistuttgart.iste.meitrex.scrumgame.util.DinoDevConverters;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -47,7 +47,7 @@ public class MeetingMapping implements Module {
         modelMapper.emptyTypeMap(NameVotingStateEntity.class, NameVotingState.class)
                 // computed field totalVotes
                 .addMappings(mapper -> mapper
-                        .using(MeitrexConverters.collectionToSize())
+                        .using(DinoDevConverters.collectionToSize())
                         .map(NameVotingStateEntity::getUserVotes, NameVotingState::setTotalVotes))
                 // animal votes field has to be converted
                 .addMappings(mapper -> mapper
@@ -58,7 +58,7 @@ public class MeetingMapping implements Module {
         modelMapper.emptyTypeMap(AnimalVotingStateEntity.class, AnimalVotingState.class)
                 // computed field totalVotes
                 .addMappings(mapper -> mapper
-                        .using(MeitrexConverters.collectionToSize())
+                        .using(DinoDevConverters.collectionToSize())
                         .map(AnimalVotingStateEntity::getUserVotes, AnimalVotingState::setTotalVotes))
                 // animal votes field has to be converted
                 .addMappings(mapper -> mapper
@@ -69,7 +69,7 @@ public class MeetingMapping implements Module {
         modelMapper.emptyTypeMap(EstimationVoteEntity.class, EstimationVote.class)
                 // computed field totalVotes
                 .addMappings(mapper -> mapper
-                        .using(MeitrexConverters.collectionToSize())
+                        .using(DinoDevConverters.collectionToSize())
                         .map(EstimationVoteEntity::getUserVotes, EstimationVote::setTotalVotes))
                 // animal votes field has to be converted
                 .addMappings(mapper -> mapper
@@ -113,7 +113,7 @@ public class MeetingMapping implements Module {
     }
 
     private Converter<List<UUID>, List<Vote>> getVoteConverter() {
-        return MeitrexConverters.listConverter(uuid -> Vote.builder().setUserId(uuid).build());
+        return DinoDevConverters.listConverter(uuid -> Vote.builder().setUserId(uuid).build());
     }
 
     // provider that maps the MeetingEntity to the correct Meeting subclass

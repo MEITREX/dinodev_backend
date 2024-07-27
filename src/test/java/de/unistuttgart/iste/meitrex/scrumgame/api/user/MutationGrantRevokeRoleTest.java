@@ -29,7 +29,7 @@ import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-public class MutationGrantRevokeRoleTest {
+class MutationGrantRevokeRoleTest {
 
     @Autowired
     private GlobalUserRepository     globalUserRepository;

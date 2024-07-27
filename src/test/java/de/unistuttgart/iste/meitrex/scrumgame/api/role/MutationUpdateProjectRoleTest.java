@@ -26,7 +26,7 @@ import static org.mockito.Mockito.*;
 
 @GraphQlApiTest
 @ActiveProfiles("test")
-public class MutationUpdateProjectRoleTest {
+class MutationUpdateProjectRoleTest {
 
     @Autowired
     private ProjectRepository projectRepository;

@@ -4,7 +4,7 @@ import de.unistuttgart.iste.meitrex.generated.dto.CreateEventInput;
 import de.unistuttgart.iste.meitrex.generated.dto.Event;
 import de.unistuttgart.iste.meitrex.rulesengine.util.EventPublisher;
 import de.unistuttgart.iste.meitrex.scrumgame.persistence.repository.UserStatsRepository;
-import de.unistuttgart.iste.meitrex.scrumgame.service.event.ScrumGameEventTypes;
+import de.unistuttgart.iste.meitrex.scrumgame.service.event.DinoDevEventTypes;
 import de.unistuttgart.iste.meitrex.scrumgame.util.TemplateDataUtils;
 import org.springframework.stereotype.Component;
 
@@ -27,20 +27,20 @@ public class MeetingXpRule extends XpAndLevelRule {
 
     @Override
     public List<String> getTriggerEventTypeIdentifiers() {
-        return List.of(ScrumGameEventTypes.SPRINT_PLANNING_ENDED.getIdentifier(),
-                ScrumGameEventTypes.STANDUP_ENDED.getIdentifier(),
-                ScrumGameEventTypes.RETROSPECTIVE_ENDED.getIdentifier());
+        return List.of(DinoDevEventTypes.SPRINT_PLANNING_ENDED.getIdentifier(),
+                DinoDevEventTypes.STANDUP_ENDED.getIdentifier(),
+                DinoDevEventTypes.RETROSPECTIVE_ENDED.getIdentifier());
     }
 
     @Override
     public int getXp(Event triggerEvent) {
         int baseXp = 0;
-        if (ScrumGameEventTypes.STANDUP_ENDED.getIdentifier().equals(triggerEvent.getEventType().getIdentifier())) {
+        if (DinoDevEventTypes.STANDUP_ENDED.getIdentifier().equals(triggerEvent.getEventType().getIdentifier())) {
             baseXp = STANDUP_BASE_XP;
-        } else if (ScrumGameEventTypes.SPRINT_PLANNING_ENDED.getIdentifier()
+        } else if (DinoDevEventTypes.SPRINT_PLANNING_ENDED.getIdentifier()
                 .equals(triggerEvent.getEventType().getIdentifier())) {
             baseXp = PLANNING_BASE_XP;
-        } else if (ScrumGameEventTypes.RETROSPECTIVE_ENDED.getIdentifier()
+        } else if (DinoDevEventTypes.RETROSPECTIVE_ENDED.getIdentifier()
                 .equals(triggerEvent.getEventType().getIdentifier())) {
             baseXp = RETRO_BASE_XP;
         }

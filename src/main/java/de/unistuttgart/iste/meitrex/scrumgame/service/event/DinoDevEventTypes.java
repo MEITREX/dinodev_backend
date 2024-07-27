@@ -9,7 +9,7 @@ import java.util.*;
  * Contains predefined event types.
  */
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class ScrumGameEventTypes {
+public class DinoDevEventTypes {
 
     public static final EventType EVENT_REACTION = DefaultEventType.builder()
             .setIdentifier("EVENT_REACTION")
@@ -69,19 +69,19 @@ public class ScrumGameEventTypes {
             .setMessageTemplate("The sprint was ended.")
             .build();
 
+    private static final DefaultFieldSchemaDefinition MEETING_LEADER_FIELD = DefaultFieldSchemaDefinition.builder()
+            .setName("meetingLeader")
+            .setType(AllowedDataType.STRING)
+            .setDescription("The ID of the user who led the meeting.")
+            .setRequired(true)
+            .build();
+
     public static final EventType SPRINT_PLANNING_ENDED = DefaultEventType.builder()
             .setIdentifier("SPRINT_PLANNING_ENDED")
             .setDescription("A sprint planning was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder()
-                    .setFields(List.of(
-                            DefaultFieldSchemaDefinition.builder()
-                                    .setName("meetingLeader")
-                                    .setType(AllowedDataType.STRING)
-                                    .setDescription("The ID of the user who led the meeting.")
-                                    .setRequired(true)
-                                    .build()
-                    ))
+                    .setFields(List.of(MEETING_LEADER_FIELD))
                     .build())
             .setMessageTemplate("The sprint planning has ended.")
             .build();
@@ -91,14 +91,7 @@ public class ScrumGameEventTypes {
             .setDescription("A daily scrum was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder()
-                    .setFields(List.of(
-                            DefaultFieldSchemaDefinition.builder()
-                                    .setName("meetingLeaderId")
-                                    .setType(AllowedDataType.STRING)
-                                    .setDescription("The ID of the user who led the meeting.")
-                                    .setRequired(true)
-                                    .build()
-                    ))
+                    .setFields(List.of(MEETING_LEADER_FIELD))
                     .build())
             .setMessageTemplate("The daily scrum has ended.")
             .build();
@@ -108,16 +101,9 @@ public class ScrumGameEventTypes {
             .setDescription("A retrospective was ended.")
             .setDefaultVisibility(EventVisibility.INTERNAL)
             .setEventSchema(DefaultSchemaDefinition.builder()
-                    .setFields(List.of(
-                            DefaultFieldSchemaDefinition.builder()
-                                    .setName("meetingLeaderId")
-                                    .setType(AllowedDataType.STRING)
-                                    .setDescription("The ID of the user who led the meeting.")
-                                    .setRequired(true)
-                                    .build()
-                    ))
+                    .setFields(List.of(MEETING_LEADER_FIELD))
                     .build())
-            .setMessageTemplate("The retrospective was ended.")
+            .setMessageTemplate("The retrospective has ended.")
             .build();
 
     public static final EventType XP_GAIN = DefaultEventType.builder()

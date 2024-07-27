@@ -8,11 +8,9 @@ import java.util.function.*;
 
 /**
  * Converters for the model mapper.
- *
- * TODO: this class could be moved to meitrext-common
  */
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
-public class MeitrexConverters {
+public class DinoDevConverters {
 
     /**
      * Converts a collection to its size.

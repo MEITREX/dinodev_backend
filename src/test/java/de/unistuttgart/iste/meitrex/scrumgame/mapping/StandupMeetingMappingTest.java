@@ -13,7 +13,7 @@ import java.util.*;
 import static de.unistuttgart.iste.meitrex.scrumgame.matchers.StandupMeetingMatcher.matchingStandupMeetingEntity;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class StandupMeetingMappingTest {
+class StandupMeetingMappingTest {
 
     private final ModelMapper modelMapper = new ModelMapperConfiguration().modelMapper();
 
