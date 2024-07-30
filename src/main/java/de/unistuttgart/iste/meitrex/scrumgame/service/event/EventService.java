@@ -40,7 +40,7 @@ public class EventService {
     // min time between event syncs
     private static final Duration GLOBAL_SYNC_INTERVAL = Duration.ofSeconds(30);
 
-    private OffsetDateTime lastGlobalEventSync = OffsetDateTime.MIN;
+    private final Map<UUID, OffsetDateTime> lastGlobalEventSyncs = new HashMap<>();
 
     public Page<Event> getAndSyncEvents(Project project, Pageable pageable) {
         syncEventsFromGropius(project);
@@ -57,13 +57,19 @@ public class EventService {
     }
 
     public void syncEventsFromGropius(Project project) {
+        OffsetDateTime lastGlobalEventSync = getLastGlobalSyncForProject(project.getId());
         if (Duration.between(lastGlobalEventSync, OffsetDateTime.now()).abs().compareTo(GLOBAL_SYNC_INTERVAL) < 0) {
             return;
         }
 
         imsService.getEventsForProject(project, lastGlobalEventSync).forEach(eventPublisher::publishEvent);
 
-        lastGlobalEventSync = OffsetDateTime.now();
+        lastGlobalEventSyncs.put(project.getId(), OffsetDateTime.now());
+    }
+
+    private OffsetDateTime getLastGlobalSyncForProject(UUID projectId) {
+        return lastGlobalEventSyncs.getOrDefault(projectId,
+                LocalDate.of(1, 1, 1).atStartOfDay().atOffset(ZoneOffset.UTC));
     }
 
     public List<Event> getAndSyncEvents(Issue issue) {
