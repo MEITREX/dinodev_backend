@@ -1,4 +1,4 @@
-type UserInProject implements ProjectDependent {
+type UserInProject {
     roles: [ProjectRole!]!
 
     userStats: UserStats! @OnDemand

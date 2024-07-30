@@ -1,3 +1,11 @@
+"""
+Roles are used to define the permissions of a user in a project.
+A user can have multiple roles in a project.
+
+NOTE: Project-level privileges/roles are NOT implemented yet.
+While the general framework is in place, an actual differentiation
+between roles has yet to be implemented.
+"""
 type ProjectRole {
     name: String!
     gamifiedName: String!
@@ -6,11 +14,23 @@ type ProjectRole {
     projectPrivileges: [ProjectPrivilege!]!
 }
 
+"""
+Global roles define the permissions of a user on a global level.
+They are not tied to a specific project.
+
+Currently, there is only a distinction between admins and non-admins.
+"""
 type GlobalUserRole {
     name: String!
     globalPrivileges: [GlobalPrivilege!]!
 }
 
+"""
+Privileges on the project level.
+
+NOTE: This is NOT implemented yet. These are just suggestions.
+Future work is needed to implement project-level privileges.
+"""
 enum ProjectPrivilege {
     READ_PROJECT
     UPDATE_PROJECT
@@ -28,9 +48,12 @@ enum ProjectPrivilege {
     UPDATE_ROLE
     DELETE_ROLE
     READ_USER_PRIVATE_INFO
-    # todo add more permissions
 }
 
+"""
+Privileges on the global level, i.e., not tied to a specific project.
+Currently, UPDATE_ROLE and LIST_USERS are not used.
+"""
 enum GlobalPrivilege {
     CREATE_PROJECT
     CREATE_ROLE
@@ -41,7 +64,6 @@ enum GlobalPrivilege {
     UPDATE_USER
     DELETE_USER
     LIST_USERS
-    # todo add more permissions
 }
 
 input CreateGlobalUserRoleInput {

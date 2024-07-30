@@ -1,7 +1,9 @@
 package de.unistuttgart.iste.meitrex.scrumgame.service.gamification;
 
 import de.unistuttgart.iste.meitrex.generated.dto.*;
+import de.unistuttgart.iste.meitrex.scrumgame.persistence.entity.project.ProjectEntity;
 import de.unistuttgart.iste.meitrex.scrumgame.service.auth.AuthService;
+import de.unistuttgart.iste.meitrex.scrumgame.service.project.ProjectService;
 import de.unistuttgart.iste.meitrex.scrumgame.service.sprint.SprintService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.*;
 
 @Slf4j
 @Service
@@ -18,16 +21,25 @@ public class ShopService {
     private final SprintService    sprintService;
     private final UserStatsService userStatsService;
     private final AuthService      authService;
+    private final ProjectService projectService;
 
-    public List<ShopItem> getShopItems() {
-        return ShopItems.DEFAULT_SHOP_ITEMS.stream()
+    public List<ShopItem> getShopItems(Project project) {
+        ProjectEntity projectEntity = projectService.getProjectEntity(project.getId());
+
+        var unlockedShopItems = projectEntity.getAdditionalUnlockedAssets()
+                .stream()
+                .map(ShopItems::getShopItemByKnownAsset);
+        var defaultShopItems = ShopItems.DEFAULT_SHOP_ITEMS.stream();
+
+        return Stream.concat(unlockedShopItems, defaultShopItems)
                 .sorted(Comparator.comparing(ShopItem::getPrice))
-                .toList();
+                .collect(Collectors.toList());
     }
 
     @Transactional
     public PlacedAsset buyAndPlace(ProjectMutation projectMutation, PlaceAssetInput input) {
-        ShopItem shopItem = getShopItemByKnownAsset(input.getAsset());
+        KnownAsset knownAsset = input.getAsset();
+        ShopItem shopItem = ShopItems.getShopItemByKnownAsset(knownAsset);
 
         userStatsService.updateUserStats(
                 authService.getCurrentUserId(),
@@ -41,10 +53,4 @@ public class ShopService {
         return sprintService.placeAsset(projectMutation.getProject(), input, authService.getCurrentUserId());
     }
 
-    public ShopItem getShopItemByKnownAsset(KnownAsset knownAsset) {
-        return ShopItems.DEFAULT_SHOP_ITEMS.stream()
-                .filter(shopItem -> shopItem.getImage() == knownAsset)
-                .findFirst()
-                .orElseThrow();
-    }
 }

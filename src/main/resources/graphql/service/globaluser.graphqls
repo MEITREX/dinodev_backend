@@ -1,20 +1,48 @@
+"""
+A user of DinoDev. (In contrast to UserInProject, which is a user in a specific project.)
+"""
 type GlobalUser {
     id: UUID!
+    """
+    Username of the user.
+    """
     username: String!
+
+    """
+    Avatar of the user. Must be a valid URL.
+    """
     avatar: String
+    """
+    ID of the user in the code repository system, e.g. GitHub.
+    """
     vcsUserId: String!
+    """
+    Roles of the user.
+    """
     roles: [GlobalUserRole!]!
 
+    """
+    Gets the corresponding UserInProject object for the user in the given project.
+    """
     userInProject(projectId: UUID!): UserInProject
+    """
+    Gets all UserInProject objects, i.e., the edges between the user and the projects.
+    """
     userInProjects: [UserInProject!]! @OnDemand
 }
 
+"""
+Input to register a new global user.
+"""
 input CreateGlobalUserInput {
     username: String! @NotBlank
     avatar: String
     vcsUserId: String!
 }
 
+"""
+Input to update a global user.
+"""
 input UpdateGlobalUserInput {
     username: String! @NotBlank
     avatar: String

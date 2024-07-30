@@ -1,57 +1,154 @@
 type Mutation {
     # projects
+    """
+    Creates a new project. Requires the permission to create a project.
+    """
     createProject(input: CreateProjectInput!): Project!
+    """
+    Updates an existing project. Requires the permission to update a project.
+    """
     updateProject(id: UUID!, input: UpdateProjectInput!): Project!
+    """
+    Deletes a project. Requires the permission to delete a project.
+    """
     deleteProject(id: UUID!): Boolean!
+    """
+    Perform changes on a project.
+    """
     mutateProject(id: UUID!): ProjectMutation!
 
     # user
+    """
+    Registers a new global user.
+    """
     register(input: CreateGlobalUserInput!): GlobalUser!
+    """
+    Adds a user to a project.
+    """
     joinProject(projectId: UUID!): UserInProject!
 
+    """
+    Updates a global user.
+    """
     updateGlobalUser(id: UUID!, input: UpdateGlobalUserInput!): GlobalUser!
+    """
+    Grants a role to a user. The caller must have all permissions that are required by the role
+    to grant it to another user.
+    """
     grantRole(userId: UUID!, roleName: String!): GlobalUser!
+    """
+    Revokes a role from a user.
+    """
     revokeRole(userId: UUID!, roleName: String!): GlobalUser!
+    """
+    Deletes a user. Requires the permission to delete a user.
+    """
     deleteUser(id: UUID!): Boolean!
 
+    # the role management is currently not really used except for the admin roles.
+    """
+    Creates a new user role.
+    """
     createGlobalUserRole(input: CreateGlobalUserRoleInput!): GlobalUserRole!
+    """
+    Updates a user role.
+    """
     updateGlobalUserRole(name: String!, input: UpdateGlobalUserRoleInput!): GlobalUserRole!
+    """
+    Deletes a user role.
+    """
     deleteGlobalUserRole(name: String!): Boolean!
 
     # event types
+    # like roles, this is not really used but could be in future extensions
+    """
+    Creates a new event type.
+    """
     createEventType(input: CreateEventTypeInput!): EventType!
+    """
+    Updates an event type. This can only update event types created manually, not the predefined ones.
+    """
     updateEventType(id: String!, input: UpdateEventTypeInput!): EventType!
+    """
+    Deletes an event type. This can only delete event types created manually, not the predefined ones.
+    """
     deleteEventType(id: String!): Boolean!
 }
 
 type Query {
     # projects
+    """
+    Get all projects
+    """
     projects: [Project!]!
+    """
+    Get a project by its ID
+    """
     project(id: UUID!): Project
 
     # users
+    """
+    Get all global users
+    """
     globalUsers: [GlobalUser!]!
+    """
+    Get a global user by its ID
+    """
     globalUser(id: UUID!): GlobalUser
+    """
+    Get the current user
+    """
     currentUser: GlobalUser
+    """
+    Get basic user information about the current user, currently fetched from Gropius
+    """
     currentUserInfo: BasicUserInfo
 
     # roles
+    """
+    Get all global user roles
+    """
     globalUserRoles: [GlobalUserRole!]!
+    """
+    Get a global user role by its name
+    """
     globalUserRole(name: String!): GlobalUserRole
 
     # event types
+    """
+    Get all event types
+    """
     eventTypes: [EventType!]!
+    """
+    Get an event type by its ID
+    """
     eventType(id: String!): EventType
-
-    # shop
-    shopItems: [ShopItem!]!
 }
 
 type Subscription {
+    """
+    Returns the current meeting instance for the given project and meeting type.
+    This is updated in real-time when the meeting changes.
+    """
     meeting(projectId: UUID!, meetingType: MeetingType!): Meeting
+    """
+    Returns the current planning meeting instance for the given project.
+    This is updated in real-time when the meeting changes.
+    """
     planningMeeting(projectId: UUID!): PlanningMeeting
+    """
+    Returns the current standup meeting instance for the given project.
+    This is updated in real-time when the meeting changes.
+    """
     standupMeeting(projectId: UUID!): StandupMeeting!
+    """
+    Returns the current retrospective meeting instance for the given project.
+    This is updated in real-time when the meeting changes.
+    """
     retrospectiveMeeting(projectId: UUID!): RetrospectiveMeeting!
+    """
+    Listens for new events for the given project and user.
+    """
     event(projectId: UUID!, userId: UUID!): Event!
 
 }

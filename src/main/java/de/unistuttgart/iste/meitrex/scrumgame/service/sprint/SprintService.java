@@ -96,6 +96,14 @@ public class SprintService extends AbstractCrudService<UUID, SprintEntity, Sprin
         return findSprint(project.getId(), project.getCurrentSprintNumber());
     }
 
+    public Optional<Sprint> findPreviousSprint(Project project) {
+        if (project.getCurrentSprintNumber() == null || project.getCurrentSprintNumber() <= 1) {
+            return repository.findFirstByProjectIdOrderByNumberDesc(project.getId())
+                    .map(this::convertToDto);
+        }
+        return findSprint(project.getId(), project.getCurrentSprintNumber() - 1);
+    }
+
     public PlacedAsset placeAsset(Project project, PlaceAssetInput input, UUID placedBy) {
         SprintEntity sprintEntity = findSprintEntity(project.getId(), project.getCurrentSprintNumber())
                 .orElseThrow(() -> new MeitrexNotFoundException("No current sprint found"));

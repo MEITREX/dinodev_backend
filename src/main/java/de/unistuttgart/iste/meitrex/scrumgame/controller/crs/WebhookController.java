@@ -13,7 +13,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class WebhookController {
 
-    private final CrsService vcsService;
+    private final CrsService crsService;
 
     @PostMapping("/webhook")
     public void handleWebhook(
@@ -21,7 +21,7 @@ public class WebhookController {
             @RequestHeader Map<String, String> headers,
             @RequestParam UUID projectId
     ) {
-        vcsService.handleWebhook(body, headers, projectId);
+        crsService.handleWebhook(body, headers, projectId);
     }
 
 }

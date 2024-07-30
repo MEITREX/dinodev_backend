@@ -1,6 +1,15 @@
+"""
+Represents a standup meeting.
+"""
 type StandupMeeting implements Meeting {
     standupMeetingSettings: StandupMeetingSettings!
+    """
+    The randomly assigned order of attendees in the meeting.
+    """
     order: [MeetingAttendee!]!
+    """
+    The user whose turn it is to speak.
+    """
     currentAttendee: MeetingAttendee
 
     # inherited from Meeting:
@@ -11,7 +20,13 @@ type StandupMeeting implements Meeting {
     projectId: UUID!
 }
 
+"""
+Settings for a standup meeting.
+"""
 type StandupMeetingSettings {
+    """
+    The (optional) number of seconds each attendee has to speak.
+    """
     countdownPerAttendee: Int
 }
 
@@ -24,10 +39,23 @@ input StandupMeetingSettingsInput {
     countdownPerAttendee: Int
 }
 
+"""
+Mutation type for standup meetings. Contains all mutations that can be performed on standup meetings.
+"""
 type StandupMeetingMutation {
     project: Project!
 
+    """
+    Starts the standup meeting.
+    This will determine the order of attendees randomly.
+    """
     startStandupMeeting: StandupMeeting! @OnDemand
+    """
+    Changes the current attendee in the standup meeting.
+    """
     changeCurrentAttendee(attendeeId: UUID!): StandupMeeting!
+    """
+    Finishes the standup meeting.
+    """
     finishStandupMeeting: StandupMeeting! @OnDemand
 }

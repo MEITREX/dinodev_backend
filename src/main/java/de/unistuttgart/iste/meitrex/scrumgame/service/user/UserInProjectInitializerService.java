@@ -30,9 +30,6 @@ public class UserInProjectInitializerService {
 
         userInProjectRepository.save(userInProjectEntity);
 
-        // userRoleInProjectService.getOrCreateDefaultRole(projectId);
-        // grantRoleToUser(userId, projectId, UserRoleInProjectService.DEFAULT_ROLE_NAME);
-
         return userInProjectEntity;
     }
 

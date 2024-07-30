@@ -5,6 +5,11 @@ type ShopItem {
     image: KnownAsset!
 }
 
+"""
+All known decorations that can be placed in the park.
+
+Note: not all are yet supported by the frontend.
+"""
 enum KnownAsset {
     WATER_PUDDLE
     CAVE,
@@ -21,6 +26,11 @@ enum KnownAsset {
     CAVE_2,
 }
 
+"""
+All known animals that can be placed in the park.
+
+Frontend supports TREX, TRICERATOPS, DODO, and PARAUSOLOPHUS.
+"""
 enum Animal {
     STEGOSAURUS
     TREX

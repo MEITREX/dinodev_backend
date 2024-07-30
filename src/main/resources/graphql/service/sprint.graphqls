@@ -150,15 +150,33 @@ enum SprintSuccessState {
     SUCCESS_WITH_GOLD_CHALLENGE
 }
 
+"""
+Represents a placed decoration in the animal enclosure.
+"""
 type PlacedAsset {
     id: UUID!
+    """
+    The asset that has been placed.
+    """
     asset: KnownAsset!
+    """
+    The x-coordinate of the asset (center of the asset).
+    """
     x: Int!
+    """
+    The y-coordinate of the asset (center of the asset).
+    """
     y: Int!
+    """
+    The user who placed the asset.
+    """
     placedByUserId: UUID!
     placedBy: UserInProject! @OnDemand
 }
 
+"""
+Input for placing an asset in the animal enclosure.
+"""
 input PlaceAssetInput {
     asset: KnownAsset!
     x: Int!

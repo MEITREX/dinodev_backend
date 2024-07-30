@@ -1,14 +1,44 @@
+"""
+An achievement is a goal that a user can achieve. It has a name, a description, a goal, and an icon.
+"""
 type Achievement {
+    """
+    Identifier of the achievement.
+    """
     identifier: String!
+    """
+    Name of the achievement.
+    """
     name: String!
+    """
+    Description of the achievement.
+    """
     description: String!
+    """
+    The target number of the achievement, e.g., the number of times a certain action has to be performed.
+    """
     goal: Int!
+    """
+    Icon of the achievement. Frontend only accepts emojis.
+    """
     icon: Icon
 }
 
+"""
+The progress of an achievement.
+"""
 type AchievementProgress {
+    """
+    The achievement that is being tracked.
+    """
     achievement: Achievement!
+    """
+    Number of times the associated action has been performed.
+    """
     progress: Int!
+    """
+    Whether the achievement has been achieved.
+    """
     achieved: Boolean!
 }
 

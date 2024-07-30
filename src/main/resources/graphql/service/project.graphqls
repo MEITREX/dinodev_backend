@@ -1,41 +1,107 @@
+"""
+Represents a student development project.
+"""
 type Project {
+    """
+    Unique identifier of the project. (This is not the same ID as the one in the IMS.)
+    """
     id: UUID!
+    """
+    Name of the project.
+    """
     name: String!
+    """
+    Description of the project.
+    """
     description: String
 
+    """
+    Project settings.
+    """
     projectSettings: ProjectSettings!
 
+    """
+    The number of the current sprint. Returns null if no sprint is active.
+    """
     currentSprintNumber: Int
+    """
+    The current sprint of the project. Returns null if no sprint is active.
+    """
     currentSprint: Sprint @OnDemand
+    """
+    The previous sprint of the project. Returns null if no sprint is active.
+    """
     previousSprint: Sprint @OnDemand
+    """
+    All sprints of the project.
+    """
     sprints: [Sprint!]! @OnDemand
 
+    """
+    Returns the users of the project.
+    """
     users: [UserInProject!]! @OnDemand
+    """
+    Return the currently logged in user in the project, defined by the JWT token.
+    """
     currentUser: UserInProject @OnDemand
 
     # meetings
+    """
+    Returns the planning meeting of the project if one is active, otherwise null.
+    """
     activePlanningMeeting: PlanningMeeting @OnDemand
+    """
+    Returns the standup meeting of the project if one is active, otherwise null.
+    """
     activeStandupMeeting: StandupMeeting @OnDemand
+    """
+    Returns the retrospective meeting of the project if one is active, otherwise null.
+    """
     activeRetrospectiveMeeting: RetrospectiveMeeting @OnDemand
 
     # roles
+    """
+    Returns all project roles.
+    """
     roles: [ProjectRole!]! @OnDemand
+    """
+    Returns the role with the given name.
+    """
     role(name: String!): ProjectRole @OnDemand
 
     # issues
+    """
+    Returns the issues of the project.
+    """
     issues: [Issue!]! @OnDemand
+    """
+    Returns the issue with the given ID.
+    """
     issue(id: UUID!): Issue @OnDemand
+    """
+    Groups the issues of the project by their state, representing a Kanban board.
+    """
     projectBoard: ProjectBoard! @OnDemand
 
     # events
+    """
+    Returns the events of the project.
+
+    NOTE: This also triggers the synchronization of Gropius events.
+    """
     events(page: Int, size: Int): [Event!]! @OnDemand
+
+    # shop
+    """
+    Returns the shop items of the project.
+    """
+    shopItems: [ShopItem!]! @OnDemand
 }
 
-interface ProjectDependent {
-    projectId: UUID!
-    project: Project! @OnDemand
-}
-
+"""
+Settings of a project.
+"""
 type ProjectSettings {
     codeRepositorySettings: CodeRepositorySettings!
     imsSettings: ImsSettings!
@@ -43,49 +109,112 @@ type ProjectSettings {
     definitionOfDone: [DefinitionOfDoneItem!]!
 }
 
+"""
+A single item of the definition of done that has to be checked or commented on when completing an issue.
+"""
 type DefinitionOfDoneItem {
+    """
+    The text of the item.
+    """
     text: String!
+    """
+    Whether the item is required to be checked. If not, the dialog can be completed without checking this item.
+    """
     required: Boolean!
+    """
+    Items that are implied by this item. If this item is checked, all items in this list also need to be checked if they are required.
+    """
     implies: [DefinitionOfDoneItem!]!
 }
 
+"""
+Ims specific settings of a project. Currently, this is tailored to Gropius.
+"""
 type ImsSettings {
+    """
+    Name of the IMS.
+    """
     imsName: String!
+    """
+    Icon of the IMS. (currently not used!)
+    """
     imsIcon: Icon
+    """
+    ID of the project in the IMS.
+    """
     imsProjectId: ID!
+    """
+    URL of the project in the IMS.
+    """
     imsProjectUrl: String!
 
+    """
+    Sorted list of issue states.
+    """
     issueStates: [IssueState!]!
+    """
+    Id of the issue template in the IMS.
+    """
     imsIssueTemplateId: ID!
 
+    """
+    Name of the field in the IMS that contains the effort estimation.
+    """
     effortEstimationFieldName: String!
+    """
+    Name of the field in the IMS that contains the sprint number.
+    """
     sprintFieldName: String!
+    """
+    ID of the relation that defines the part-of relation.
+    """
     partOfRelationId: ID!
 
+    """
+    Issue priorities.
+    """
     issuePriorities: [IssuePriorityConfiguration!]!
+    """
+    Issue types.
+    """
     issueTypes: [IssueTypeConfiguration!]!
 }
 
+"""
+Establishes a mapping between an issue priority in the IMS and the corresponding priority in DinoDev.
+"""
 type IssuePriorityConfiguration {
     imsPriorityId: ID!
     issuePriority: IssuePriority!
 }
 
+"""
+Establishes a mapping between an issue type in the IMS and the corresponding type in DinoDev.
+"""
 type IssueTypeConfiguration {
     name: String!
     imsTypeId: ID!
 }
 
+"""
+Settings related to the code repositories of a project.
+"""
 type CodeRepositorySettings {
     repositories: [RepositoryDefinition!]!
 }
 
+"""
+Definition of a code repository.
+"""
 type RepositoryDefinition {
     name: String!
     url: String!
     icon: Icon
 }
 
+"""
+A single icon that can be displayed in the UI.
+"""
 type Icon {
     path: String
     mdiIcon: String
@@ -98,15 +227,25 @@ enum KnownIcon {
     GROPIUS
 }
 
+"""
+Input to create a new project.
+"""
 input CreateProjectInput {
     name: String! @NotBlank
     description: String @NotBlank
 
+    """
+    At which sprint number the project should start.
+    Useful if DinoDev is not used from the beginning of the project.
+    """
     startingSprintNumber: Int! = 1
 
     projectSettings: ProjectSettingsInput!
 }
 
+"""
+Input to update a project.
+"""
 input UpdateProjectInput {
     name: String! @NotBlank
     description: String @NotBlank
@@ -114,13 +253,22 @@ input UpdateProjectInput {
     projectSettings: ProjectSettingsInput!
 }
 
+"""
+Input for the project settings.
+"""
 input ProjectSettingsInput {
     codeRepositorySettings: CodeRepositorySettingsInput!
     imsSettings: ImsSettingsInput!
 
+    """
+    Definition of done items.
+    """
     definitionOfDone: [DefinitionOfDoneItemInput!]! = []
 }
 
+"""
+Input for the IMS settings. For a documentation of the fields, see the corresponding fields in the ImsSettings type.
+"""
 input ImsSettingsInput {
     imsName: String!
     imsIcon: IconInput!
@@ -178,42 +326,112 @@ input IssueTypeInput {
     imsTypeId: ID! @NotBlank
 }
 
+"""
+Represents a like to an event.
+"""
 type Reaction {
     userId: UUID!
     user: GlobalUser @OnDemand
     reaction: String!
 }
 
+"""
+Wrapper that contains all project related mutations.
+"""
 type ProjectMutation {
     project: Project!
 
+    """
+    Adds the current user to a meeting.
+    """
     joinMeeting(type: MeetingType!): Meeting! @OnDemand
+    """
+    Marks the current user as offline in a meeting.
+    """
     leaveMeeting(type: MeetingType!): Meeting @OnDemand
+    """
+    Cancels a meeting.
+    """
     cancelMeeting(type: MeetingType!): Meeting! @OnDemand
+    """
+    Promotes a user to a leader in a meeting.
+    """
     promoteToMeetingLeader(type: MeetingType!, userId: UUID!): Meeting! @OnDemand
 
+    """
+    Adds a reaction to an event.
+    Currently, the reaction string does not influence the behavior.
+    """
     reactToEvent(eventId: UUID!, reaction: String! = "♥️"): Event! @OnDemand
-    postComment(optionalParentEventId: UUID, comment: String!): Event! @OnDemand
+    """
+    Adds a new global comment to an event.
+    """
+    postComment(
+        """
+        ID of the parent comment if the comment is a reply.
+        """
+        optionalParentEventId: UUID, comment: String!): Event! @OnDemand
 
+    """
+    Starts a new planning meeting.
+    """
     createPlanningMeeting(input: PlanningMeetingInput!): PlanningMeeting! @OnDemand
+    """
+    Perform changes to the planning meeting.
+    """
     mutatePlanningMeeting: PlanningMeetingMutation! @OnDemand
+    """
+    Starts a new standup meeting.
+    """
     createStandupMeeting(input: StandupMeetingInput!): StandupMeeting! @OnDemand
+    """
+    Perform changes to the standup meeting.
+    """
     mutateStandupMeeting: StandupMeetingMutation! @OnDemand
+    """
+    Starts a new retrospective meeting.
+    """
     createRetrospectiveMeeting(input: RetrospectiveMeetingInput!): RetrospectiveMeeting! @OnDemand
+    """
+    Perform changes to the retrospective meeting.
+    """
     mutateRetrospectiveMeeting: RetrospectiveMeetingMutation! @OnDemand
 
+    # crud operations for roles
     createRole(input: CreateProjectRoleInput!): ProjectRole! @OnDemand
     updateRole(name: String!, input: UpdateProjectRoleInput!): ProjectRole! @OnDemand
     deleteRole(name: String!): Boolean! @OnDemand
 
+    """
+    Creates a new sprint.
+    Remark: It is recommended to use the start new sprints via a planning meeting.
+    """
     createSprint(input: CreateSprintInput): Sprint! @OnDemand
+    """
+    Updates a sprint.
+    """
     updateSprint(number: Int!, input: UpdateSprintInput!): Sprint! @OnDemand
 
+    """
+    Perform changes to an issue.
+    """
     mutateIssue(id: ID!): IssueMutation! @OnDemand
+    """
+    Creates a new issue.
+    """
     createIssue(input: CreateIssueInput!): Issue! @OnDemand
 
+    """
+    Resets the user stats of the project. Requires the user to have the role "ADMIN".
+    """
     resetUserStats: Boolean! @OnDemand
+    """
+    Resets the achievements of the project. Requires the user to have the role "ADMIN".
+    """
     resetAchievements: Boolean! @OnDemand
 
+    """
+    Places a new decoration asset in the enclosure.
+    """
     buyAndPlace(input: PlaceAssetInput!): PlacedAsset! @OnDemand
 }

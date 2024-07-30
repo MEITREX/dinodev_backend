@@ -10,6 +10,11 @@ import java.util.*;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class ShopItems {
 
+    /**
+     * All shop items unlocked by default.
+     * <p>
+     * Note: uncomment the commented out shop items as soon as the frontend is ready to display them.
+     */
     public static final List<ShopItem> DEFAULT_SHOP_ITEMS = List.of(
             ShopItem.builder()
                     .setImage(KnownAsset.BUSHES_1)
@@ -31,12 +36,6 @@ public class ShopItems {
 //                    .setPrice(100)
 //                    .setId(UUID.randomUUID())
 //                    .build(),
-            ShopItem.builder()
-                    .setImage(KnownAsset.ROCK_1)
-                    .setName("Rock")
-                    .setPrice(25)
-                    .setId(UUID.randomUUID())
-                    .build(),
 //            ShopItem.builder()
 //                    .setImage(Asset.builder()
 //                            .setKnownAsset(KnownAsset.ROCK_2)
@@ -82,6 +81,9 @@ public class ShopItems {
                     .setId(UUID.randomUUID())
                     .build());
 
+    /**
+     * All shop items
+     */
     public static final List<ShopItem> ALL_SHOP_ITEMS = MeitrexCollectionUtils.concat(
             DEFAULT_SHOP_ITEMS,
             ShopItem.builder()
@@ -102,6 +104,12 @@ public class ShopItems {
                     .setPrice(300)
                     .setId(UUID.nameUUIDFromBytes("FOUNTAIN".getBytes()))
                     .build()
-
     );
+
+    public static ShopItem getShopItemByKnownAsset(KnownAsset knownAsset) {
+        return ALL_SHOP_ITEMS.stream()
+                .filter(shopItem -> shopItem.getImage() == knownAsset)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("No shop item found for asset " + knownAsset));
+    }
 }

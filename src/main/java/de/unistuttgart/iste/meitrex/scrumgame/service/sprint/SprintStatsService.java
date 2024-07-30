@@ -83,9 +83,8 @@ public class SprintStatsService {
 
             Integer previousStoryPointsPlanned = previousSprintStats.get().getSprint().getStoryPointsPlanned();
 
-            if ((previousStoryPointsPlanned != null &&
-                 sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned)
-                || sprintStats.getTotalStoryPoints() > previousSprintStats.get().getTotalStoryPoints()
+            if (achievedMoreThanPlannedInPreviousSprint(sprintStats, previousStoryPointsPlanned)
+                || previousSprintFailedAndCompletedMoreSP(sprintStats, previousSprintStats.get())
             ) {
                 sprintStats.setSuccessState(SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE);
                 return;
@@ -98,6 +97,18 @@ public class SprintStatsService {
         } else {
             sprintStats.setSuccessState(SprintSuccessState.IN_PROGRESS);
         }
+    }
+
+    private static boolean achievedMoreThanPlannedInPreviousSprint(SprintStats sprintStats,
+            Integer previousStoryPointsPlanned) {
+        return previousStoryPointsPlanned != null &&
+               sprintStats.getTotalStoryPoints() > previousStoryPointsPlanned;
+    }
+
+    private static boolean previousSprintFailedAndCompletedMoreSP(SprintStats sprintStats,
+            SprintStats previousSprintStats) {
+        return previousSprintStats.getSuccessState() == SprintSuccessState.FAILED
+               && sprintStats.getTotalStoryPoints() > previousSprintStats.getTotalStoryPoints();
     }
 
     private void calculateSprintStreak(SprintStats sprintStats, Optional<SprintStats> previousSprintStats) {

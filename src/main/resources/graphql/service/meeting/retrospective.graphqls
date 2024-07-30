@@ -1,24 +1,75 @@
+"""
+Represents a retrospective meeting.
+"""
 type RetrospectiveMeeting implements Meeting {
 
+    """
+    Current page of the retrospective meeting.
+    """
     currentPage: RetrospectiveMeetingPage!
 
+    """
+    Id of the user who achieved the gold medal.
+    Can be null, if no user contributed to the project in the sprint.
+    """
     goldMedalUserId: UUID
+    """
+    Id of the user who achieved the silver medal.
+    Can be null, if only one user contributed to the project in the sprint.
+    """
     silverMedalUserId: UUID
+    """
+    Id of the user who achieved the bronze medal.
+    Can be null, if only two users contributed to the project in the sprint.
+    """
     bronzeMedalUserId: UUID
 
+    """
+    User who achieved the gold medal.
+    Can be null, if no user contributed to the project in the sprint.
+    """
     goldMedalUser: GlobalUser @OnDemand
+    """
+    User who achieved the silver medal.
+    Can be null, if only one user contributed to the project in the sprint.
+    """
     silverMedalUser: GlobalUser @OnDemand
+    """
+    User who achieved the bronze medal.
+    Can be null, if only two users contributed to the project in the sprint.
+    """
     bronzeMedalUser: GlobalUser @OnDemand
 
+    """
+    Number of SP the gold medal user achieved.
+    """
     goldMedalPoints: Float
+    """
+    Number of SP the silver medal user achieved.
+    """
     silverMedalPoints: Float
+    """
+    Number of SP the bronze medal user achieved.
+    """
     bronzeMedalPoints: Float
 
+    """
+    Reward for the gold challenge, if it was achieved and there are any rewards left to unlock.
+    """
     goldChallengeReward: Animal
+    """
+    List of rewards. Given under any circumstances, but may be empty.
+    """
     baseRewards: [KnownAsset!]!
-    successRewards: [KnownAsset!]!
+    """
+    List of rewards when a streak of two or more successful sprints is achieved.
+    """
     streakRewards: [KnownAsset!]!
 
+    """
+    List of activities in the retrospective meeting.
+    Currently, the frontend only supports this list to have a length of 0 or 1.
+    """
     activities: [RetrospectiveActivity!]!
 
     # inherited from Meeting:
@@ -29,19 +80,32 @@ type RetrospectiveMeeting implements Meeting {
     projectId: UUID!
 }
 
+"""
+Column-based activity in the retrospective meeting.
+"""
 type RetrospectiveActivity {
     id: UUID!
     name: String!
     columns: [RetrospectiveColumn!]!
 }
 
+"""
+A category of comments in the retrospective meeting.
+For example "Mad" in a "Mad, Sad, Glad" activity.
+"""
 type RetrospectiveColumn {
     id: UUID!
     title: String!
     description: String!
+    """
+    Comments in this column.
+    """
     comments: [RetrospectiveComment!]!
 }
 
+"""
+A comment by a user in the retrospective activity.
+"""
 type RetrospectiveComment {
     id: UUID!
     content: String!
@@ -71,14 +135,39 @@ input RetrospectiveColumnInput {
     description: String!
 }
 
+"""
+Mutation type for retrospective meetings. Contains all mutations that can be performed on retrospective meetings.
+"""
 type RetrospectiveMeetingMutation {
     project: Project!
 
+    """
+    Updates the current page of the retrospective meeting.
+    """
     updatePage(page: RetrospectiveMeetingPage!): RetrospectiveMeeting! @OnDemand
+    """
+    Should be called for the medal awarding to happen.
+    Adds badges to the users who achieved the medals and awards virtual currency.
+    """
     awardMedals: RetrospectiveMeeting! @OnDemand
+    """
+    Adds a comment to the respective column in a retrospective activity.
+    """
     addComment(columnId: UUID!, content: String!): RetrospectiveMeeting! @OnDemand
+    """
+    Updates a comment in the retrospective meeting.
+    """
     editComment(commentId: UUID!, content: String!): RetrospectiveMeeting! @OnDemand
+    """
+    Deletes a comment in the retrospective meeting.
+    """
     deleteComment(commentId: UUID!): RetrospectiveMeeting! @OnDemand
+    """
+    Adds a thumbs-up to a comment in the retrospective meeting.
+    """
     thumbsUpComment(commentId: UUID!): RetrospectiveMeeting! @OnDemand
+    """
+    Finishes the retrospective meeting.
+    """
     finishMeeting: RetrospectiveMeeting! @OnDemand
 }

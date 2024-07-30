@@ -44,7 +44,7 @@ public class SprintController {
     @SchemaMapping
     @Nullable
     public Sprint previousSprint(Project project) {
-        return sprintService.findSprint(project.getId(), project.getCurrentSprintNumber() - 1).orElse(null);
+        return sprintService.findPreviousSprint(project).orElse(null);
     }
 
     @SchemaMapping

@@ -21,6 +21,7 @@ import reactor.core.publisher.Flux;
 import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.*;
+import java.util.stream.*;
 
 @Slf4j
 @Service
@@ -38,6 +39,7 @@ public class RetrospectiveMeetingService
     private final SprintService                  sprintService;
     private final UserInProjectService           userInProjectService;
     private final UserStatsService               userStatsService;
+    private final StandupMeetingService standupMeetingService;
 
     public RetrospectiveMeetingService(
             RetrospectiveMeetingRepository repository,
@@ -47,8 +49,8 @@ public class RetrospectiveMeetingService
             SprintStatsService sprintStatsService,
             SprintService sprintService,
             UserInProjectService userInProjectService,
-            UserStatsService userStatsService
-    ) {
+            UserStatsService userStatsService,
+            StandupMeetingService standupMeetingService) {
         super(repository, modelMapper, RetrospectiveMeetingEntity.class, RetrospectiveMeeting.class);
         this.meetingService = meetingService;
         this.repository = repository;
@@ -57,20 +59,26 @@ public class RetrospectiveMeetingService
         this.sprintService = sprintService;
         this.userInProjectService = userInProjectService;
         this.userStatsService = userStatsService;
+        this.standupMeetingService = standupMeetingService;
     }
 
     public RetrospectiveMeeting createRetrospectiveMeeting(Project project, RetrospectiveMeetingInput input) {
         RetrospectiveMeetingEntity entity = new RetrospectiveMeetingEntity();
         ProjectEntity projectEntity = projectRepository.findByIdOrThrow(project.getId());
 
+        Sprint sprint = sprintService.findCurrentSprint(project)
+                .or(() -> sprintService.findPreviousSprint(project))
+                .orElseThrow(() -> new MeitrexNotFoundException("No active or previous sprint found"));
+        SprintStats sprintStats = sprintStatsService.getSprintStats(sprint);
+
         entity.setProject(projectEntity);
         entity.setMeetingType(MeetingType.RETROSPECTIVE);
         entity.setActive(true);
         entity.setCurrentPage(RetrospectiveMeetingPage.INFORMATION);
         entity.setAttendees(meetingService.initMeetingAttendees(input.getMeetingLeaderId()));
-        entity.setGoldChallengeReward(Animal.TRICERATOPS); // TODO unlocking
-        entity.setBaseRewards(Set.of(KnownAsset.ROCK_1));
-        entity.setStreakRewards(Set.of(KnownAsset.FOUNTAIN));
+        entity.setGoldChallengeReward(getGoldChallengeReward(projectEntity, sprintStats).orElse(null));
+        entity.setBaseRewards(getBaseRewards(projectEntity));
+        entity.setStreakRewards(getStreakRewards(projectEntity, sprintStats));
         entity.setMedalsAwarded(false);
 
         initActivities(entity, input.getActivities());
@@ -118,9 +126,15 @@ public class RetrospectiveMeetingService
         // update sprint number
         int newSprintNumber = Optional.ofNullable(projectEntity.getCurrentSprintNumber()).orElse(0) + 1;
         projectEntity.setCurrentSprintNumber(newSprintNumber + 1);
-        projectRepository.save(projectEntity);
 
-        // TODO unlocks
+        // unlocks
+        if (retrospectiveMeetingEntity.getGoldChallengeReward() != null) {
+            projectEntity.getAdditionalUnlockedAnimals().add(retrospectiveMeetingEntity.getGoldChallengeReward());
+        }
+        projectEntity.getAdditionalUnlockedAssets().addAll(retrospectiveMeetingEntity.getBaseRewards());
+        projectEntity.getAdditionalUnlockedAssets().addAll(retrospectiveMeetingEntity.getStreakRewards());
+
+        projectRepository.save(projectEntity);
 
         RetrospectiveMeeting result = convertToDto(repository.save(retrospectiveMeetingEntity));
         meetingService.publishMeetingUpdated(result);
@@ -234,5 +248,49 @@ public class RetrospectiveMeetingService
             entity.setBronzeMedalUserId(sortedUserStats.get(2).getUserId());
             entity.setBronzeMedalPoints(sortedUserStats.get(2).getStoryPointsCompleted());
         }
+    }
+
+    private Optional<Animal> getGoldChallengeReward(
+            ProjectEntity projectEntity,
+            SprintStats sprintStats
+    ) {
+        List<Animal> unlockingOrder = List.of(
+                Animal.TRICERATOPS,
+                Animal.PARASAUROLOPHUS);
+        // add more animals as they are implemented in the frontend
+
+        if (sprintStats.getSuccessState() != SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE) {
+            return Optional.empty();
+        }
+
+        return getNextInUnlockingOrder(unlockingOrder, projectEntity.getAdditionalUnlockedAnimals());
+    }
+
+    private static <T> Optional<T> getNextInUnlockingOrder(List<T> unlockingOrder, Set<T> unlockedItems) {
+        return unlockingOrder.stream()
+                .filter(item -> !unlockedItems.contains(item))
+                .findFirst();
+    }
+
+    private Set<KnownAsset> getBaseRewards(ProjectEntity projectEntity) {
+        List<KnownAsset> unlockingOrder = List.of(KnownAsset.ROCK_1);
+        // add more assets as they are implemented in the frontend
+
+        return getNextInUnlockingOrder(unlockingOrder, projectEntity.getAdditionalUnlockedAssets())
+                .stream().collect(Collectors.toSet());
+    }
+
+    private Set<KnownAsset> getStreakRewards(ProjectEntity projectEntity, SprintStats sprintStats) {
+        List<KnownAsset> unlockingOrder = List.of(KnownAsset.FOUNTAIN, KnownAsset.CAVE_2);
+        // add more assets as they are implemented in the frontend
+
+        if (sprintStats.getStreak() < 2
+            || (sprintStats.getSuccessState() != SprintSuccessState.SUCCESS_WITH_GOLD_CHALLENGE
+                && sprintStats.getSuccessState() != SprintSuccessState.SUCCESS)) {
+            return Set.of();
+        }
+
+        return getNextInUnlockingOrder(unlockingOrder, projectEntity.getAdditionalUnlockedAssets())
+                .stream().collect(Collectors.toSet());
     }
 }

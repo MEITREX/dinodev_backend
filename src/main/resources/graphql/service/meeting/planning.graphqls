@@ -173,6 +173,9 @@ type NameVoting {
     votingResult: String
 }
 
+"""
+Details about the issue estimation.
+"""
 type IssueEstimation {
     planningMeeting: PlanningMeeting!
 
@@ -188,6 +191,9 @@ type IssueEstimation {
     finalResult: TShirtSizeEstimation
 }
 
+"""
+Statistics about the estimations.
+"""
 type EstimationStats {
     median: TShirtSizeEstimation
     max: TShirtSizeEstimation
@@ -195,12 +201,18 @@ type EstimationStats {
     mode: TShirtSizeEstimation
 }
 
+"""
+Holds the votes for an estimation.
+"""
 type EstimationVote {
     votedFor: TShirtSizeEstimation!
     userVotes: [Vote!]!
     totalVotes: Int!
 }
 
+"""
+Details about the sprint goal voting.
+"""
 type SprintGoalVoting {
     planningMeeting: PlanningMeeting!
 
@@ -213,30 +225,87 @@ type SprintGoalVoting {
     finished: Boolean!
 }
 
+"""
+Wrapper type for all operations on the planning meeting.
+"""
 type PlanningMeetingMutation {
     project: Project!
     changePage(page: PlanningMeetingPage!): PlanningMeeting!
 
     # animal voting
+    """
+    Add a vote for an animal.
+    """
     voteAnimal(animal: Animal!): PlanningMeeting!
+    """
+    For meeting leader: End the animal voting.
+    """
     endAnimalVoting: PlanningMeeting! @OnDemand
 
     # name voting
+    """
+    Adds a new name that can be voted for.
+    """
     addName(name: String!): PlanningMeeting!
+    """
+    Adds a vote for a name.
+    """
     voteName(name: String!): PlanningMeeting!
+    """
+    For meeting leader: End the name voting.
+    """
     endNameVoting: PlanningMeeting! @OnDemand
 
+    """
+    Vote for a t-shirt size on the current issue.
+    """
     voteEstimation(estimation: TShirtSizeEstimation!): PlanningMeeting!
+    """
+    For meeting leader: Restart the estimation of the current issue.
+    """
     restartEstimation: PlanningMeeting! @OnDemand
-    nextIssue(issueId: String): PlanningMeeting! # todo rename setIssueId or something
+    """
+    For meeting leader: Selects an issue to estimate.
+    """
+    nextIssue(issueId: String): PlanningMeeting!
+    """
+    For meeting leader: Start a countdown for the estimation.
+    After the countdown, the estimation will end, as if "endEstimation" was called.
+    """
     startCountdown(seconds: Int! @Positive): PlanningMeeting! @OnDemand
+    """
+    For meeting leader: End the estimation of the current issue.
+    """
     endEstimation: PlanningMeeting! @OnDemand
-    setFinalResult(estimation: TShirtSizeEstimation!, assignUserIds: [UUID!]! = []): PlanningMeeting!
+    """
+    Confirm the final estimation result.
+    """
+    setFinalResult(
+        """
+        The final estimation result.
+        """
+        estimation: TShirtSizeEstimation!,
+        """
+        Optional: user ids that should be assigned to the issue.
+        """
+        assignUserIds: [UUID!]! = []): PlanningMeeting!
 
+    """
+    Adds an issue to the sprint goal.
+    """
     addSprintIssue(issueId: String!): PlanningMeeting!
+    """
+    Removes an issue from the sprint goal.
+    """
     removeSprintIssue(issueId: String!): PlanningMeeting!
+    """
+    For meeting leader: End the sprint goal voting.
+    """
     finishSprintGoalVoting: PlanningMeeting! @OnDemand
 
+    """
+    For meeting leader: Finish the planning meeting.
+    """
     finishMeeting: Sprint!
 }
 

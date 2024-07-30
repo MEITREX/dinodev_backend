@@ -27,10 +27,6 @@ public class UserStatsService extends AbstractCrudService<UserProjectId, UserSta
         return convertToDto(findOrInitUserStatsEntity(userId, projectId));
     }
 
-    public Optional<UserStatsEntity> findUserStatsEntity(UUID userId, UUID projectId) {
-        return userStatsRepository.findById(new UserProjectId(userId, projectId));
-    }
-
     public UserStatsEntity findOrInitUserStatsEntity(UUID userId, UUID projectId) {
         return userStatsRepository.findById(new UserProjectId(userId, projectId))
                 .orElseGet(() -> UserStatsEntity.builder().id(new UserProjectId(userId, projectId)).build());
@@ -50,7 +46,6 @@ public class UserStatsService extends AbstractCrudService<UserProjectId, UserSta
         return convertToDto(userStatsRepository.save(userStats));
     }
 
-    // TODO replace with more fitting project role
     @PreAuthorize("@auth.hasPrivilege(@globalPrivileges.UPDATE_USER)")
     @Transactional
     public void resetUserStatsInProject(UUID projectId) {
