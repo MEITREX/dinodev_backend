@@ -13,13 +13,14 @@ This repository contains the backend of the DinoDev project.
       The frontend URL is used to provide a direct link from issues. The given URL is the default URL of the Gropius
       frontend when running locally.
       When using a deployed version, ask the administrator for the secret.
-3. Run `docker-compose up` to start the backend.
+3. Run `docker compose up` to start the backend.
 
 ## Dev Setup
 
 1. Follow the instructions of the first step in the previous section.
-2. Only run the database, i.e., `docker-compose up database-scrum-game`.
-3. Edit the `application-dev` properties similar to step 2 in the previous section. With the default setup, only the
+2. Only run the database, i.e., `docker compose up database-scrum-game`.
+3. Edit the `application-dev` properties similar to step 2 in the previous section. With the default Gropius setup, only
+   the
    secret needs to be changed.
 4. Run the backend in the `dev` profile: `./gradlew bootRun --args='--spring.profiles.active=dev'`. Or simply use an
    IntelliJ run configuration, but make sure to set the `dev` profile in the run configuration.
