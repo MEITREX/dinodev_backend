@@ -34,7 +34,7 @@ services:
       # replace accordingly:
       GROPIUS_URL: http://gropius-testing-api-public-1:8080
       GROPIUS_FRONTEND_URL: http://localhost:4200
-      GROPIUS_AUTH_SECRET: xvnoqU54G4GDUx7B9EHiyPhjjnpLDSmTq7XhAcVhszDYzGKPCwPq2nQjszzfg5DVEevQonNaeyQZFdMMNFcXH96Jgu9zw3JUjnj7
+      GROPIUS_AUTH_SECRET: <GROPIUS_AUTH_SECRET>
     networks:
       - "scrum-game-network"
 volumes:
