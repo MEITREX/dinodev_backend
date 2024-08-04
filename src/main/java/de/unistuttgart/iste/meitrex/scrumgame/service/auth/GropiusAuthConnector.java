@@ -13,15 +13,18 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 
-import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
+import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
+import java.security.interfaces.RSAPublicKey;
+import java.security.spec.InvalidKeySpecException;
+import java.security.spec.X509EncodedKeySpec;
 import java.util.*;
 
 @RequiredArgsConstructor
 public class GropiusAuthConnector implements AuthConnector {
 
     private final GraphQlRequestExecutor graphQlRequestExecutor;
-    private final String                 secret;
+    private final String publicKey;
 
     @Override
     public JwtDecoder getJwtDecoder() {
@@ -57,8 +60,19 @@ public class GropiusAuthConnector implements AuthConnector {
     }
 
     private NimbusJwtDecoder initNimbusDecoder() {
-        SecretKey secretKey = new SecretKeySpec(Base64.getDecoder().decode(secret), "HmacSHA256");
-        return NimbusJwtDecoder.withSecretKey(secretKey).build();
+        var publicKeyPem = new String(Base64.getDecoder().decode(publicKey))
+                .replace("-----BEGIN PUBLIC KEY-----", "")
+                .replace("\n", "")
+                .replace("-----END PUBLIC KEY-----", "");
+        var encoded = Base64.getDecoder().decode(publicKeyPem);
+        RSAPublicKey rsaPublicKey = null;
+        try {
+            rsaPublicKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
+                    .generatePublic(new X509EncodedKeySpec(encoded));
+        } catch (InvalidKeySpecException | NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Wrong setup of environment variables");
+        }
+        return NimbusJwtDecoder.withPublicKey(rsaPublicKey).build();
     }
 
     private OAuth2TokenValidator<Jwt> createAudienceValidator() {
