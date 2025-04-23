@@ -43,6 +43,10 @@ public class ProjectEntity implements IWithId<UUID> {
     @Setter
     private Integer currentSprintNumber;
 
+    // filter issue by a fixed label
+    @Column
+    private String fixedLabelFilter;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<UserInProjectEntity> users = new ArrayList<>();

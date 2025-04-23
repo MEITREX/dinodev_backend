@@ -24,6 +24,12 @@ type Project {
     The number of the current sprint. Returns null if no sprint is active.
     """
     currentSprintNumber: Int
+
+    """
+    Only issues with this label will be considered by DinoDev.
+    """
+    fixedLabelFilter: String
+
     """
     The current sprint of the project. Returns null if no sprint is active.
     """

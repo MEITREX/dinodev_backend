@@ -27,7 +27,13 @@ public class ImsService {
 
     @Cacheable(value = "issues", key = "#project.id", sync = true)
     public synchronized List<Issue> getIssues(Project project) {
-        return imsAdapterFactory.getImsAdapterForProject(project).getIssues(project.getId());
+        var result = imsAdapterFactory.getImsAdapterForProject(project).getIssues(project.getId());
+        if (project.getFixedLabelFilter() != null) {
+            return result.stream()
+                    .filter(issue -> issue.getLabels().contains(project.getFixedLabelFilter()))
+                    .toList();
+        }
+        return result;
     }
 
     @Cacheable(value = "issue", key = "#project.id + #id", sync = true)
